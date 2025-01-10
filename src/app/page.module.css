@@ -27,6 +27,11 @@
   }
 }
 
+.gamearea {
+  height: 40em;
+  width: 33em;
+}
+
 .main {
   display: flex;
   flex-direction: column;
