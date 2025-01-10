@@ -27,6 +27,14 @@
   }
 }
 
+.boosterActive {
+  color: green;
+}
+
+.boosterInactive {
+  color: red;
+}
+
 .gamearea {
   height: 40em;
   width: 33em;
