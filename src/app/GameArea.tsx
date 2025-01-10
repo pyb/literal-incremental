@@ -15,38 +15,28 @@ const GameArea = () => {
     wordLength.current = len;
   }
   
-  useEffect(() => {
-    const keyDownHandler = (e) => {
-      //console.log(e.code)
+  const updateScore = (e) => {
       if (
           (e.code == "Enter") ||
           (e.code == "Space")
          )
       {
-        console.log("Enter or space pressed!");
         setScore(wordLength.current);
         setText("");
       }
-      else 
-      {
-        //console.log("something else")
-        // console.log(`You pressed ${e.code}.`);
-      }
-    }
-       
-    document.addEventListener("keydown", keyDownHandler);
-
-    // clean up
-    return () => {
-      document.removeEventListener("keydown", keyDownHandler);
-    };
-  }, []);
+  }
   
   return (
     <div>
       <h1>Literal Incremental</h1>
       <span>score: {score}</span>
-      <textarea className={styles.gamearea} value={text} onChange={updateText}></textarea>
+      <textarea 
+        className={styles.gamearea} 
+        value={text} 
+        onChange={updateText} 
+        // onKeyDown={updateScore}
+      >
+      </textarea>
     </div>
   )
 }
