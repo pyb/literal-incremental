@@ -33,12 +33,7 @@
 
 .boosterInactive {
   color: red;
-}
-
-.gamearea {
-  height: 40em;
-  width: 33em;
-}
+} 
 
 .main {
   display: flex;

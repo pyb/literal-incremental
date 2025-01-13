@@ -4,6 +4,7 @@ import styles from "./page.module.css"
 import React, { useEffect } from "react";
 
 const GameArea = () => {
+  const [word, setWord] = React.useState<string>("")
   const [score, setScore] = React.useState<number>(0);
   const wordLength = React.useRef<number>(0);
   const [text, setText] = React.useState<string>("");
@@ -14,6 +15,42 @@ const GameArea = () => {
   const Booster1Threshold = 100;
   const Booster1Cost = 100;
   const Booster1Multiplier = 2;
+
+  const dictionary = new Set<string>(['i', 'say']);
+
+  const checkPartialWord = (partialWord: string, dictionary: Set<string>) => {
+    for (let word of dictionary)
+    {
+      const len = partialWord.length;
+      const w = word.slice(0, len);
+      if (partialWord == w)
+        return true;
+    }
+    return false;
+  }
+  useEffect(() => {
+    const handlePress = (e: any) => {
+      console.log(word)
+
+      if (e.key.length == 1 && e.key >= 'a' && e.key <='z') {
+        const newWord = word + e.key
+        if (dictionary.has(newWord)) {
+          setScore(score + 1)
+          setWord("")
+        }
+        else if (checkPartialWord(newWord, dictionary)) {
+          setWord(newWord)
+        } else {
+          setWord("")
+        }
+      }
+    };
+    window.addEventListener('keydown', handlePress);
+
+    return () => {
+      window.removeEventListener('keydown', handlePress);
+    };
+  }, [word, score]);
 
   const updateText = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     // textdata logic
@@ -38,13 +75,14 @@ const GameArea = () => {
       setB1Visible(true);
     }
   }
-  const updateScore = (e) => {
+  const updateScore = (e: any) => {
       if (
           (e.code == "Enter") ||
           (e.code == "Space")
          )
       {
         const newscore = score + wordLength.current * multiplier.current;
+        console.log()
         setScore(newscore);
         setText("");
         updateBoosterVisibility(newscore);
@@ -67,23 +105,16 @@ const GameArea = () => {
         </button>  
       </li>
       }
-      {/* <li>
-        <button id="booster2">Booster2</button>
-      </li>
-      <li>
-        <button id="booster3">Booster3</button>
-      </li>
-      <li>
-        <button id="booster4">Booster4</button>
-      </li> */}
       </ul>
-      <textarea 
+      {/* <textarea 
         className={styles.gamearea} 
         value={text} 
         onChange={updateText} 
         onKeyDown={updateScore}
       >
-      </textarea>
+      </textarea> */}
+      <input autoFocus type="hidden"></input>
+      <div>{word}</div>
     </div>
   )
 }
