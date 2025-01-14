@@ -35,6 +35,15 @@
   color: red;
 } 
 
+.key {
+  align-items: center;
+}
+
+.KbdKey {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .main {
   display: flex;
   flex-direction: column;
