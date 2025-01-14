@@ -3,12 +3,12 @@
 import React, { useEffect } from "react";
 import { Kbd } from "@chakra-ui/react"
 import styles from "./page.module.css"
+import { KeyMode } from "./GameArea";
 
-const Key = ({ letter, highlight } : { letter: string, highlight: boolean }) => {
-  
-  
+const Key = ({ letter, highlight, mode } : { letter: string, highlight: boolean, mode: KeyMode }) => {
+
   return (
-    <Kbd size='lg' variant={highlight ? 'subtle' : 'raised'} colorPalette={highlight ? 'yellow' : 'orange'}>
+    <Kbd size='lg' variant={highlight ? 'subtle' : 'raised'} colorPalette={mode == KeyMode.VISIBLE ? 'gray' : (highlight ? 'yellow' : 'orange')}>
       <div className={styles.KbdKey}>
         {letter}
         </div>
