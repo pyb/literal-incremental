@@ -183,3 +183,8 @@ a.secondary {
     filter: invert();
   }
 }
+
+.teststyle
+{
+    font-weight: bold;
+}

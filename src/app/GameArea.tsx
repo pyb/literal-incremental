@@ -2,6 +2,7 @@
 
 import styles from "./page.module.css"
 import React, { useEffect } from "react";
+import { animate, motion, useMotionValue, useTransform } from "motion/react"
 
 import Keyboard from "./Keyboard"
 
@@ -20,6 +21,21 @@ export interface Keys {
 export enum KeyMode {
   BOUGHT,
   VISIBLE
+}
+
+const TestArea = () => {
+  const count = useMotionValue(0);
+  const opacity = useTransform (() => count.get()/100);
+  useEffect(() => {
+    const controls = animate(count, 100, { duration: 0.2 })
+    return () => controls.stop()
+  }, [])
+
+  return (
+    <motion.div className={styles.teststyle} whileHover={{ scale: 1.1 }} style={{opacity}}>
+    Foo
+    </motion.div>
+  )
 }
 
 const GameArea = () => {
@@ -84,10 +100,10 @@ const GameArea = () => {
     };
   }, [glyphs]);
 
-
   return (
     <div>
       <h1>Literal Incremental</h1>
+      <TestArea />
       <span>glyphs: {glyphs}</span>
       <Keyboard keyModes={keyModes(keyInfo, boughtKeys, glyphs)} focus={highlight ? lastPressed : ""}/>
     </div>
