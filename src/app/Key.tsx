@@ -3,7 +3,23 @@
 import React, { useEffect } from "react";
 import { Kbd } from "@chakra-ui/react"
 import styles from "./page.module.css"
-import { KeyMode } from "./GameArea";
+
+export interface KeyInfo {
+  key: string,
+  visibilityPrice: number,
+  price: number,
+  repeaterPrice: number
+}
+
+export interface Keys {
+  letter: string,
+  mode: KeyMode
+}
+
+export enum KeyMode {
+  BOUGHT,
+  VISIBLE
+}
 
 const Key = ({ letter, highlight, mode } : { letter: string, highlight: boolean, mode: KeyMode }) => {
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { HStack, StackSeparator, Kbd } from "@chakra-ui/react"
-import { Keys, KeyMode } from './GameArea'
+import { Keys, KeyMode } from './Key'
 import Key from './Key'
 
 const Keyboard = ({keyModes, focus}: {keyModes: Keys[], focus: string}) => {
