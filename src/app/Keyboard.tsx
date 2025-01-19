@@ -2,15 +2,34 @@
 
 import React, { useEffect } from "react";
 import { HStack, StackSeparator, Kbd } from "@chakra-ui/react"
-import { Keys, KeyMode } from './Key'
-import Key from './Key'
+import styles from "./page.module.css"
 
-const Keyboard = ({keyModes, focus}: {keyModes: Keys[], focus: string}) => {
+export interface KeyStatus {
+  letter: string,
+  mode: KeyMode
+}
+
+export enum KeyMode {
+  BOUGHT,
+  VISIBLE
+}
+
+const Key = ({ letter, highlight, mode } : { letter: string, highlight: boolean, mode: KeyMode }) => {
+  return (
+    <Kbd size='lg' variant={highlight ? 'subtle' : 'raised'} colorPalette={mode == KeyMode.VISIBLE ? 'gray' : (highlight ? 'yellow' : 'orange')}>
+      <div className={styles.KbdKey}>
+        {letter}
+        </div>
+    </Kbd>
+  )
+}
+
+const Keyboard = ({keyModes, focus}: {keyModes: KeyStatus[], focus: string}) => {
   return (
     <HStack separator={<StackSeparator />}>
-      {keyModes.map((keyMode: Keys) =>
-       <Key key={keyMode.letter} highlight={(keyMode.letter == focus)? true : false}
-            letter={keyMode.letter} mode={keyMode.mode}/>)} 
+      {keyModes.map((keyStatus: KeyStatus) =>
+       <Key key={keyStatus.letter} highlight={(keyStatus.letter == focus)? true : false}
+            letter={keyStatus.letter} mode={keyStatus.mode}/>)} 
     </HStack>
   )
 }

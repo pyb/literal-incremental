@@ -5,8 +5,7 @@
 import styles from "./page.module.css"
 import React, { useEffect } from "react";
 import { animate, motion, useMotionValue, useTransform } from "motion/react"
-import { KeyMode } from './Key'
-import Keyboard, { KeyStatus } from "./Keyboard"
+import Keyboard, { KeyStatus, KeyMode } from "./Keyboard"
 
 interface KeyInfo {
   key: string,
@@ -24,6 +23,13 @@ const keyInfo = [
   { key: 'o', visibilityPrice: 600, price: 750, repeaterPrice: 50000000 },
   { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 },
 ]
+
+const ScoreBoard = ({glyphs} : {glyphs: number}) =>
+{
+  return (
+  <div>Glyphs score : {glyphs}</div>
+  );
+}
 
 const GameArea = () => {
   const [glyphs, setGlyphs] = React.useState<number>(0);
@@ -68,7 +74,7 @@ const GameArea = () => {
     <div>
       <h1>Literal Incremental!</h1>
       {/* <TestArea /> */}
-      <span>glyphs: {glyphs}</span>
+      <ScoreBoard glyphs={glyphs}/>
       <Keyboard keyModes={keyModes(keyInfo, boughtKeys, glyphs)} focus={highlight ? lastPressed : ""} />
     </div>
   )
