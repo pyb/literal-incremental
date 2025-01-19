@@ -3,7 +3,7 @@
 // 'etaoin schrldu'
 
 import styles from "./page.module.css"
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { animate, motion, useMotionValue, useTransform } from "motion/react"
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard"
 
@@ -24,67 +24,75 @@ const keyInfo = [
   { key: 'h', visibilityPrice: 350, price: 500, repeaterPrice: 5000000 },
   { key: 'o', visibilityPrice: 600, price: 750, repeaterPrice: 50000000 },
   { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 },
-]
+];
 
 const ScoreBoard = ({glyphs} : {glyphs: number}) =>
 {
   return (
   <div>Glyphs score : {glyphs}</div>
   );
-}
+};
+
+const getKeyStatus = (keyInfo: Array<KeyInfo>, boughtKeys: Array<string>, score: number): KeyStatus[] => {
+  const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
+  return visibleKeys.map(
+    (kInfo: KeyInfo) :KeyStatus => ({
+      letter: kInfo.key,
+      mode: (boughtKeys.includes(kInfo.key) ? KeyMode.BOUGHT : KeyMode.VISIBLE)
+  })
+  );
+};
 
 const GameArea = () => {
   const [glyphs, setGlyphs] = useState<number>(0);
   const [lastPressed, setLastPressed] = useState<string>("");
-  const [highlight, setHighlight] = useState<boolean>(false);
-  const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i'])
+  const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
+  const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i']);
+
+  const stopKeyHighlight = () => {
+    setKeyHighlight(false);
+  }
 
   const handleKeydown = (kev: KeyboardEvent) => {
-    //const kev = ev as KeyboardEvent;
-    let key:string = kev.key;
-    console.log(key)
-    if (key.length == 1 && 
-        ( (key >= 'a' && key <= 'z') ||
-          (key >= 'A' && key <= '|') ) &&
-        boughtKeys.includes(key.toLowerCase())) {
-      key = key.toLowerCase();
-      setGlyphs(glyphs + 1)
+    let key:string = kev.key.toLowerCase();
+    if ( key.length == 1 &&
+         key >= 'a' && key <= 'z' &&
+         boughtKeys.includes(key) )
+    {
+      setGlyphs(glyphs + 1);
       setLastPressed(key);
-      setHighlight(true);
-      window.setTimeout(() => {
-        setHighlight(false)
-      }, highlightDuration)
+      setKeyHighlight(true);
+      window.setTimeout(
+        stopKeyHighlight,
+        highlightDuration);
     }
   }
+
+  const handleKeyup = (kev: KeyboardEvent) => {
+    //let key:string = kev.key;
+  }
+
   useEffect(() => {
     window.addEventListener('keydown', handleKeydown);
-
+    window.addEventListener('keyup', handleKeyup);
     return () => {
       window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('keyup', handleKeyup);
     };
   }, [glyphs]);
-
-  const keyModes = (keyInfo: Array<KeyInfo>, boughtKeys: Array<string>, score: number): KeyStatus[] => {
-    const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
-    return visibleKeys.map(
-      (kInfo: KeyInfo) :KeyStatus => ({
-        letter: kInfo.key,
-        mode: (boughtKeys.includes(kInfo.key) ? KeyMode.BOUGHT : KeyMode.VISIBLE)
-    })
-    );
-  }
 
   return (
     <div>
       <h1>Literal Incremental!</h1>
-      {/* <TestArea /> */}
       <ScoreBoard glyphs={glyphs}/>
-      <Keyboard keyModes={keyModes(keyInfo, boughtKeys, glyphs)} focus={highlight ? lastPressed : ""} />
+      <Keyboard allKeyStatus={getKeyStatus(keyInfo, boughtKeys, glyphs)}
+                focusedKey={keyHighlight ? lastPressed : ""} />
     </div>
-  )
-}
+  );
+};
 
 // Saving for valid word recognition
+
 /* 
 const checkPartialWord = (partialWord: string, dictionary: Set<string>) => {
   for (let word of dictionary) {
@@ -95,7 +103,8 @@ const checkPartialWord = (partialWord: string, dictionary: Set<string>) => {
   }
   return false;
 }
- */
+*/
+
 /*
 const TestArea = () => {
   const count = useMotionValue(0);

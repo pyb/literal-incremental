@@ -16,7 +16,9 @@ export enum KeyMode {
 
 const Key = ({ letter, highlight, mode } : { letter: string, highlight: boolean, mode: KeyMode }) => {
   return (
-    <Kbd size='lg' variant={highlight ? 'subtle' : 'raised'} colorPalette={mode == KeyMode.VISIBLE ? 'gray' : (highlight ? 'yellow' : 'orange')}>
+    <Kbd size='lg'
+         variant={highlight ? 'subtle' : 'raised'}
+         colorPalette={mode == KeyMode.VISIBLE ? 'gray' : (highlight ? 'yellow' : 'orange')}>
       <div className={styles.KbdKey}>
         {letter}
         </div>
@@ -24,12 +26,14 @@ const Key = ({ letter, highlight, mode } : { letter: string, highlight: boolean,
   )
 }
 
-const Keyboard = ({keyModes, focus}: {keyModes: KeyStatus[], focus: string}) => {
+const Keyboard = ({allKeyStatus, focusedKey}: {allKeyStatus: KeyStatus[], focusedKey: string}) => {
   return (
     <HStack separator={<StackSeparator />}>
-      {keyModes.map((keyStatus: KeyStatus) =>
-       <Key key={keyStatus.letter} highlight={(keyStatus.letter == focus)? true : false}
-            letter={keyStatus.letter} mode={keyStatus.mode}/>)} 
+      {allKeyStatus.map((keyStatus: KeyStatus) =>
+       <Key key={keyStatus.letter}
+            highlight={(keyStatus.letter == focusedKey) ? true : false}
+            letter={keyStatus.letter}
+            mode={keyStatus.mode}/>)} 
     </HStack>
   )
 }
