@@ -3,9 +3,11 @@
 // 'etaoin schrldu'
 
 import styles from "./page.module.css"
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { animate, motion, useMotionValue, useTransform } from "motion/react"
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard"
+
+const highlightDuration = 150;
 
 interface KeyInfo {
   key: string,
@@ -32,31 +34,33 @@ const ScoreBoard = ({glyphs} : {glyphs: number}) =>
 }
 
 const GameArea = () => {
-  const [glyphs, setGlyphs] = React.useState<number>(0);
-  const [lastPressed, setLastPressed] = React.useState<string>("");
-  const [highlight, setHighlight] = React.useState<boolean>(false);
-  const interval = React.useRef<number>(0);
-  const [boughtKeys, setBoughtKeys] = React.useState<Array<string>>(['i'])
+  const [glyphs, setGlyphs] = useState<number>(0);
+  const [lastPressed, setLastPressed] = useState<string>("");
+  const [highlight, setHighlight] = useState<boolean>(false);
+  const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i'])
 
-  useEffect(() => {
-    const handlePress = (e: any) => {
-      console.log(e.key)
-      if (e.key.length == 1 && e.key >= 'a' && e.key <= 'z' && boughtKeys.includes(e.key)) {
-        setGlyphs(glyphs + 1)
-        setLastPressed(e.key);
-        setHighlight(true);
-        window.setTimeout(() => {
-          setHighlight(false)
-          console.log('setting interval to false')
-        }, 150)
-        console.log(interval.current)
-      }
+  const handleKeydown = (kev: KeyboardEvent) => {
+    //const kev = ev as KeyboardEvent;
+    let key:string = kev.key;
+    console.log(key)
+    if (key.length == 1 && 
+        ( (key >= 'a' && key <= 'z') ||
+          (key >= 'A' && key <= '|') ) &&
+        boughtKeys.includes(key.toLowerCase())) {
+      key = key.toLowerCase();
+      setGlyphs(glyphs + 1)
+      setLastPressed(key);
+      setHighlight(true);
+      window.setTimeout(() => {
+        setHighlight(false)
+      }, highlightDuration)
     }
-
-    window.addEventListener('keydown', handlePress);
+  }
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeydown);
 
     return () => {
-      window.removeEventListener('keydown', handlePress);
+      window.removeEventListener('keydown', handleKeydown);
     };
   }, [glyphs]);
 
