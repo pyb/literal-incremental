@@ -9,6 +9,10 @@ import Keyboard, { KeyStatus, KeyMode } from "./Keyboard"
 
 const highlightDuration = 150;
 
+const maxWordLength = 4;
+const inputSize = 20;
+const dict = new Set(['i', 'sin', 'is', 'in', 'si']);
+
 interface KeyInfo {
   key: string,
   visibilityPrice: number,
@@ -18,18 +22,21 @@ interface KeyInfo {
 
 const keyInfo = [
   { key: 'i', visibilityPrice: 0, price: 0, repeaterPrice: 500 },
-  { key: 's', visibilityPrice: 10, price: 100, repeaterPrice: 5000 },
-  { key: 'n', visibilityPrice: 150, price: 200, repeaterPrice: 50000 },
+  { key: 's', visibilityPrice: 1, price: 100, repeaterPrice: 5000 },
+  { key: 'n', visibilityPrice: 1, price: 200, repeaterPrice: 50000 },
   { key: 'c', visibilityPrice: 200, price: 300, repeaterPrice: 500000 },
   { key: 'h', visibilityPrice: 350, price: 500, repeaterPrice: 5000000 },
   { key: 'o', visibilityPrice: 600, price: 750, repeaterPrice: 50000000 },
   { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 },
 ];
 
-const ScoreBoard = ({glyphs} : {glyphs: number}) =>
+const ScoreBoard = ({glyphs, words} : {glyphs: number, words: number}) =>
 {
   return (
-  <div>Glyphs score : {glyphs}</div>
+  <>
+    <div>Glyphs : {glyphs}</div>
+    <div>Words : {words}</div>
+  </>
   );
 };
 
@@ -43,14 +50,108 @@ const getKeyStatus = (keyInfo: Array<KeyInfo>, boughtKeys: Array<string>, score:
   );
 };
 
+// Adding a temporary basic InputArea to enable the implementation of word typing.
+const InputArea = ({input}: {input: string}) =>
+{
+  return (
+    <>
+      <span>{input}</span>
+    </>
+  )
+}
+
+const WordTest = ({currentPartialWord, lastWord}:{currentPartialWord:string, lastWord:string}) =>
+{
+  return (
+  <>
+    <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
+  </>)
+}
+
+// Naive dictionary implementation / no trie 
+const checkPartialWord = (partialWord: string, dictionary: Set<string>) => {
+  for (let word of dictionary) {
+    const len = partialWord.length;
+    const w = word.slice(0, len);
+    if (partialWord == w)
+      return true;
+  }
+  return false;
+}
+
+/* 
+  Design : word formation.
+
+  Currently, typed letters can do the following (possibly overlapping) things:
+  -Start a new word
+  -No-op, ie not start a new word, or add to an existing word
+  -Interrupt an incomplete word, and either start a new one, or No-op
+  -Continue ongoing word
+  -Complete a word
+  
+
+  Q : Is state transition completely determined by an op (key, currentWord) -> (currentWord, lastWord) ?
+*/
+
+// Complete next state.  
+const nextWordState = (key:string, currentPartialWord:string, dict: Set<string>) =>
+{
+  let finishedWord = "";
+  const tentativeWord = currentPartialWord.concat(key);
+
+  if (checkPartialWord(currentPartialWord.concat(key), dict))
+  {
+    currentPartialWord = tentativeWord;
+  }
+  else if (dict.has(currentPartialWord))
+  {
+    finishedWord = currentPartialWord;
+    currentPartialWord = checkPartialWord(key, dict) ? key : "";
+  }
+
+  return (
+  {
+    currentPartialWord: currentPartialWord,
+    finishedWord: finishedWord
+  });
+}
+
 const GameArea = () => {
   const [glyphs, setGlyphs] = useState<number>(0);
+  const [words, setWords] = useState<number>(0);
   const [lastPressed, setLastPressed] = useState<string>("");
   const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
-  const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i']);
+  const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i', 's', 'n']);
+  const [inputBuffer, setInputBuffer] = useState<string>("");
+  
+  // tmp
+  const [currentPartialWord, setCurrentPartialWord] = useState<string>("");
+  const [lastScoredWord, setLastScoredWord] = useState<string>("lcw");
 
   const stopKeyHighlight = () => {
     setKeyHighlight(false);
+  }
+
+  const addKeyToBuffer = (key:string):void =>
+  {
+    let buffer = inputBuffer;
+    if (buffer.length == inputSize) {
+      buffer = buffer.slice(inputSize / 2, inputSize);
+    }
+    setInputBuffer(buffer + key);
+  }
+
+  const processKey = (key:string) =>
+  {
+    setGlyphs(glyphs + 1);
+    addKeyToBuffer(key);
+    const nextState = nextWordState(key, currentPartialWord, dict);
+    setCurrentPartialWord(nextState.currentPartialWord);
+    if (nextState.finishedWord != "")
+    {
+      setLastScoredWord(nextState.finishedWord);
+      setWords(words + 1);
+    }
   }
 
   const handleKeydown = (kev: KeyboardEvent) => {
@@ -59,12 +160,13 @@ const GameArea = () => {
          key >= 'a' && key <= 'z' &&
          boughtKeys.includes(key) )
     {
-      setGlyphs(glyphs + 1);
       setLastPressed(key);
       setKeyHighlight(true);
       window.setTimeout(
         stopKeyHighlight,
         highlightDuration);
+      
+      processKey(key);
     }
   }
 
@@ -82,28 +184,15 @@ const GameArea = () => {
   }, [glyphs]);
 
   return (
-    <div>
-      <h1>Literal Incremental!</h1>
-      <ScoreBoard glyphs={glyphs}/>
+    <>
+      <ScoreBoard glyphs={glyphs} words={words}/>
       <Keyboard allKeyStatus={getKeyStatus(keyInfo, boughtKeys, glyphs)}
                 focusedKey={keyHighlight ? lastPressed : ""} />
-    </div>
+      <InputArea input={inputBuffer} />
+      <WordTest currentPartialWord={currentPartialWord} lastWord={lastScoredWord} />
+    </>
   );
 };
-
-// Saving for valid word recognition
-
-/* 
-const checkPartialWord = (partialWord: string, dictionary: Set<string>) => {
-  for (let word of dictionary) {
-    const len = partialWord.length;
-    const w = word.slice(0, len);
-    if (partialWord == w)
-      return true;
-  }
-  return false;
-}
-*/
 
 /*
 const TestArea = () => {
