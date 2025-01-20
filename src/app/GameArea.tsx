@@ -6,12 +6,15 @@ import styles from "./page.module.css"
 import React, { useState, useEffect, useCallback } from "react";
 import { animate, motion, useMotionValue, useTransform } from "motion/react"
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard"
+import { Trie } from "./trie/trie"
+import { TrieNode } from "./trie/trieNode"
 
 const highlightDuration = 150;
 
 const maxWordLength = 4;
 const inputSize = 20;
-const dict = new Set(['i', 'sin', 'is', 'in', 'si']);
+const adict = ['i', 'sin', 'is', 'in', 'si'];
+const tdict = Trie.fromArray(adict);
 
 interface KeyInfo {
   key: string,
@@ -68,15 +71,35 @@ const WordTest = ({currentPartialWord, lastWord}:{currentPartialWord:string, las
   </>)
 }
 
-// Naive dictionary implementation / no trie 
-const checkPartialWord = (partialWord: string, dictionary: Set<string>) => {
-  for (let word of dictionary) {
+const isPartialWord = (partialWord: string, tdict: Trie) => {
+  const node = tdict.prefixSearch(partialWord);
+  if (node === null)
+    return false;
+  
+  return true;
+  /*
+  // Old naive dictionary implementation / no trie 
+  for (let word of dict) {
     const len = partialWord.length;
     const w = word.slice(0, len);
     if (partialWord == w)
       return true;
   }
   return false;
+  */
+}
+
+const isWordTerminal = (word: string, tdict: Trie, maxLength: number):boolean =>
+{
+  const node = tdict.prefixSearch(word);
+  if (!node)
+    return false;
+  else if (word.length == maxLength)
+    return true;
+  else if (node.childrenCount() > 0)
+    return false;
+  
+  return true;
 }
 
 /* 
@@ -94,19 +117,25 @@ const checkPartialWord = (partialWord: string, dictionary: Set<string>) => {
 */
 
 // Complete next state.  
-const nextWordState = (key:string, currentPartialWord:string, dict: Set<string>) =>
+const nextWordState = (key:string, currentPartialWord:string, tdict:Trie, maxWordLength: number) =>
 {
   let finishedWord = "";
   const tentativeWord = currentPartialWord.concat(key);
 
-  if (checkPartialWord(currentPartialWord.concat(key), dict))
+  if (isPartialWord(tentativeWord, tdict))
   {
-    currentPartialWord = tentativeWord;
+    if (isWordTerminal(tentativeWord, tdict, maxWordLength))
+    {
+      finishedWord = tentativeWord;
+      currentPartialWord = "";
+    }
+    else
+      currentPartialWord = tentativeWord;
   }
-  else if (dict.has(currentPartialWord))
+  else if (tdict.has(currentPartialWord))
   {
     finishedWord = currentPartialWord;
-    currentPartialWord = checkPartialWord(key, dict) ? key : "";
+    currentPartialWord = isPartialWord(key, tdict) ? key : "";
   }
 
   return (
@@ -145,7 +174,7 @@ const GameArea = () => {
   {
     setGlyphs(glyphs + 1);
     addKeyToBuffer(key);
-    const nextState = nextWordState(key, currentPartialWord, dict);
+    const nextState = nextWordState(key, currentPartialWord, tdict, maxWordLength);
     setCurrentPartialWord(nextState.currentPartialWord);
     if (nextState.finishedWord != "")
     {

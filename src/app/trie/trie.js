@@ -45,32 +45,41 @@ class Trie {
     return this;
   }
 
-  /**
-   * Checks if a word exists in the trie
-   * @public
-   * @param {any} value
-   * @returns {boolean}
-   */
-  has(value) {
+  prefixSearch(value) {
     if (value === undefined || value === null) {
-      return false;
+      return null;
     }
 
     const word = value.toString();
     let currentNode = this._root;
     for (let i = 0; i < word.length; i += 1) {
       if (!currentNode.hasChild(word[i])) {
-        return false;
+        return null;
       }
       currentNode = currentNode.getChild(word[i]);
     }
-
-    if (!currentNode.isEndOfWord()) {
-      return false;
-    }
-
-    return true;
+    return currentNode;
   }
+
+    /**
+   * Checks if a word exists in the trie
+   * @public
+   * @param {any} value
+   * @returns {boolean}
+   */
+    has(value) {
+      if (value === undefined || value === null) {
+        return false;
+      }
+      const currentNode = this.prefixSearch(value);
+      if (!currentNode)
+        return false;
+      else if (!currentNode.isEndOfWord()) {
+        return false;
+      }
+      else
+        return true;
+    }
 
   /**
    * Finds a word in the trie and returns its last char node
