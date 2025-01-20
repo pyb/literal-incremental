@@ -35,7 +35,7 @@ const getKeyStatus = (keyInfo: Array<KeyInfo>, boughtKeys: Array<string>, score:
 const InputArea = ({ input }: { input: string }) => {
   return (
     <>
-      <span>{input}</span>
+      <span className={styles.inputArea}>{input}</span>
     </>
   )
 }

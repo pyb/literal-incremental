@@ -188,3 +188,8 @@ a.secondary {
 {
     font-weight: bold;
 }
+
+.inputArea
+{
+  font-family: monospace;
+}
