@@ -3,7 +3,7 @@
 // 'etaoin schrldu'
 
 import styles from "./page.module.css"
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import { Trie } from "./trie/trie";
@@ -56,16 +56,6 @@ const isPartialWord = (partialWord: string, tdict: Trie) => {
     return false;
   
   return true;
-  /*
-  // Old naive dictionary implementation / no trie 
-  for (let word of dict) {
-    const len = partialWord.length;
-    const w = word.slice(0, len);
-    if (partialWord == w)
-      return true;
-  }
-  return false;
-  */
 }
 
 const isWordTerminal = (word: string, tdict: Trie, maxLength: number):boolean =>
@@ -131,28 +121,27 @@ const GameArea = () => {
   const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
   const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i', 's', 'n']);
   const [inputBuffer, setInputBuffer] = useState<string>("");
-  
+
+  const pressedKeys= useRef<Set<string>>(new Set<string>());
+  const intervalId = useRef<number>(0);
+
   // tmp
   const [currentPartialWord, setCurrentPartialWord] = useState<string>("");
-  const [lastScoredWord, setLastScoredWord] = useState<string>("lcw");
+  const [lastScoredWord, setLastScoredWord] = useState<string>("");
 
   const stopKeyHighlight = () => {
     setKeyHighlight(false);
   }
 
-  const addKeyToBuffer = (key:string):void =>
+  const processGlyph = (key:string) =>
   {
+    // Update InputArea
     let buffer = inputBuffer;
     if (buffer.length == GameData.inputSize) {
       buffer = buffer.slice(GameData.inputSize / 2, GameData.inputSize);
     }
     setInputBuffer(buffer + key);
-  }
 
-  const processKey = (key:string) =>
-  {
-    setGlyphs(glyphs + 1);
-    addKeyToBuffer(key);
     const nextState = nextWordState(key, currentPartialWord, tdict, GameData.maxWordLength);
     setCurrentPartialWord(nextState.currentPartialWord);
     if (nextState.finishedWord != "")
@@ -160,34 +149,63 @@ const GameArea = () => {
       setLastScoredWord(nextState.finishedWord);
       setWords(words + 1);
     }
+    setGlyphs(glyphs + 1);
   }
 
-  const handleKeydown = (kev: KeyboardEvent) => {
-    let key:string = kev.key.toLowerCase();
-    if ( key.length == 1 &&
-         key >= 'a' && key <= 'z' &&
-         boughtKeys.includes(key) )
+  const handleKey = (key:string) =>
+  {
+    if (boughtKeys.includes(key))
     {
+      // Highlight key in Keyboard
       setLastPressed(key);
       setKeyHighlight(true);
       window.setTimeout(
         stopKeyHighlight,
         GameData.highlightDuration);
       
-      processKey(key);
+      processGlyph(key);
+    }
+  }
+
+  const handleKeydown = (kev: KeyboardEvent) => {
+    let key:string = kev.key.toLowerCase();
+    if ( key.length == 1 &&
+         key >= 'a' && key <= 'z')
+    {
+      if (!pressedKeys.current.has(key))
+      {
+        pressedKeys.current.add(key);
+        handleKey(key);
+      }
     }
   }
 
   const handleKeyup = (kev: KeyboardEvent) => {
-    //let key:string = kev.key;
+    let key:string = kev.key.toLowerCase();
+    if ( key.length == 1 &&
+         key >= 'a' && key <= 'z')
+    {
+      pressedKeys.current.delete(key);
+    }
+  }
+
+  const processTimeouts = () => {
+    pressedKeys.current.forEach (
+      (key:string) =>
+        handleKey(key) );
+    //pressedKeys.current.clear();
   }
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('keyup', handleKeyup);
+    intervalId.current = window.setInterval(processTimeouts, GameData.tick);
+
     return () => {
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('keyup', handleKeyup);
+      window.clearInterval(intervalId.current);
+      intervalId.current = 0;
     };
   }, [glyphs]);
 
