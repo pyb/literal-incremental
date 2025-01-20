@@ -4,17 +4,13 @@
 
 import styles from "./page.module.css"
 import React, { useState, useEffect, useCallback } from "react";
-import { animate, motion, useMotionValue, useTransform } from "motion/react"
-import Keyboard, { KeyStatus, KeyMode } from "./Keyboard"
-import { Trie } from "./trie/trie"
-import { TrieNode } from "./trie/trieNode"
+import { animate, motion, useMotionValue, useTransform } from "motion/react";
+import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
+import { Trie } from "./trie/trie";
+import { TrieNode } from "./trie/trieNode";
+import  GameData from "./gamedata";
 
-const highlightDuration = 150;
-
-const maxWordLength = 4;
-const inputSize = 20;
-const adict = ['i', 'sin', 'is', 'in', 'si'];
-const tdict = Trie.fromArray(adict);
+const tdict = Trie.fromArray(GameData.adict);
 
 interface KeyInfo {
   key: string,
@@ -22,16 +18,6 @@ interface KeyInfo {
   price: number,
   repeaterPrice: number
 }
-
-const keyInfo = [
-  { key: 'i', visibilityPrice: 0, price: 0, repeaterPrice: 500 },
-  { key: 's', visibilityPrice: 1, price: 100, repeaterPrice: 5000 },
-  { key: 'n', visibilityPrice: 1, price: 200, repeaterPrice: 50000 },
-  { key: 'c', visibilityPrice: 200, price: 300, repeaterPrice: 500000 },
-  { key: 'h', visibilityPrice: 350, price: 500, repeaterPrice: 5000000 },
-  { key: 'o', visibilityPrice: 600, price: 750, repeaterPrice: 50000000 },
-  { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 },
-];
 
 const ScoreBoard = ({glyphs, words} : {glyphs: number, words: number}) =>
 {
@@ -164,8 +150,8 @@ const GameArea = () => {
   const addKeyToBuffer = (key:string):void =>
   {
     let buffer = inputBuffer;
-    if (buffer.length == inputSize) {
-      buffer = buffer.slice(inputSize / 2, inputSize);
+    if (buffer.length == GameData.inputSize) {
+      buffer = buffer.slice(GameData.inputSize / 2, GameData.inputSize);
     }
     setInputBuffer(buffer + key);
   }
@@ -174,7 +160,7 @@ const GameArea = () => {
   {
     setGlyphs(glyphs + 1);
     addKeyToBuffer(key);
-    const nextState = nextWordState(key, currentPartialWord, tdict, maxWordLength);
+    const nextState = nextWordState(key, currentPartialWord, tdict, GameData.maxWordLength);
     setCurrentPartialWord(nextState.currentPartialWord);
     if (nextState.finishedWord != "")
     {
@@ -193,7 +179,7 @@ const GameArea = () => {
       setKeyHighlight(true);
       window.setTimeout(
         stopKeyHighlight,
-        highlightDuration);
+        GameData.highlightDuration);
       
       processKey(key);
     }
@@ -215,7 +201,7 @@ const GameArea = () => {
   return (
     <>
       <ScoreBoard glyphs={glyphs} words={words}/>
-      <Keyboard allKeyStatus={getKeyStatus(keyInfo, boughtKeys, glyphs)}
+      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs)}
                 focusedKey={keyHighlight ? lastPressed : ""} />
       <InputArea input={inputBuffer} />
       <WordTest currentPartialWord={currentPartialWord} lastWord={lastScoredWord} />
