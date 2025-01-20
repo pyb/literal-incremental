@@ -8,16 +8,9 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import { Trie } from "./trie/trie";
 import { TrieNode } from "./trie/trieNode";
-import  GameData from "./gamedata";
+import  {KeyInfo, GameData} from "./gamedata";
 
-const tdict = Trie.fromArray(GameData.adict);
-
-interface KeyInfo {
-  key: string,
-  visibilityPrice: number,
-  price: number,
-  repeaterPrice: number
-}
+const tdict = Trie.fromArray(GameData.dict);
 
 const ScoreBoard = ({glyphs, words} : {glyphs: number, words: number}) =>
 {

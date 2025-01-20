@@ -1,16 +1,16 @@
-interface KeyInfo {
+export type KeyInfo = {
   key: string,
   visibilityPrice: number,
   price: number,
   repeaterPrice: number
 }
 
-const GameData =
+export const GameData =
 {
     highlightDuration: 150,
     maxWordLength: 4,
     inputSize: 20,
-    adict: ['i', 'sin', 'is', 'in', 'si'],
+    dict: ['i', 'sin', 'is', 'in', 'si'],
 
     keyInfo: [
     { key: 'i', visibilityPrice: 0, price: 0, repeaterPrice: 500 },
@@ -23,6 +23,4 @@ const GameData =
     ],   
 
 };
-
-export default GameData;
 
