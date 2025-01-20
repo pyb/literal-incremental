@@ -25,4 +25,9 @@ export const GameData =
     { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 }
     ],
 
+    B1VisPrice: 30,
+    B1Price: 100,
+
+    B2VisPrice: 100,
+    B2Price: 300,
 };

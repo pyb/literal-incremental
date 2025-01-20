@@ -8,33 +8,31 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import { Trie } from "./trie/trie";
 import { TrieNode } from "./trie/trieNode";
-import  {KeyInfo, GameData} from "./gamedata";
+import { KeyInfo, GameData } from "./gamedata";
 
 const tdict = Trie.fromArray(GameData.dict);
 
-const ScoreBoard = ({glyphs, words} : {glyphs: number, words: number}) =>
-{
+const ScoreBoard = ({ glyphs, words }: { glyphs: number, words: number }) => {
   return (
-  <>
-    <div>Glyphs : {glyphs}</div>
-    <div>Words : {words}</div>
-  </>
+    <>
+      <div>Glyphs : {glyphs}</div>
+      <div>Words : {words}</div>
+    </>
   );
 };
 
 const getKeyStatus = (keyInfo: Array<KeyInfo>, boughtKeys: Array<string>, score: number): KeyStatus[] => {
   const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
   return visibleKeys.map(
-    (kInfo: KeyInfo) :KeyStatus => ({
+    (kInfo: KeyInfo): KeyStatus => ({
       letter: kInfo.key,
       mode: (boughtKeys.includes(kInfo.key) ? KeyMode.BOUGHT : KeyMode.VISIBLE)
-  })
+    })
   );
 };
 
 // Adding a temporary basic InputArea to enable the implementation of word typing.
-const InputArea = ({input}: {input: string}) =>
-{
+const InputArea = ({ input }: { input: string }) => {
   return (
     <>
       <span>{input}</span>
@@ -42,24 +40,54 @@ const InputArea = ({input}: {input: string}) =>
   )
 }
 
-const WordTest = ({currentPartialWord, lastWord}:{currentPartialWord:string, lastWord:string}) =>
-{
+const Shop = ({ isB1Visible, isB1Active, B1callback, isB2Visible, isB2Active, B2callback }:
+  { isB1Visible: boolean, isB1Active: boolean, B1callback: () => void, isB2Visible: boolean, isB2Active: boolean, B2callback: () => void} ) =>
+  {
   return (
-  <>
-    <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
-  </>)
+    <>
+      <ul>
+        {
+          isB1Visible &&
+          <li>
+            <button
+              className={isB1Active ? styles.boosterActive : styles.boosterInactive}
+              onClick={B1callback}
+              id="booster1">
+              Booster1
+            </button>
+          </li>
+        }
+        {
+        isB2Visible && 
+        <li>
+          <button
+              className={isB2Active ? styles.boosterActive : styles.boosterInactive}
+              onClick={B2callback}
+              id="booster2">
+              Booster2
+          </button>
+        </li>
+        }
+      </ul >
+    </>
+  );
+}
+const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
+  return (
+    <>
+      <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
+    </>)
 }
 
 const isPartialWord = (partialWord: string, tdict: Trie) => {
   const node = tdict.prefixSearch(partialWord);
   if (node === null)
     return false;
-  
+
   return true;
 }
 
-const isWordTerminal = (word: string, tdict: Trie, maxLength: number):boolean =>
-{
+const isWordTerminal = (word: string, tdict: Trie, maxLength: number): boolean => {
   const node = tdict.prefixSearch(word);
   if (!node)
     return false;
@@ -67,7 +95,7 @@ const isWordTerminal = (word: string, tdict: Trie, maxLength: number):boolean =>
     return true;
   else if (node.childrenCount() > 0)
     return false;
-  
+
   return true;
 }
 
@@ -86,32 +114,28 @@ const isWordTerminal = (word: string, tdict: Trie, maxLength: number):boolean =>
 */
 
 // Complete next state.  
-const nextWordState = (key:string, currentPartialWord:string, tdict:Trie, maxWordLength: number) =>
-{
+const nextWordState = (key: string, currentPartialWord: string, tdict: Trie, maxWordLength: number) => {
   let finishedWord = "";
   const tentativeWord = currentPartialWord.concat(key);
 
-  if (isPartialWord(tentativeWord, tdict))
-  {
-    if (isWordTerminal(tentativeWord, tdict, maxWordLength))
-    {
+  if (isPartialWord(tentativeWord, tdict)) {
+    if (isWordTerminal(tentativeWord, tdict, maxWordLength)) {
       finishedWord = tentativeWord;
       currentPartialWord = "";
     }
     else
       currentPartialWord = tentativeWord;
   }
-  else if (tdict.has(currentPartialWord))
-  {
+  else if (tdict.has(currentPartialWord)) {
     finishedWord = currentPartialWord;
     currentPartialWord = isPartialWord(key, tdict) ? key : "";
   }
 
   return (
-  {
-    currentPartialWord: currentPartialWord,
-    finishedWord: finishedWord
-  });
+    {
+      currentPartialWord: currentPartialWord,
+      finishedWord: finishedWord
+    });
 }
 
 const GameArea = () => {
@@ -122,19 +146,20 @@ const GameArea = () => {
   const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i', 's', 'n']);
   const [inputBuffer, setInputBuffer] = useState<string>("");
 
-  const pressedKeys= useRef<Set<string>>(new Set<string>());
+  const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
+  //  const lastTimeUpdate = useRef<number>(Date.now());
 
   // tmp
   const [currentPartialWord, setCurrentPartialWord] = useState<string>("");
   const [lastScoredWord, setLastScoredWord] = useState<string>("");
 
-  const stopKeyHighlight = () => {
-    setKeyHighlight(false);
-  }
+  const [isB1Visible, setB1Visible] = React.useState<boolean>(false);
+  const [isB1Active, setB1Active] = React.useState<boolean>(false);
+  const [isB2Visible, setB2Visible] = React.useState<boolean>(false);
+  const [isB2Active, setB2Active] = React.useState<boolean>(false);
 
-  const processGlyph = (key:string) =>
-  {
+  const processGlyph = (key: string) => {
     // Update InputArea
     let buffer = inputBuffer;
     if (buffer.length == GameData.inputSize) {
@@ -144,36 +169,53 @@ const GameArea = () => {
 
     const nextState = nextWordState(key, currentPartialWord, tdict, GameData.maxWordLength);
     setCurrentPartialWord(nextState.currentPartialWord);
-    if (nextState.finishedWord != "")
-    {
+    if (nextState.finishedWord != "") {
       setLastScoredWord(nextState.finishedWord);
       setWords(words + 1);
     }
     setGlyphs(glyphs + 1);
+    if (!isB1Visible &&
+      (glyphs + 1) >= GameData.B1VisPrice) {
+      setB1Visible(true);
+    }
+    if (!isB2Visible &&
+      (glyphs + 1) >= GameData.B2VisPrice) {
+      setB2Visible(true);
+    }
   }
 
-  const handleKey = (key:string) =>
+  const B1callback = () =>
   {
-    if (boughtKeys.includes(key))
-    {
+    setB1Active(true);
+  }
+
+  const B2callback = () =>
+  {
+    setB2Active(true);
+  }
+
+  const stopKeyHighlight = () => {
+    setKeyHighlight(false);
+  }
+
+  const handleKey = (key: string) => {
+    if (boughtKeys.includes(key)) {
       // Highlight key in Keyboard
       setLastPressed(key);
       setKeyHighlight(true);
       window.setTimeout(
         stopKeyHighlight,
         GameData.highlightDuration);
-      
+
       processGlyph(key);
     }
   }
 
   const handleKeydown = (kev: KeyboardEvent) => {
-    let key:string = kev.key.toLowerCase();
-    if ( key.length == 1 &&
-         key >= 'a' && key <= 'z')
-    {
-      if (!pressedKeys.current.has(key))
-      {
+    let key: string = kev.key.toLowerCase();
+    if (key.length == 1 &&
+      key >= 'a' && key <= 'z') {
+      if (!pressedKeys.current.has(key)) {
         pressedKeys.current.add(key);
         handleKey(key);
       }
@@ -181,19 +223,23 @@ const GameArea = () => {
   }
 
   const handleKeyup = (kev: KeyboardEvent) => {
-    let key:string = kev.key.toLowerCase();
-    if ( key.length == 1 &&
-         key >= 'a' && key <= 'z')
-    {
+    let key: string = kev.key.toLowerCase();
+    if (key.length == 1 &&
+      key >= 'a' && key <= 'z') {
       pressedKeys.current.delete(key);
     }
   }
 
   const processTimeouts = () => {
-    pressedKeys.current.forEach (
-      (key:string) =>
-        handleKey(key) );
-    //pressedKeys.current.clear();
+    /*
+    // Fine timeout control not need (yet?)
+     const now = Date.now();
+     const elapsed = now - lastTimeUpdate.current;
+     lastTimeUpdate.current = now;
+     */
+    pressedKeys.current.forEach(
+      (key: string) =>
+        handleKey(key));
   }
 
   useEffect(() => {
@@ -211,9 +257,11 @@ const GameArea = () => {
 
   return (
     <>
-      <ScoreBoard glyphs={glyphs} words={words}/>
+      <ScoreBoard glyphs={glyphs} words={words} />
+      <Shop isB1Visible={isB1Visible} isB1Active={isB1Active} B1callback={B1callback}
+            isB2Visible={isB2Visible} isB2Active={isB2Active} B2callback={B2callback}></Shop>
       <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs)}
-                focusedKey={keyHighlight ? lastPressed : ""} />
+        focusedKey={keyHighlight ? lastPressed : ""} />
       <InputArea input={inputBuffer} />
       <WordTest currentPartialWord={currentPartialWord} lastWord={lastScoredWord} />
     </>
