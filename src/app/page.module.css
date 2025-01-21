@@ -27,23 +27,6 @@
   }
 }
 
-.boosterActive {
-  color: green;
-}
-
-.boosterInactive {
-  color: red;
-} 
-
-.key {
-  align-items: center;
-}
-
-.KbdKey {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
 .main {
   display: flex;
   flex-direction: column;
@@ -184,6 +167,8 @@ a.secondary {
   }
 }
 
+/* Added */
+
 .teststyle
 {
     font-weight: bold;
@@ -192,4 +177,37 @@ a.secondary {
 .inputArea
 {
   font-family: monospace;
+}
+
+.shop
+{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: .5ch;
+}
+
+.shopButton
+{
+  background-color: white;
+  border-style: double;
+  border-width: 1px;
+}
+
+.boosterActive {
+  /* composes: shopButton; */
+  color: green;
+}
+
+.boosterInactive {
+  color: red;
+} 
+
+.key {
+  align-items: center;
+}
+
+.KbdKey {
+  margin-left: 5px;
+  margin-right: 5px;
 }

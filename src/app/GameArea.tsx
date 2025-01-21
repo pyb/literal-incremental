@@ -40,32 +40,34 @@ const InputArea = ({ input }: { input: string }) => {
   )
 }
 
+const ShopButton = ({label, id, isActive, callback}: {label:string, id:string, isActive:boolean, callback: () => void}) =>
+{
+  return (
+  <button
+    className={styles.shopButton}
+    onClick={callback}
+    id={id}>
+    <div className={isActive ? styles.boosterActive : styles.boosterInactive}>{label}</div>
+  </button>)
+}
+
 const Shop = ({ isB1Visible, isB1Active, B1callback, isB2Visible, isB2Active, B2callback }:
-  { isB1Visible: boolean, isB1Active: boolean, B1callback: () => void, isB2Visible: boolean, isB2Active: boolean, B2callback: () => void} ) =>
+  { isB1Visible: boolean, isB1Active: boolean, B1callback: () => void, isB2Visible: boolean, isB2Active: boolean,
+    B2callback: () => void} ) =>
   {
   return (
     <>
-      <ul>
+      <ul className={styles.shop}>
         {
           isB1Visible &&
           <li>
-            <button
-              className={isB1Active ? styles.boosterActive : styles.boosterInactive}
-              onClick={B1callback}
-              id="booster1">
-              Booster1
-            </button>
+            <ShopButton label="Booster1" id="booster1" callback={B1callback} isActive={isB1Active}></ShopButton>
           </li>
         }
         {
         isB2Visible && 
         <li>
-          <button
-              className={isB2Active ? styles.boosterActive : styles.boosterInactive}
-              onClick={B2callback}
-              id="booster2">
-              Booster2
-          </button>
+          <ShopButton label="Booster2" id="booster2" callback={B2callback} isActive={isB2Active}></ShopButton>
         </li>
         }
       </ul >
