@@ -9,6 +9,7 @@ import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import { Trie } from "./trie/trie";
 import { TrieNode } from "./trie/trieNode";
 import { KeyInfo, GameData } from "./gamedata";
+import Log from "./Log";
 
 const tdict = Trie.fromArray(GameData.dict);
 
@@ -39,14 +40,6 @@ const InputArea = ({ input }: { input: string }) => {
       <span className={styles.inputArea}>{input}</span>
     </>
   )
-}
-
-// Log area a la Paperclips
-const Log = () => {
-  return (
-    <>
-    </>
-  );
 }
 
 const ShopButton = ({label, isActive, callback}: {label:string, isActive:boolean, callback: () => void}) =>
@@ -158,7 +151,10 @@ const GameArea = () => {
   const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i', 's', 'n']);
   const [inputBuffer, setInputBuffer] = useState<string>("");
   const [maxWordSize, setMaxWordSize] = useState<number>(0);
-
+  const [log, setLog] = useState<Array<string>>([
+    "Welcome to Literal Incremental.",
+    "Second log"]);
+  
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
   //  const lastTimeUpdate = useRef<number>(Date.now());
@@ -282,6 +278,7 @@ const GameArea = () => {
   
   return (
     <>
+      <Log log={log}></Log>
       <ScoreBoard glyphs={glyphs} words={words} maxWordSize={maxWordSize}/>
       <Shop glyphs={glyphs}
             shopItems={shopItems}></Shop>

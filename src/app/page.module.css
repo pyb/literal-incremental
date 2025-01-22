@@ -257,3 +257,14 @@ a.secondary {
   margin-left: 5px;
   margin-right: 5px;
 }
+
+.log {
+  font-size: x-small;
+  font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+  background-color: black;
+  color: grey;
+}
+
+.lastLog {
+  color: white;
+}
