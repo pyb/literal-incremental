@@ -43,6 +43,7 @@ const InputArea = ({ input }: { input: string }) => {
   )
 }
 
+// Temporary area to see the current and last words
 const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
   return (
     <>
@@ -85,7 +86,6 @@ const isWordTerminal = (word: string, tdict: Trie, maxLength: number): boolean =
   Q : Is state transition completely determined by an op (key, currentWord) -> (currentWord, lastWord) ?
 */
 
-
 //TODO : implement maxWordLength properly.
 // Complete next state.  
 const nextWordState = (key: string, currentPartialWord: string, tdict: Trie, maxWordLength: number) => {
@@ -120,9 +120,8 @@ const GameArea = () => {
   const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i', 's', 'n']);
   const [inputBuffer, setInputBuffer] = useState<string>("");
   const [maxWordSize, setMaxWordSize] = useState<number>(0);
-  const [log, setLog] = useState<Array<string>>([
-    "Welcome to Literal Incremental.",
-    "Second log"]);
+  const [log, setLog] = useState<Array<string>>(["", "", "", "",
+    "Welcome to Literal Incremental."]);
   
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
@@ -134,6 +133,13 @@ const GameArea = () => {
 
   const [isB1Active, setB1Active] = React.useState<boolean>(false);
   const [isB2Active, setB2Active] = React.useState<boolean>(false);
+
+  const addLog = (message: string) =>
+  {
+    const newLog = log.slice(1, log.length);
+    newLog.push(message);
+    setLog(newLog);
+  }
 
   const processGlyph = (key: string) => {
     // Update InputArea
@@ -214,6 +220,7 @@ const GameArea = () => {
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('keyup', handleKeyup);
     intervalId.current = window.setInterval(processTimeouts, GameData.tick);
+    addLog("Render!");
 
     return () => {
       window.removeEventListener('keydown', handleKeydown);
