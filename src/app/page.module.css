@@ -259,6 +259,7 @@ a.secondary {
 }
 
 .log {
+  min-width: 25vw;
   font-size: x-small;
   font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
   background-color: black;

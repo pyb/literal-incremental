@@ -5,6 +5,7 @@ import styles from "./page.module.css"
 
 type ShopItem = {
     text: string;
+    position: number,
     visCost: number,
     active: boolean,
     callback: () => void
@@ -19,13 +20,15 @@ const ShopButton = ({ label, isActive, callback }: { label: string, isActive: bo
         </button>)
 }
 
-const Shop = ({ glyphs, shopItems }: { glyphs: number, shopItems: Array<ShopItem> }) => {
+const Shop = ({ score, shopItems }: { score: number, shopItems: Array<ShopItem> }) => {
+    const sortedShopItems = shopItems.sort((item1: ShopItem, item2: ShopItem) =>
+                                             item1.position - item2.position);
     return (
         <>
             <ul className={styles.shop}>
-                {shopItems.map(
+                {sortedShopItems.map(
                     (shopItem: ShopItem) =>
-                        (glyphs >= shopItem.visCost) &&
+                        (score >= shopItem.visCost) &&
                         <li key={shopItem.text} >
                             <ShopButton label={shopItem.text} callback={shopItem.callback} isActive={shopItem.active}></ShopButton>
                         </li>)}

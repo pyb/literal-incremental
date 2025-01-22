@@ -122,7 +122,6 @@ const GameArea = () => {
   const [maxWordSize, setMaxWordSize] = useState<number>(0);
   const [log, setLog] = useState<Array<string>>(["", "", "", "",
     "Welcome to Literal Incremental."]);
-  
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
   //  const lastTimeUpdate = useRef<number>(Date.now());
@@ -133,6 +132,46 @@ const GameArea = () => {
 
   const [isB1Active, setB1Active] = React.useState<boolean>(false);
   const [isB2Active, setB2Active] = React.useState<boolean>(false);
+
+  const [doProcessTimeouts, setDoProcessTimeouts] = useState<boolean>(false);
+  /*
+  const processTimeouts = useCallback(() => {
+    pressedKeys.current.forEach(
+      (key: string) =>
+        handleKey(key));
+  }, [...]);
+  */
+
+  const processTimeouts = () => {
+    /*
+    // Fine timeout control not need (yet?)
+     const now = Date.now();
+     const elapsed = now - lastTimeUpdate.current;
+     lastTimeUpdate.current = now;
+     */
+    pressedKeys.current.forEach(
+      (key: string) =>
+        handleKey(key));
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeydown);
+    window.addEventListener('keyup', handleKeyup);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('keyup', handleKeyup);
+    };
+  });
+
+  useEffect(() => {;
+   // intervalId.current = window.setInterval(processTimeouts, GameData.tick);
+    intervalId.current = window.setInterval(() => setDoProcessTimeouts(true),
+                                            GameData.tick);
+    return () => {
+      window.clearInterval(intervalId.current);
+    };
+  }, []);
 
   const addLog = (message: string) =>
   {
@@ -204,53 +243,35 @@ const GameArea = () => {
     }
   }
 
-  const processTimeouts = () => {
-    /*
-    // Fine timeout control not need (yet?)
-     const now = Date.now();
-     const elapsed = now - lastTimeUpdate.current;
-     lastTimeUpdate.current = now;
-     */
-    pressedKeys.current.forEach(
-      (key: string) =>
-        handleKey(key));
-  }
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeydown);
-    window.addEventListener('keyup', handleKeyup);
-    intervalId.current = window.setInterval(processTimeouts, GameData.tick);
-    addLog("Render!");
-
-    return () => {
-      window.removeEventListener('keydown', handleKeydown);
-      window.removeEventListener('keyup', handleKeyup);
-      window.clearInterval(intervalId.current);
-      intervalId.current = 0;
-    };
-  }, [glyphs]);
-  
-  const shopItems:Array<ShopItem> = [
+  const exampleShopItems:Array<ShopItem> = [
     {
       text: "Voila Booster1",
+      position: 0,
       visCost: GameData.B1VisPrice,
       active: isB1Active,
       callback: B1callback
     },
     {
       text: "This is Booster2",
+      position: 1,
       visCost: GameData.B2VisPrice,
       active: isB2Active,
       callback: B2callback
     }
   ];
-  
+
+  if (doProcessTimeouts)
+  {
+    setDoProcessTimeouts(false);
+    processTimeouts();
+  }
+    
   return (
     <>
       <Log log={log}></Log>
       <ScoreBoard glyphs={glyphs} words={words} maxWordSize={maxWordSize}/>
-      <Shop glyphs={glyphs}
-            shopItems={shopItems}></Shop>
+      <Shop score={glyphs}
+            shopItems={exampleShopItems}></Shop>
       <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs)}
         focusedKey={keyHighlight ? lastPressed : ""} />
       <InputArea input={inputBuffer} />
