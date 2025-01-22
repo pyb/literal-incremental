@@ -16,5 +16,3 @@ const Log = ({ log }: { log: Array<string> }) => {
 }
 
 export default Log;
-
-

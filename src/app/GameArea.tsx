@@ -10,6 +10,7 @@ import { Trie } from "./trie/trie";
 import { TrieNode } from "./trie/trieNode";
 import { KeyInfo, GameData } from "./gamedata";
 import Log from "./Log";
+import {Shop, ShopItem} from "./Shop";
 
 const tdict = Trie.fromArray(GameData.dict);
 
@@ -40,38 +41,6 @@ const InputArea = ({ input }: { input: string }) => {
       <span className={styles.inputArea}>{input}</span>
     </>
   )
-}
-
-const ShopButton = ({label, isActive, callback}: {label:string, isActive:boolean, callback: () => void}) =>
-{
-  return (
-  <button
-    className={styles.shopButtonTest}
-    onClick={callback}>
-    <span className={isActive ? styles.boosterActive : styles.boosterInactive}>{label}</span>
-  </button>)
-}
-
-type ShopItem = {
-  text: string;
-  visCost: number,
-  active: boolean,
-  callback: () => void
-};
-
-const Shop = ({glyphs, shopItems }: { glyphs: number, shopItems: Array<ShopItem>} ) => {
-    return (
-    <>
-      <ul className={styles.shop}>
-        { shopItems.map(
-           (shopItem: ShopItem) =>
-              (glyphs >= shopItem.visCost) &&
-              <li key={shopItem.text} >
-                <ShopButton label={shopItem.text} callback={shopItem.callback} isActive={shopItem.active}></ShopButton>
-              </li> )}
-      </ul >
-    </>
-  );
 }
 
 const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
@@ -253,13 +222,6 @@ const GameArea = () => {
       intervalId.current = 0;
     };
   }, [glyphs]);
-
-  type ShopItem = {
-    text: string;
-    visCost: number,
-    active: boolean,
-    callback: () => void
-  };
   
   const shopItems:Array<ShopItem> = [
     {
