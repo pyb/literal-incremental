@@ -8,7 +8,7 @@ export type KeyInfo = {
 export const GameData =
 {
     highlightDuration: 150,
-    maxWordLength: 4,
+    //maxWordLength: 4,
     inputSize: 20,
     dict: ['i', 'sin', 'is', 'in', 'si'],
 

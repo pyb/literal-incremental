@@ -12,11 +12,12 @@ import { KeyInfo, GameData } from "./gamedata";
 
 const tdict = Trie.fromArray(GameData.dict);
 
-const ScoreBoard = ({ glyphs, words }: { glyphs: number, words: number }) => {
+const ScoreBoard = ({ glyphs, words, maxWordSize }: { glyphs: number, words: number, maxWordSize: number}) => {
   return (
     <>
       <div>Glyphs : {glyphs}</div>
       <div>Words : {words}</div>
+      <div>Max Word Size : {maxWordSize}</div>
     </>
   );
 };
@@ -40,40 +41,46 @@ const InputArea = ({ input }: { input: string }) => {
   )
 }
 
-const ShopButton = ({label, id, isActive, callback}: {label:string, id:string, isActive:boolean, callback: () => void}) =>
+// Log area a la Paperclips
+const Log = () => {
+  return (
+    <>
+    </>
+  );
+}
+
+const ShopButton = ({label, isActive, callback}: {label:string, isActive:boolean, callback: () => void}) =>
 {
   return (
   <button
-    className={styles.shopButton}
-    onClick={callback}
-    id={id}>
-    <div className={isActive ? styles.boosterActive : styles.boosterInactive}>{label}</div>
+    className={styles.shopButtonTest}
+    onClick={callback}>
+    <span className={isActive ? styles.boosterActive : styles.boosterInactive}>{label}</span>
   </button>)
 }
 
-const Shop = ({ isB1Visible, isB1Active, B1callback, isB2Visible, isB2Active, B2callback }:
-  { isB1Visible: boolean, isB1Active: boolean, B1callback: () => void, isB2Visible: boolean, isB2Active: boolean,
-    B2callback: () => void} ) =>
-  {
-  return (
+type ShopItem = {
+  text: string;
+  visCost: number,
+  active: boolean,
+  callback: () => void
+};
+
+const Shop = ({glyphs, shopItems }: { glyphs: number, shopItems: Array<ShopItem>} ) => {
+    return (
     <>
       <ul className={styles.shop}>
-        {
-          isB1Visible &&
-          <li>
-            <ShopButton label="Booster1" id="booster1" callback={B1callback} isActive={isB1Active}></ShopButton>
-          </li>
-        }
-        {
-        isB2Visible && 
-        <li>
-          <ShopButton label="Booster2" id="booster2" callback={B2callback} isActive={isB2Active}></ShopButton>
-        </li>
-        }
+        { shopItems.map(
+           (shopItem: ShopItem) =>
+              (glyphs >= shopItem.visCost) &&
+              <li key={shopItem.text} >
+                <ShopButton label={shopItem.text} callback={shopItem.callback} isActive={shopItem.active}></ShopButton>
+              </li> )}
       </ul >
     </>
   );
 }
+
 const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
   return (
     <>
@@ -89,6 +96,7 @@ const isPartialWord = (partialWord: string, tdict: Trie) => {
   return true;
 }
 
+//TODO : buggy ? re. maxlength.
 const isWordTerminal = (word: string, tdict: Trie, maxLength: number): boolean => {
   const node = tdict.prefixSearch(word);
   if (!node)
@@ -115,6 +123,8 @@ const isWordTerminal = (word: string, tdict: Trie, maxLength: number): boolean =
   Q : Is state transition completely determined by an op (key, currentWord) -> (currentWord, lastWord) ?
 */
 
+
+//TODO : implement maxWordLength properly.
 // Complete next state.  
 const nextWordState = (key: string, currentPartialWord: string, tdict: Trie, maxWordLength: number) => {
   let finishedWord = "";
@@ -147,6 +157,7 @@ const GameArea = () => {
   const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
   const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i', 's', 'n']);
   const [inputBuffer, setInputBuffer] = useState<string>("");
+  const [maxWordSize, setMaxWordSize] = useState<number>(0);
 
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
@@ -156,9 +167,7 @@ const GameArea = () => {
   const [currentPartialWord, setCurrentPartialWord] = useState<string>("");
   const [lastScoredWord, setLastScoredWord] = useState<string>("");
 
-  const [isB1Visible, setB1Visible] = React.useState<boolean>(false);
   const [isB1Active, setB1Active] = React.useState<boolean>(false);
-  const [isB2Visible, setB2Visible] = React.useState<boolean>(false);
   const [isB2Active, setB2Active] = React.useState<boolean>(false);
 
   const processGlyph = (key: string) => {
@@ -169,21 +178,13 @@ const GameArea = () => {
     }
     setInputBuffer(buffer + key);
 
-    const nextState = nextWordState(key, currentPartialWord, tdict, GameData.maxWordLength);
+    const nextState = nextWordState(key, currentPartialWord, tdict, maxWordSize);
     setCurrentPartialWord(nextState.currentPartialWord);
     if (nextState.finishedWord != "") {
       setLastScoredWord(nextState.finishedWord);
       setWords(words + 1);
     }
     setGlyphs(glyphs + 1);
-    if (!isB1Visible &&
-      (glyphs + 1) >= GameData.B1VisPrice) {
-      setB1Visible(true);
-    }
-    if (!isB2Visible &&
-      (glyphs + 1) >= GameData.B2VisPrice) {
-      setB2Visible(true);
-    }
   }
 
   const B1callback = () =>
@@ -257,11 +258,33 @@ const GameArea = () => {
     };
   }, [glyphs]);
 
+  type ShopItem = {
+    text: string;
+    visCost: number,
+    active: boolean,
+    callback: () => void
+  };
+  
+  const shopItems:Array<ShopItem> = [
+    {
+      text: "Voila Booster1",
+      visCost: GameData.B1VisPrice,
+      active: isB1Active,
+      callback: B1callback
+    },
+    {
+      text: "This is Booster2",
+      visCost: GameData.B2VisPrice,
+      active: isB2Active,
+      callback: B2callback
+    }
+  ];
+  
   return (
     <>
-      <ScoreBoard glyphs={glyphs} words={words} />
-      <Shop isB1Visible={isB1Visible} isB1Active={isB1Active} B1callback={B1callback}
-            isB2Visible={isB2Visible} isB2Active={isB2Active} B2callback={B2callback}></Shop>
+      <ScoreBoard glyphs={glyphs} words={words} maxWordSize={maxWordSize}/>
+      <Shop glyphs={glyphs}
+            shopItems={shopItems}></Shop>
       <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs)}
         focusedKey={keyHighlight ? lastPressed : ""} />
       <InputArea input={inputBuffer} />
