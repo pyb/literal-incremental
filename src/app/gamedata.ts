@@ -5,6 +5,21 @@ export type KeyInfo = {
   repeaterPrice: number
 }
 
+export type ShopEntry = {
+  text: string,
+  id: string,
+  position: number,
+  visibilityPrice: number,
+  price: number
+}
+
+/*
+interface IGameData {
+  keyInfo: Array<KeyInfo>,
+  shopEntries:Array<ShopEntry>
+}
+*/
+
 export const GameData =
 {
     highlightDuration: 150,
@@ -25,9 +40,9 @@ export const GameData =
     { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 }
     ],
 
-    B1VisPrice: 30,
-    B1Price: 100,
-
-    B2VisPrice: 100,
-    B2Price: 300,
-};
+    shopEntries: [
+      {text: "Booster1", id: "booster1", position: 0, visibilityPrice: 10, price: 40},
+      {text: "Booster2", id: "booster2", position: 10, visibilityPrice: 11, price: 50},
+    ],
+  };
+//} as IGameData;

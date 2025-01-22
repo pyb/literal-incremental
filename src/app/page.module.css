@@ -217,7 +217,7 @@ a.secondary {
   outline: 0;
 }
 
-.shopButtonTest span {
+.shopButtonTest div {
   background-color: rgb(5, 6, 45);
   padding: 16px 24px;
   border-radius: 6px;
@@ -226,7 +226,18 @@ a.secondary {
   transition: 300ms;
 }
 
-.shopButtonTest:hover span {
+/* FIXME */
+.shopButtonActive {
+  background-color: rgb(5, 106, 45) !important;
+  color: white;
+}
+
+.shopButtonActive div{
+  background-color: rgb(5, 106, 45) !important;
+  color: white;
+}
+
+.shopButtonTest:hover div {
   background: none;
 }
 
@@ -234,18 +245,7 @@ a.secondary {
   transform: scale(0.9);
 }
 
-.shopButton
-{
-  background-color: white;
-  border-style: double;
-  border-width: 1px;
-}
-
-.boosterActive {
-  color: white;
-}
-
-.boosterInactive {
+.shopButtonInactive {
   color: grey;
 } 
 

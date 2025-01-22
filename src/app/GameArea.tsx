@@ -8,9 +8,9 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import { Trie } from "./trie/trie";
 import { TrieNode } from "./trie/trieNode";
-import { KeyInfo, GameData } from "./gamedata";
+import { KeyInfo, GameData, ShopEntry } from "./gamedata";
 import Log from "./Log";
-import {Shop, ShopItem} from "./Shop";
+import Shop from "./Shop";
 
 const tdict = Trie.fromArray(GameData.dict);
 
@@ -124,23 +124,19 @@ const GameArea = () => {
     "Welcome to Literal Incremental."]);
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
-  //  const lastTimeUpdate = useRef<number>(Date.now());
+  const [purchaseableLetters, setpurchaseableLetters] = useState<Set<string>>(new Set<string>());
+  const [activeShopItems, setActiveShopItems] = useState<Set<string>>(new Set<string>());
+  const [visibleShopItems, setVisibleShopItems] = useState<Set<string>>(new Set<string>());
 
-  // tmp
   const [currentPartialWord, setCurrentPartialWord] = useState<string>("");
   const [lastScoredWord, setLastScoredWord] = useState<string>("");
 
+  //  const lastTimeUpdate = useRef<number>(Date.now());  
+  const [doProcessTimeouts, setDoProcessTimeouts] = useState<boolean>(false);
+
+  //tmp
   const [isB1Active, setB1Active] = React.useState<boolean>(false);
   const [isB2Active, setB2Active] = React.useState<boolean>(false);
-
-  const [doProcessTimeouts, setDoProcessTimeouts] = useState<boolean>(false);
-  /*
-  const processTimeouts = useCallback(() => {
-    pressedKeys.current.forEach(
-      (key: string) =>
-        handleKey(key));
-  }, [...]);
-  */
 
   const processTimeouts = () => {
     /*
@@ -192,19 +188,34 @@ const GameArea = () => {
     setCurrentPartialWord(nextState.currentPartialWord);
     if (nextState.finishedWord != "") {
       setLastScoredWord(nextState.finishedWord);
-      setWords(words + 1);
+      setWords((word) => word + 1);
     }
-    setGlyphs(glyphs + 1);
+    setGlyphs((glyph) => glyph + 1);
+    for (const entry of GameData.shopEntries)
+      {
+        if ((glyphs + 1) >= entry.visibilityPrice)
+          setVisibleShopItems((s) => s.add(entry.id));
+      }
   }
 
-  const B1callback = () =>
+  const shopCallback = (id: string, shopEntries: Array<ShopEntry>) =>
   {
-    setB1Active(true);
-  }
+    const entry:ShopEntry = shopEntries.find((entry) => entry.id == id)!;
+    const price = entry.price;
 
-  const B2callback = () =>
-  {
-    setB2Active(true);
+    if (!activeShopItems.has(id) &&
+        (glyphs >= price) ) {
+      setGlyphs(glyphs - price);
+      setActiveShopItems(activeShopItems.add(id));
+      // TODO : Insert side effects here
+      switch(id) {
+        case "booster1":
+          break;
+        case "booster2":
+          break;
+        default:
+      }
+    }
   }
 
   const stopKeyHighlight = () => {
@@ -243,6 +254,7 @@ const GameArea = () => {
     }
   }
 
+  /*
   const exampleShopItems:Array<ShopItem> = [
     {
       text: "Voila Booster1",
@@ -259,7 +271,7 @@ const GameArea = () => {
       callback: B2callback
     }
   ];
-
+  */
   if (doProcessTimeouts)
   {
     setDoProcessTimeouts(false);
@@ -271,7 +283,10 @@ const GameArea = () => {
       <Log log={log}></Log>
       <ScoreBoard glyphs={glyphs} words={words} maxWordSize={maxWordSize}/>
       <Shop score={glyphs}
-            shopItems={exampleShopItems}></Shop>
+            shopItems={GameData.shopEntries}
+            visibleShopItems={visibleShopItems}
+            activeShopItems={activeShopItems}
+            callback={shopCallback}></Shop>
       <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs)}
         focusedKey={keyHighlight ? lastPressed : ""} />
       <InputArea input={inputBuffer} />
