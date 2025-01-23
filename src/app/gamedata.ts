@@ -5,43 +5,54 @@ export type KeyInfo = {
   repeaterPrice: number
 }
 
+export enum ShopAction {
+  LETTERUNLOCK,
+  WORDUNLOCK,
+  REPEATUNLOCK
+}
+
 export type ShopEntry = {
   text: string,
-  id: string,
+  action: ShopAction,
+  n: number,
   position: number,
   visibilityPrice: number,
   price: number
 }
 
+// This is obsolete. keys no longer have a key-specific price. And prob same goes for repeaterPrice(?)
+const keyInfo:Array<KeyInfo> = [
+  { key: 'i', visibilityPrice: 0, price: 0, repeaterPrice: 500 },
+  { key: 's', visibilityPrice: 1,  price: 100, repeaterPrice: 5000 },
+  { key: 'n', visibilityPrice: 1, price: 200, repeaterPrice: 50000 },
+  { key: 'c', visibilityPrice: 200, price: 300, repeaterPrice: 500000 },
+  { key: 'h', visibilityPrice: 350, price: 500, repeaterPrice: 5000000 },
+  { key: 'o', visibilityPrice: 600, price: 750, repeaterPrice: 50000000 },
+  { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 }
+];
+
+const shopEntries:Array<ShopEntry> = [
+  {text: "Unlock a Letter", action: ShopAction.LETTERUNLOCK, n: 1, position: 0, visibilityPrice: 10, price: 40},
+  {text: "Unlock another Letter", action: ShopAction.LETTERUNLOCK, n: 2, position: 10, visibilityPrice: 60, price: 150},
+  {text: "Unlock Word formation", action: ShopAction.WORDUNLOCK, n: 1, position: 20, visibilityPrice: 40, price: 100},
+  {text: "Unlock 2-letter Words", action: ShopAction.WORDUNLOCK, n: 2, position: 130, visibilityPrice: 200, price: 220},
+  {text: "Unlock 3-letter Words", action: ShopAction.WORDUNLOCK, n: 3, position: 140, visibilityPrice: 200, price: 2000},
+  {text: "Unlock 4-letter Words", action: ShopAction.WORDUNLOCK, n: 4, position: 150, visibilityPrice: 2000, price: 6000},
+  {text: "Unlock a third Letter", action: ShopAction.LETTERUNLOCK, n: 3, position: 200, visibilityPrice: 5000, price: 40000},
+  {text: "Unlock a Repeater", action: ShopAction.REPEATUNLOCK, n: 1, position: 300, visibilityPrice: 4000, price: 8000},
+];
+
 export const GameData =
 {
+  /* UI, internals stuff */
+    tick: 30, // setinterval delay
     highlightDuration: 150,
+    
     //maxWordLength: 4,
     inputSize: 20,
+  
+    /* Word / letter data */
     dict: ['i', 'sin', 'is', 'in', 'si'],
-
-    tick: 30, // setinterval delay
-
-    // This is obsolete. keys no longer have a key-specific price. And prob same goes for repeaterPrice(?)
-    keyInfo: [
-    { key: 'i', visibilityPrice: 0, price: 0, repeaterPrice: 500 },
-    { key: 's', visibilityPrice: 1,  price: 100, repeaterPrice: 5000 },
-    { key: 'n', visibilityPrice: 1, price: 200, repeaterPrice: 50000 },
-    { key: 'c', visibilityPrice: 200, price: 300, repeaterPrice: 500000 },
-    { key: 'h', visibilityPrice: 350, price: 500, repeaterPrice: 5000000 },
-    { key: 'o', visibilityPrice: 600, price: 750, repeaterPrice: 50000000 },
-    { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 }
-    ],
-
-    shopEntries: [
-      {text: "Unlock a Letter", id: "letterunlock1", position: 0, visibilityPrice: 10, price: 40},
-      {text: "Unlock another Letter", id: "letterunlock2", position: 10, visibilityPrice: 500, price: 4000},
-      {text: "Unlock Word formation", id: "wordunlock", position: 20, visibilityPrice: 100, price: 400},
-      {text: "Unlock 2-letter Words", id: "wordunlock2", position: 130, visibilityPrice: 200, price: 2000},
-      {text: "Unlock 3-letter Words", id: "wordunlock3", position: 140, visibilityPrice: 200, price: 2000},
-      {text: "Unlock 4-letter Words", id: "wordunlock4", position: 150, visibilityPrice: 2000, price: 6000},
-      {text: "Unlock a third Letter", id: "letterunlock3", position: 200, visibilityPrice: 5000, price: 40000},
-      {text: "Unlock a Repeater", id: "repeaterunlock1", position: 300, visibilityPrice: 4000, price: 8000},
-
-    ],
+    keyInfo: keyInfo,
+    shopEntries: shopEntries,
   };

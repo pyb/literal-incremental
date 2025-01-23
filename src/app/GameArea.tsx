@@ -8,7 +8,7 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import { Trie } from "./trie/trie";
 import { TrieNode } from "./trie/trieNode";
-import { KeyInfo, GameData, ShopEntry } from "./gamedata";
+import { KeyInfo, GameData, ShopEntry, ShopAction } from "./gamedata";
 import Log from "./Log";
 import Shop from "./Shop";
 
@@ -125,8 +125,8 @@ const GameArea = () => {
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
   const [purchaseableLetters, setpurchaseableLetters] = useState<Set<string>>(new Set<string>());
-  const [activeShopItems, setActiveShopItems] = useState<Set<string>>(new Set<string>());
-  const [visibleShopItems, setVisibleShopItems] = useState<Set<string>>(new Set<string>());
+  const [activeShopItems, setActiveShopItems] = useState<Set<number>>(new Set<number>());
+  const [visibleShopItems, setVisibleShopItems] = useState<Set<number>>(new Set<number>());
 
   const [currentPartialWord, setCurrentPartialWord] = useState<string>("");
   const [lastScoredWord, setLastScoredWord] = useState<string>("");
@@ -190,27 +190,32 @@ const GameArea = () => {
       setWords((word) => word + 1);
     }
     setGlyphs((glyph) => glyph + 1);
+
+    let index = 0;
     for (const entry of GameData.shopEntries)
       {
         if ((glyphs + 1) >= entry.visibilityPrice)
-          setVisibleShopItems((s) => s.add(entry.id));
+          setVisibleShopItems((s) => s.add(index));
+        index++;
       }
   }
 
-  const shopCallback = (id: string, shopEntries: Array<ShopEntry>) =>
+  const shopCallback = (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) =>
   {
-    const entry:ShopEntry = shopEntries.find((entry) => entry.id == id)!;
+    const entry:ShopEntry = shopEntries[index];
     const price = entry.price;
 
-    if (!activeShopItems.has(id) &&
+    if (!activeShopItems.has(index) &&
         (glyphs >= price) ) {
       setGlyphs(glyphs - price);
-      setActiveShopItems(activeShopItems.add(id));
+      setActiveShopItems(activeShopItems.add(index));
       // TODO : Insert side effects here
-      switch(id) {
-        case "booster1":
+      switch(action) {
+        case ShopAction.LETTERUNLOCK:
           break;
-        case "booster2":
+        case ShopAction.WORDUNLOCK:
+          break;
+        case ShopAction.REPEATUNLOCK:
           break;
         default:
       }

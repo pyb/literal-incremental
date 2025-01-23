@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import styles from "./page.module.css"
-import {ShopEntry} from "./gamedata"
+import {ShopAction, ShopEntry} from "./gamedata"
 /*
 import { s } from "motion/react-client";
 */
@@ -20,20 +20,21 @@ const ShopButton = ({ label, price, isActive, callback }: { label: string, price
 }
 
 const Shop = ({ score, callback, shopItems, visibleShopItems, activeShopItems }:
-     { score: number, shopItems: Array<ShopEntry>, visibleShopItems: Set<string>, activeShopItems: Set<string>, callback: (id: string, shopEntries: Array<ShopEntry>) => void }) => {
+     { score: number, shopItems: Array<ShopEntry>, visibleShopItems: Set<number>, activeShopItems: Set<number>,
+         callback: (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) => void }) => {
     const sortedShopItems = shopItems.toSorted((item1: ShopEntry, item2: ShopEntry) =>
                                                 item1.position - item2.position);
     return (
         <>
             <ul className={styles.shop}>
                 {sortedShopItems.map(
-                    (shopItem: ShopEntry) =>
-                        (visibleShopItems.has(shopItem.id)) &&
+                    (shopItem: ShopEntry, index: number) =>
+                        (visibleShopItems.has(index)) &&
                         <li key={shopItem.text} >
                             <ShopButton label={shopItem.text}
                                         price={shopItem.price}
-                                        callback={() => callback(shopItem.id, shopItems)}
-                                        isActive={activeShopItems.has(shopItem.id)}></ShopButton>
+                                        callback={() => callback(shopItem.action, shopItem.n, index, shopItems)}
+                                        isActive={activeShopItems.has(index)}></ShopButton>
                         </li>)}
             </ul >
         </>
