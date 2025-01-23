@@ -89,6 +89,15 @@ const isWordTerminal = (word: string, tdict: Trie, maxLength: number): boolean =
 //TODO : implement maxWordLength properly.
 // Complete next state.  
 const nextWordState = (key: string, currentPartialWord: string, tdict: Trie, maxWordLength: number) => {
+  if (maxWordLength == 0)
+  {
+    return (
+      {
+        currentPartialWord: "",
+        finishedWord: ""
+      });
+  }
+
   let finishedWord = "";
   const tentativeWord = currentPartialWord.concat(key);
 
