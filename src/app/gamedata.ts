@@ -3,8 +3,8 @@ import { GiEntryDoor } from "react-icons/gi";
 export type KeyInfo = {
   key: string,
   visibilityPrice: number,
-  price: number,
-  repeaterPrice: number
+  repeaterPrice: number,
+  score: number
 }
 
 export enum ShopAction {
@@ -25,13 +25,16 @@ export type ShopEntry = {
 
 // This is obsolete. keys no longer have a key-specific price. And prob same goes for repeaterPrice(?)
 const keyInfo:Array<KeyInfo> = [
-  { key: 'i', visibilityPrice: 0, price: 0, repeaterPrice: 500 },
-  { key: 's', visibilityPrice: 1,  price: 100, repeaterPrice: 5000 },
-  { key: 'n', visibilityPrice: 1, price: 200, repeaterPrice: 50000 },
+  { key: 'i', visibilityPrice: 0, repeaterPrice: 50, score: 1},
+  { key: 's', visibilityPrice: 10, repeaterPrice: 5000 , score: 2},
+  { key: 'x', visibilityPrice: 50, repeaterPrice: 50000, score: 50 },
+  { key: 'n', visibilityPrice: 100, repeaterPrice: 5000, score: 3 },
+  /*
   { key: 'c', visibilityPrice: 200, price: 300, repeaterPrice: 500000 },
   { key: 'h', visibilityPrice: 350, price: 500, repeaterPrice: 5000000 },
   { key: 'o', visibilityPrice: 600, price: 750, repeaterPrice: 50000000 },
   { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 }
+   */
 ];
 
 const shopEntries:Array<ShopEntry> = ([
@@ -57,7 +60,7 @@ export const GameData =
     inputSize: 20,
   
     /* Word / letter data */
-    dict: ['i', 'sin', 'is', 'in', 'si'],
+    tinydict: ['i', 'sin', 'is', 'in', 'si', 'six', 'nix'],
     keyInfo: keyInfo,
     shopEntries: shopEntries,
   };

@@ -12,11 +12,12 @@ import { KeyInfo, GameData, ShopEntry, ShopAction } from "./gamedata";
 import Log from "./Log";
 import Shop from "./Shop";
 
-const tdict = Trie.fromArray(GameData.dict);
+const tdict = Trie.fromArray(GameData.tinydict);
 
-const ScoreBoard = ({ glyphs, words, maxWordSize }: { glyphs: number, words: number, maxWordSize: number}) => {
+const ScoreBoard = ({ score, glyphs, words, maxWordSize }: { score: number, glyphs: number, words: number, maxWordSize: number}) => {
   return (
     <>
+      <div>Score : {score}</div>
       <div>Glyphs : {glyphs}</div>
       <div>Words : {words}</div>
       <div>Max Word Size : {maxWordSize}</div>
@@ -37,9 +38,9 @@ const getKeyStatus = (keyInfo: Array<KeyInfo>, boughtKeys: Array<string>, score:
 // Adding a temporary basic InputArea to enable the implementation of word typing.
 const InputArea = ({ input }: { input: string }) => {
   return (
-    <>
-      <span className={styles.inputArea}>{input}</span>
-    </>
+    <div className={styles.inputArea}>
+      <span>{input}</span>
+    </div>
   )
 }
 
@@ -110,8 +111,14 @@ const nextWordState = (key: string, currentPartialWord: string, tdict: Trie, max
       finishedWord: finishedWord
     });
 }
+const keyScores: Record<string, number>= {};
+for (const keyInfo of GameData.keyInfo)
+{
+  keyScores[keyInfo.key] = keyInfo.score;
+}
 
 const GameArea = () => {
+  const [score, setScore] = useState<number>(0);
   const [glyphs, setGlyphs] = useState<number>(0);
   const [words, setWords] = useState<number>(0);
   const [lastPressed, setLastPressed] = useState<string>("");
@@ -139,6 +146,7 @@ const GameArea = () => {
   //tmp
   const [isB1Active, setB1Active] = React.useState<boolean>(false);
   const [isB2Active, setB2Active] = React.useState<boolean>(false);
+
 
   const processTimeouts = () => {
     /*
@@ -192,6 +200,7 @@ const GameArea = () => {
       setWords((word) => word + 1);
     }
     setGlyphs((glyph) => glyph + 1);
+    setScore((score) => score + keyScores[key]);
 
     for (const entry of GameData.shopEntries) {
       if ((glyphs + 1) >= entry.visibilityPrice)
@@ -269,8 +278,8 @@ const GameArea = () => {
   return (
     <>
       <Log log={log}></Log>
-      <ScoreBoard glyphs={glyphs} words={words} maxWordSize={maxWordSize}/>
-      <Shop score={glyphs}
+      <ScoreBoard score={score} glyphs={glyphs} words={words} maxWordSize={maxWordSize}/>
+      <Shop score={score}
             shopItems={GameData.shopEntries}
             visibleShopItems={visibleShopItems}
             activeShopItems={activeShopItems}
