@@ -23,7 +23,7 @@ export type ShopEntry = {
   price: number
 }
 
-// This is obsolete. keys no longer have a key-specific price. And prob same goes for repeaterPrice(?)
+// Obsolete? Do keys still have a repeaterPrice?
 const keyInfo:Array<KeyInfo> = [
   { key: 'i', visibilityPrice: 0, repeaterPrice: 50, score: 1},
   { key: 's', visibilityPrice: 10, repeaterPrice: 5000 , score: 2},

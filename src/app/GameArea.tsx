@@ -25,12 +25,23 @@ const ScoreBoard = ({ score, glyphs, words, maxWordSize }: { score: number, glyp
   );
 };
 
-const getKeyStatus = (keyInfo: Array<KeyInfo>, boughtKeys: Array<string>, score: number): KeyStatus[] => {
+const getKeyMode = (key:string, boughtKeys: Set<string>, unlockAvailable: boolean) =>
+{
+  if (boughtKeys.has(key))
+    return KeyMode.BOUGHT
+  else if (unlockAvailable)
+    return KeyMode.PURCHASEABLE;
+  else
+    return KeyMode.VISIBLE;
+}
+
+const getKeyStatus = (keyInfo: Array<KeyInfo>, boughtKeys: Set<string>, score: number,
+                      unlockAvailable: boolean): KeyStatus[] => {
   const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
   return visibleKeys.map(
     (kInfo: KeyInfo): KeyStatus => ({
       letter: kInfo.key,
-      mode: (boughtKeys.includes(kInfo.key) ? KeyMode.BOUGHT : KeyMode.VISIBLE)
+      mode: getKeyMode(kInfo.key, boughtKeys, unlockAvailable)
     })
   );
 };
@@ -132,7 +143,7 @@ const GameArea = () => {
   const [words, setWords] = useState<number>(0);
   const [lastPressed, setLastPressed] = useState<string>("");
   const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
-  const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i', 's', 'n']);
+  const [boughtKeys, setBoughtKeys] = useState<Set<string>>(new Set<string>(['i']));
   const [inputBuffer, setInputBuffer] = useState<string>("");
   const [inputVisible, setInputVisible] = useState<boolean>(false);
 
@@ -142,9 +153,12 @@ const GameArea = () => {
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
 
-  const [purchaseableLetters, setpurchaseableLetters] = useState<Set<string>>(new Set<string>());
+  /*
+  const [purchaseableLetters, setPurchaseableLetters] = useState<Set<string>>(new Set<string>());
+  */
   const [activeShopItems, setActiveShopItems] = useState<Set<number>>(new Set<number>());
   const [visibleShopItems, setVisibleShopItems] = useState<Set<number>>(new Set<number>());
+  const [unlockAvailable, setUnlockAvailable] = useState<boolean>(false);
 
   const [currentPartialWord, setCurrentPartialWord] = useState<string>("");
   const [lastScoredWord, setLastScoredWord] = useState<string>("");
@@ -155,7 +169,6 @@ const GameArea = () => {
   //tmp
   const [isB1Active, setB1Active] = React.useState<boolean>(false);
   const [isB2Active, setB2Active] = React.useState<boolean>(false);
-
 
   const processTimeouts = () => {
     /*
@@ -230,6 +243,7 @@ const GameArea = () => {
       // TODO : Insert side effects here
       switch(action) {
         case ShopAction.LETTERUNLOCK:
+          setUnlockAvailable(true);
           break;
         case ShopAction.WORDUNLOCK:
           setInputVisible(true);
@@ -244,7 +258,7 @@ const GameArea = () => {
   }
 
   const handleKey = (key: string) => {
-    if (boughtKeys.includes(key)) {
+    if (boughtKeys.has(key)) {
       // Highlight key in Keyboard
       setLastPressed(key);
       setKeyHighlight(true);
@@ -275,8 +289,20 @@ const GameArea = () => {
   }
 
   const keyboardCallback = (key: string) => {
-    console.log("clicked " + key)
+    if (unlockAvailable && !boughtKeys.has(key))
+    {
+      console.log("bought " + key);
+      setUnlockAvailable(false);
+      boughtKeys.add(key);
+    }
   }
+
+  /*
+  Letter unlocks
+  Implement purchaseLetter() called by a callback fn on every letter
+  Allow only if letter is included in purchaseable Set (which gets deleted immediately)
+  */
+
 
   if (doProcessTimeouts)
   {
@@ -293,7 +319,7 @@ const GameArea = () => {
             visibleShopItems={visibleShopItems}
             activeShopItems={activeShopItems}
             callback={shopCallback}></Shop>
-      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs)}
+      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs, unlockAvailable)}
                 clickCallback={keyboardCallback}
                 focusedKey={keyHighlight ? lastPressed : ""} />
       {inputVisible &&
@@ -302,12 +328,5 @@ const GameArea = () => {
     </>
   );
 };
-
-/*
-
-Implement purchaseLetter() called by a callback fn on every letter
-Allow only if letter is included in purchaseable Set (which gets deleted immediately)
-
-*/
 
 export default GameArea;
