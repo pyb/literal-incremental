@@ -3,28 +3,20 @@
 import React, { useEffect } from "react";
 import styles from "./page.module.css"
 import {ShopEntry} from "./gamedata"
-import { s } from "motion/react-client";
-
 /*
-type ShopItem = {
-    text: string;
-    position: number,
-    visCost: number,
-    active: boolean,
-    callback: () => void
-  };
+import { s } from "motion/react-client";
 */
 
 const ShopButton = ({ label, price, isActive, callback }: { label: string, price: number, isActive: boolean, callback: () => void }) => {
     return (
-        <button
-            className={styles.shopButtonTest}
-            onClick={callback}>
+        <div>
             <div className={isActive ? styles.shopButtonActive : styles.shopButtonInactive}>
-                <div>{label}</div>
-                <div>{price}</div>
-            </div>
-        </button>)
+            <button className={styles.botonElegante}
+                    onClick={callback}>
+                <p>{label}</p>
+                <p className={styles.shopPrice}>{price}</p>
+            </button>
+        </div></div>);
 }
 
 const Shop = ({ score, callback, shopItems, visibleShopItems, activeShopItems }:
@@ -47,4 +39,5 @@ const Shop = ({ score, callback, shopItems, visibleShopItems, activeShopItems }:
         </>
     );
 }
+
 export default Shop;
