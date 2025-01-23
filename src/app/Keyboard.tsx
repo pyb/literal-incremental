@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { HStack, StackSeparator, Kbd } from "@chakra-ui/react"
 import styles from "./page.module.css"
+import { keyframes } from "motion";
 
 export interface KeyStatus {
   letter: string,
@@ -11,28 +12,53 @@ export interface KeyStatus {
 
 export enum KeyMode {
   BOUGHT,
+  PURCHASEABLE,
   VISIBLE
 }
 
-const Key = ({ letter, highlight, mode } : { letter: string, highlight: boolean, mode: KeyMode }) => {
+const Key = ({ letter, highlight, mode, onclick } :
+   { letter: string, highlight: boolean, mode: KeyMode, onclick: () => void}) => {
+  let palette:string = "";
+  if (highlight)
+    palette = 'yellow';
+  else switch(mode)
+  {
+    case KeyMode.BOUGHT:
+      palette = 'orange';
+      break;
+    case KeyMode.PURCHASEABLE:
+      palette = 'red';
+      break;
+    case KeyMode.VISIBLE:
+      palette = 'gray';
+      break;
+    default:
+  };
+
   return (
+    <div className={styles.kbd}>
     <Kbd size='lg'
          variant={highlight ? 'subtle' : 'raised'}
-         colorPalette={mode == KeyMode.VISIBLE ? 'gray' : (highlight ? 'yellow' : 'orange')}>
+         className={styles.Kbd}
+         onClick={onclick}
+         colorPalette={palette}>
       <div className={styles.KbdKey}>
         {letter}
         </div>
     </Kbd>
+    </div>
   )
 }
 
-const Keyboard = ({allKeyStatus, focusedKey}: {allKeyStatus: KeyStatus[], focusedKey: string}) => {
+const Keyboard = ({allKeyStatus, focusedKey, clickCallback}:
+   {allKeyStatus: KeyStatus[], focusedKey: string, clickCallback: (key: string) => void}) => {
   return (
-    <HStack separator={<StackSeparator />}>
+    <HStack className={styles.stack} separator={<StackSeparator />}>
       {allKeyStatus.map((keyStatus: KeyStatus) =>
        <Key key={keyStatus.letter}
             highlight={(keyStatus.letter == focusedKey) ? true : false}
             letter={keyStatus.letter}
+            onclick={() => clickCallback(keyStatus.letter)}
             mode={keyStatus.mode}/>)} 
     </HStack>
   )

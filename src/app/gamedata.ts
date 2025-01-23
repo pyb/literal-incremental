@@ -1,3 +1,5 @@
+import { GiEntryDoor } from "react-icons/gi";
+
 export type KeyInfo = {
   key: string,
   visibilityPrice: number,
@@ -12,6 +14,7 @@ export enum ShopAction {
 }
 
 export type ShopEntry = {
+  index: number,
   text: string,
   action: ShopAction,
   n: number,
@@ -31,7 +34,7 @@ const keyInfo:Array<KeyInfo> = [
   { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 }
 ];
 
-const shopEntries:Array<ShopEntry> = [
+const shopEntries:Array<ShopEntry> = ([
   {text: "Unlock a Letter", action: ShopAction.LETTERUNLOCK, n: 1, position: 0, visibilityPrice: 10, price: 40},
   {text: "Unlock another Letter", action: ShopAction.LETTERUNLOCK, n: 2, position: 10, visibilityPrice: 60, price: 150},
   {text: "Unlock Word formation", action: ShopAction.WORDUNLOCK, n: 1, position: 20, visibilityPrice: 40, price: 100},
@@ -40,10 +43,12 @@ const shopEntries:Array<ShopEntry> = [
   {text: "Unlock 4-letter Words", action: ShopAction.WORDUNLOCK, n: 4, position: 150, visibilityPrice: 2000, price: 6000},
   {text: "Unlock a third Letter", action: ShopAction.LETTERUNLOCK, n: 3, position: 200, visibilityPrice: 5000, price: 40000},
   {text: "Unlock a Repeater", action: ShopAction.REPEATUNLOCK, n: 1, position: 300, visibilityPrice: 4000, price: 8000},
-];
+].map((entry: any, index: number) => { entry.index = index; return entry; })); // add an index property starting at 0
 
 export const GameData =
 {
+    welcomeMessage: "Welcome to Literal Incremental.",
+
   /* UI, internals stuff */
     tick: 30, // setinterval delay
     highlightDuration: 150,

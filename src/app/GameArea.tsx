@@ -119,11 +119,14 @@ const GameArea = () => {
   const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
   const [boughtKeys, setBoughtKeys] = useState<Array<string>>(['i', 's', 'n']);
   const [inputBuffer, setInputBuffer] = useState<string>("");
+  const [inputVisible, setInputVisible] = useState<boolean>(false);
+
   const [maxWordSize, setMaxWordSize] = useState<number>(0);
   const [log, setLog] = useState<Array<string>>(["", "", "", "",
-    "Welcome to Literal Incremental."]);
+    GameData.welcomeMessage]);
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
+
   const [purchaseableLetters, setpurchaseableLetters] = useState<Set<string>>(new Set<string>());
   const [activeShopItems, setActiveShopItems] = useState<Set<number>>(new Set<number>());
   const [visibleShopItems, setVisibleShopItems] = useState<Set<number>>(new Set<number>());
@@ -191,13 +194,10 @@ const GameArea = () => {
     }
     setGlyphs((glyph) => glyph + 1);
 
-    let index = 0;
-    for (const entry of GameData.shopEntries)
-      {
-        if ((glyphs + 1) >= entry.visibilityPrice)
-          setVisibleShopItems((s) => s.add(index));
-        index++;
-      }
+    for (const entry of GameData.shopEntries) {
+      if ((glyphs + 1) >= entry.visibilityPrice)
+        setVisibleShopItems((s) => s.add(entry.index));
+    }
   }
 
   const shopCallback = (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) =>
@@ -209,11 +209,15 @@ const GameArea = () => {
         (glyphs >= price) ) {
       setGlyphs(glyphs - price);
       setActiveShopItems(activeShopItems.add(index));
+      addLog("Bought : " + entry.text + " for " + price);
       // TODO : Insert side effects here
       switch(action) {
         case ShopAction.LETTERUNLOCK:
           break;
         case ShopAction.WORDUNLOCK:
+          setInputVisible(true);
+          console.assert(n == (maxWordSize + 1), n, maxWordSize);
+          setMaxWordSize(n); // should always be maxWordSize+1
           break;
         case ShopAction.REPEATUNLOCK:
           break;
@@ -253,6 +257,10 @@ const GameArea = () => {
     }
   }
 
+  const keyboardCallback = (key: string) => {
+    console.log("clicked " + key)
+  }
+
   if (doProcessTimeouts)
   {
     setDoProcessTimeouts(false);
@@ -269,8 +277,10 @@ const GameArea = () => {
             activeShopItems={activeShopItems}
             callback={shopCallback}></Shop>
       <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs)}
-        focusedKey={keyHighlight ? lastPressed : ""} />
-      <InputArea input={inputBuffer} />
+                clickCallback={keyboardCallback}
+                focusedKey={keyHighlight ? lastPressed : ""} />
+      {inputVisible &&
+      <InputArea input={inputBuffer} />}
       <WordTest currentPartialWord={currentPartialWord} lastWord={lastScoredWord} />
     </>
   );

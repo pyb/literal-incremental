@@ -28,13 +28,13 @@ const Shop = ({ score, callback, shopItems, visibleShopItems, activeShopItems }:
         <>
             <ul className={styles.shop}>
                 {sortedShopItems.map(
-                    (shopItem: ShopEntry, index: number) =>
-                        (visibleShopItems.has(index)) &&
+                    (shopItem: ShopEntry) =>
+                        (visibleShopItems.has(shopItem.index)) &&
                         <li key={shopItem.text} >
                             <ShopButton label={shopItem.text}
                                         price={shopItem.price}
-                                        callback={() => callback(shopItem.action, shopItem.n, index, shopItems)}
-                                        isActive={activeShopItems.has(index)}></ShopButton>
+                                        callback={() => callback(shopItem.action, shopItem.n, shopItem.index, shopItems)}
+                                        isActive={activeShopItems.has(shopItem.index)}></ShopButton>
                         </li>)}
             </ul >
         </>

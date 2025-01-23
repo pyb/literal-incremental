@@ -221,7 +221,7 @@ https://uiverse.io/iZOXVL/wise-goat-75
   font-weight: bold;
   */
   /* Added */
-  height: 18vh;
+  height: 130px;
   width: 9vw;
 }
 
@@ -263,6 +263,12 @@ https://uiverse.io/iZOXVL/wise-goat-75
   align-items: center;
 }
 
+.kbd {
+  flex-shrink: 0;
+  flex-basis: 22px;  
+}
+
+
 .KbdKey {
   margin-left: 5px;
   margin-right: 5px;
@@ -278,4 +284,9 @@ https://uiverse.io/iZOXVL/wise-goat-75
 
 .lastLog {
   color: white;
+}
+
+.stack {
+  align-items: center;
+  justify-content: center;
 }
