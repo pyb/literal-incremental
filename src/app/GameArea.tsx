@@ -59,17 +59,16 @@ const isPartialWord = (partialWord: string, tdict: Trie) => {
   return true;
 }
 
-//TODO : buggy ? re. maxlength.
+// Is it a word, and am I unable to extend it?
 const isWordTerminal = (word: string, tdict: Trie, maxLength: number): boolean => {
+  if (!tdict.find(word))
+    return false;
   const node = tdict.prefixSearch(word);
-  if (!node)
-    return false;
-  else if (word.length == maxLength)
+  if ((word.length == maxLength) ||
+      (node.childrenCount() == 0) )
     return true;
-  else if (node.childrenCount() > 0)
-    return false;
 
-  return true;
+  return false;
 }
 
 /* 
