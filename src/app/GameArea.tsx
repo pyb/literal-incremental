@@ -177,7 +177,6 @@ const GameArea = () => {
   }
 
   const processGlyph = (key: string) => {
-    // Update InputArea
     let buffer = inputBuffer;
     if (buffer.length == GameData.inputSize) {
       buffer = buffer.slice(GameData.inputSize / 2, GameData.inputSize);
@@ -218,19 +217,14 @@ const GameArea = () => {
     }
   }
 
-  const stopKeyHighlight = () => {
-    setKeyHighlight(false);
-  }
-
   const handleKey = (key: string) => {
     if (boughtKeys.includes(key)) {
       // Highlight key in Keyboard
       setLastPressed(key);
       setKeyHighlight(true);
       window.setTimeout(
-        stopKeyHighlight,
+        () => setKeyHighlight(false),
         GameData.highlightDuration);
-
       processGlyph(key);
     }
   }
@@ -254,24 +248,6 @@ const GameArea = () => {
     }
   }
 
-  /*
-  const exampleShopItems:Array<ShopItem> = [
-    {
-      text: "Voila Booster1",
-      position: 0,
-      visCost: GameData.B1VisPrice,
-      active: isB1Active,
-      callback: B1callback
-    },
-    {
-      text: "This is Booster2",
-      position: 1,
-      visCost: GameData.B2VisPrice,
-      active: isB2Active,
-      callback: B2callback
-    }
-  ];
-  */
   if (doProcessTimeouts)
   {
     setDoProcessTimeouts(false);
@@ -296,20 +272,10 @@ const GameArea = () => {
 };
 
 /*
-const TestArea = () => {
-  const count = useMotionValue(0);
-  const opacity = useTransform (() => count.get()/100);
-  useEffect(() => {
-    const controls = animate(count, 100, { duration: 0.2 })
-    return () => controls.stop()
-  }, [])
 
-  return (
-    <motion.div className={styles.teststyle} whileHover={{ scale: 1.1 }} style={{opacity}}>
-    Foo
-    </motion.div>
-  )
-}
+Implement purchaseLetter() called by a callback fn on every letter
+Allow only if letter is included in purchaseable Set (which gets deleted immediately)
+
 */
 
 export default GameArea;
