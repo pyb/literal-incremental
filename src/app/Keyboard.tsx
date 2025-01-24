@@ -21,12 +21,14 @@ export enum KeyMode {
 const Key = ({ letter, highlight, mode, onclick } :
    { letter: string, highlight: boolean, mode: KeyMode, onclick: () => void}) => {
   let palette:string = "";
-  if (highlight)
-    palette = 'yellow';
-  else switch(mode)
+
+  switch(mode)
   {
     case KeyMode.BOUGHT:
-      palette = 'orange';
+      if (highlight)
+        palette = 'yellow';
+      else
+        palette = 'orange';
       break;
     case KeyMode.PURCHASEABLE:
       palette = 'red';
