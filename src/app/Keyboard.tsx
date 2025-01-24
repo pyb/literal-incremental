@@ -14,7 +14,8 @@ export enum KeyMode {
   BOUGHT,
   PURCHASEABLE,
   REPEAT_PURCHASEABLE,
-  VISIBLE
+  VISIBLE,
+  REPEAT_TOGGLE
 }
 
 const Key = ({ letter, highlight, mode, onclick } :
@@ -36,6 +37,9 @@ const Key = ({ letter, highlight, mode, onclick } :
     case KeyMode.VISIBLE:
       palette = 'gray';
       break;
+    case KeyMode.REPEAT_TOGGLE:
+      palette = 'green';
+      break;
     default:
   };
 
@@ -54,8 +58,8 @@ const Key = ({ letter, highlight, mode, onclick } :
   )
 }
 
-const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatCallback, repeatVisible}:
-   {allKeyStatus: KeyStatus[], focusedKey: string, repeatCallback: () => void,
+const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, repeatVisible}:
+   {allKeyStatus: KeyStatus[], focusedKey: string, repeatModeCallback: () => void,
      clickCallback: (key: string) => void, repeatVisible: boolean}) => {
   return (
     <HStack className={styles.stack} separator={<StackSeparator />}>
@@ -64,7 +68,7 @@ const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatCallback, repe
       <Kbd size='lg'
           variant='subtle'
           className={styles.Kbd}
-          onClick={repeatCallback}
+          onClick={repeatModeCallback}
           colorPalette='blue'>
       <div className={styles.KbdKey}>
         rpt

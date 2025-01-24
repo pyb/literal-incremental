@@ -25,9 +25,12 @@ const ScoreBoard = ({ score, glyphs, words, maxWordSize }: { score: number, glyp
   );
 };
 
-const getKeyMode = (key:string, boughtKeys: Set<string>, repeatKeys: Set<string>, repeatAvailable: boolean, unlockAvailable: boolean) =>
+const getKeyMode = (key:string, boughtKeys: Set<string>, repeatableKeys: Set<string>,
+   repeatAvailable: boolean, unlockAvailable: boolean, repeatSelectMode: boolean) =>
 {
-  if (repeatAvailable && !repeatKeys.has(key) && boughtKeys.has(key))
+  if (repeatSelectMode && repeatableKeys.has(key))
+    return KeyMode.REPEAT_TOGGLE;
+  if (repeatAvailable && !repeatableKeys.has(key) && boughtKeys.has(key))
     return KeyMode.REPEAT_PURCHASEABLE;
   else if (boughtKeys.has(key))
     return KeyMode.BOUGHT
@@ -38,13 +41,13 @@ const getKeyMode = (key:string, boughtKeys: Set<string>, repeatKeys: Set<string>
 }
 
 const getKeyStatus = (keyInfo: Array<KeyInfo>,
-                      boughtKeys: Set<string>, repeatKeys: Set<string>,
+                      boughtKeys: Set<string>, repeatableKeys: Set<string>, repeatSelectMode: boolean,
                       repeatAvailable: boolean, unlockAvailable: boolean, score: number): KeyStatus[] => {
   const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
   return visibleKeys.map(
     (kInfo: KeyInfo): KeyStatus => ({
       letter: kInfo.key,
-      mode: getKeyMode(kInfo.key, boughtKeys, repeatKeys, repeatAvailable, unlockAvailable)
+      mode: getKeyMode(kInfo.key, boughtKeys, repeatableKeys, repeatAvailable, unlockAvailable, repeatSelectMode)
     })
   );
 };
@@ -147,9 +150,10 @@ const GameArea = () => {
   const [lastPressed, setLastPressed] = useState<string>("");
   const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
   const [boughtKeys, setBoughtKeys] = useState<Set<string>>(new Set<string>(['i']));
-  const [repeatKeys, setRepeatKeys] = useState<Set<string>>(new Set<string>());
+  const [repeatableKeys, setRepeatableKeys] = useState<Set<string>>(new Set<string>());
   const [inputBuffer, setInputBuffer] = useState<string>("");
   const [inputVisible, setInputVisible] = useState<boolean>(false);
+  const [repeatKeys, setRepeatKeys] = useState<Set<string>>(new Set<string>());
 
   const [maxWordSize, setMaxWordSize] = useState<number>(0);
   const [log, setLog] = useState<Array<string>>(["", "", "", "",
@@ -183,6 +187,10 @@ const GameArea = () => {
      const elapsed = now - lastTimeUpdate.current;
      lastTimeUpdate.current = now;
     */
+    repeatKeys.forEach(
+      (key: string) =>
+        handleKey(key));
+
     pressedKeys.current.forEach(
       (key: string) =>
         handleKey(key));
@@ -296,19 +304,32 @@ const GameArea = () => {
   }
 
   const keyboardCallback = (key: string) => {
-    if (unlockAvailable && !boughtKeys.has(key))
+    if (repeatSelectMode && repeatableKeys.has(key))
+    {
+      if (repeatKeys.has(key))
+      {
+        repeatKeys.delete(key)
+        setRepeatKeys(repeatKeys);
+        console.log("removed repeat key " + key);
+      }
+      else {
+        setRepeatKeys(repeatKeys.add(key));
+        console.log("adding repeat key " + key);
+      }
+    }
+    else if (unlockAvailable && !boughtKeys.has(key))
     {
       setUnlockAvailable(false);
       setBoughtKeys(boughtKeys.add(key));
     }
-    else if (repeatAvailable && !repeatKeys.has(key))
+    else if (repeatAvailable && !repeatableKeys.has(key))
     {
       setRepeatAvailable(false);
-      setRepeatKeys(repeatKeys.add(key));
+      setRepeatableKeys(repeatableKeys.add(key));
     }
   }
 
-  const repeatCallback = () => {
+  const repeatModeCallback = () => {
     setRepeatSelectMode (!repeatSelectMode);
   }
 
@@ -335,9 +356,9 @@ const GameArea = () => {
             visibleShopItems={visibleShopItems}
             activeShopItems={activeShopItems}
             callback={shopCallback}></Shop>
-      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, repeatKeys, repeatAvailable, unlockAvailable, score)}
+      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, repeatableKeys, repeatSelectMode, repeatAvailable, unlockAvailable, score)}
                 clickCallback={keyboardCallback}
-                repeatCallback={repeatCallback}
+                repeatModeCallback={repeatModeCallback}
                 repeatVisible={true}
                 focusedKey={keyHighlight ? lastPressed : ""} />
       {inputVisible &&
