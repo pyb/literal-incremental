@@ -13,6 +13,7 @@ export interface KeyStatus {
 export enum KeyMode {
   BOUGHT,
   PURCHASEABLE,
+  REPEAT_PURCHASEABLE,
   VISIBLE
 }
 
@@ -28,6 +29,9 @@ const Key = ({ letter, highlight, mode, onclick } :
       break;
     case KeyMode.PURCHASEABLE:
       palette = 'red';
+      break;
+    case KeyMode.REPEAT_PURCHASEABLE:
+      palette = 'purple';
       break;
     case KeyMode.VISIBLE:
       palette = 'gray';
@@ -50,11 +54,24 @@ const Key = ({ letter, highlight, mode, onclick } :
   )
 }
 
-const Keyboard = ({allKeyStatus, focusedKey, clickCallback}:
-   {allKeyStatus: KeyStatus[], focusedKey: string, clickCallback: (key: string) => void}) => {
+const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatCallback, repeatVisible}:
+   {allKeyStatus: KeyStatus[], focusedKey: string, repeatCallback: () => void,
+     clickCallback: (key: string) => void, repeatVisible: boolean}) => {
   return (
     <HStack className={styles.stack} separator={<StackSeparator />}>
-      {allKeyStatus.map((keyStatus: KeyStatus) =>
+    { repeatVisible &&
+    <div className={styles.kbd}>
+      <Kbd size='lg'
+          variant='subtle'
+          className={styles.Kbd}
+          onClick={repeatCallback}
+          colorPalette='blue'>
+      <div className={styles.KbdKey}>
+        rpt
+        </div>
+      </Kbd>
+    </div>}
+    {allKeyStatus.map((keyStatus: KeyStatus) =>
        <Key key={keyStatus.letter}
             highlight={(keyStatus.letter == focusedKey) ? true : false}
             letter={keyStatus.letter}

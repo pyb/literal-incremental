@@ -45,22 +45,23 @@ const shopEntries:Array<ShopEntry> = ([
   {text: "Unlock 3-letter Words", action: ShopAction.WORDUNLOCK, n: 3, position: 140, visibilityPrice: 200, price: 2000},
   {text: "Unlock 4-letter Words", action: ShopAction.WORDUNLOCK, n: 4, position: 150, visibilityPrice: 2000, price: 6000},
   {text: "Unlock a third Letter", action: ShopAction.LETTERUNLOCK, n: 3, position: 200, visibilityPrice: 5000, price: 40000},
-  {text: "Unlock a Repeater", action: ShopAction.REPEATUNLOCK, n: 1, position: 300, visibilityPrice: 4000, price: 8000},
+  {text: "Unlock a Repeater", action: ShopAction.REPEATUNLOCK, n: 1, position: 300, visibilityPrice: 40, price: 80},
 ].map((entry: any, index: number) => { entry.index = index; return entry; })); // add an index property starting at 0
 
 export const GameData =
 {
-    welcomeMessage: "Welcome to Literal Incremental.",
+  welcomeMessage: "Welcome to Literal Incremental.",
 
   /* UI, internals stuff */
-    tick: 30, // setinterval delay
-    highlightDuration: 150,
-    
-    //maxWordLength: 4,
-    inputSize: 20,
-  
-    /* Word / letter data */
-    tinydict: ['i', 'sin', 'is', 'in', 'si', 'six', 'nix'],
-    keyInfo: keyInfo,
-    shopEntries: shopEntries,
-  };
+  tick: 50, // setinterval delay
+  highlightDuration: 150,
+
+  //maxWordLength: 4,
+  inputSize: 20,
+  autorepeatDelay: 500,
+
+  /* Word / letter data */
+  tinydict: ['i', 'sin', 'is', 'in', 'si', 'six', 'nix'],
+  keyInfo: keyInfo,
+  shopEntries: shopEntries,
+};

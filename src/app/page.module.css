@@ -180,10 +180,17 @@ a.secondary {
 {
   font-family: monospace;
   text-align: center;
+  font-size:1.3em;
+}
+
+.scoreBoard
+{
+  gap: 10px;
 }
 
 .shop
 {
+  font-size:.9rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -211,7 +218,9 @@ https://uiverse.io/iZOXVL/wise-goat-75
   */
   background-color: #042504;
   color: #ffffff;
+  /*
   font-size: 1rem;
+  */
   cursor: pointer;
   border-radius: 30px;
   transition: all 0.4s ease;

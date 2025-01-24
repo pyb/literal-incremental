@@ -16,18 +16,20 @@ const tdict = Trie.fromArray(GameData.tinydict);
 
 const ScoreBoard = ({ score, glyphs, words, maxWordSize }: { score: number, glyphs: number, words: number, maxWordSize: number}) => {
   return (
-    <>
+    <div className={styles.scoreBoard}>
       <div>Score : {score}</div>
       <div>Glyphs : {glyphs}</div>
       <div>Words : {words}</div>
       <div>Max Word Size : {maxWordSize}</div>
-    </>
+    </div>
   );
 };
 
-const getKeyMode = (key:string, boughtKeys: Set<string>, unlockAvailable: boolean) =>
+const getKeyMode = (key:string, boughtKeys: Set<string>, repeatKeys: Set<string>, repeatAvailable: boolean, unlockAvailable: boolean) =>
 {
-  if (boughtKeys.has(key))
+  if (repeatAvailable && !repeatKeys.has(key) && boughtKeys.has(key))
+    return KeyMode.REPEAT_PURCHASEABLE;
+  else if (boughtKeys.has(key))
     return KeyMode.BOUGHT
   else if (unlockAvailable)
     return KeyMode.PURCHASEABLE;
@@ -35,13 +37,14 @@ const getKeyMode = (key:string, boughtKeys: Set<string>, unlockAvailable: boolea
     return KeyMode.VISIBLE;
 }
 
-const getKeyStatus = (keyInfo: Array<KeyInfo>, boughtKeys: Set<string>, score: number,
-                      unlockAvailable: boolean): KeyStatus[] => {
+const getKeyStatus = (keyInfo: Array<KeyInfo>,
+                      boughtKeys: Set<string>, repeatKeys: Set<string>,
+                      repeatAvailable: boolean, unlockAvailable: boolean, score: number): KeyStatus[] => {
   const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
   return visibleKeys.map(
     (kInfo: KeyInfo): KeyStatus => ({
       letter: kInfo.key,
-      mode: getKeyMode(kInfo.key, boughtKeys, unlockAvailable)
+      mode: getKeyMode(kInfo.key, boughtKeys, repeatKeys, repeatAvailable, unlockAvailable)
     })
   );
 };
@@ -144,6 +147,7 @@ const GameArea = () => {
   const [lastPressed, setLastPressed] = useState<string>("");
   const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
   const [boughtKeys, setBoughtKeys] = useState<Set<string>>(new Set<string>(['i']));
+  const [repeatKeys, setRepeatKeys] = useState<Set<string>>(new Set<string>());
   const [inputBuffer, setInputBuffer] = useState<string>("");
   const [inputVisible, setInputVisible] = useState<boolean>(false);
 
@@ -153,12 +157,10 @@ const GameArea = () => {
   const pressedKeys = useRef<Set<string>>(new Set<string>());
   const intervalId = useRef<number>(0);
 
-  /*
-  const [purchaseableLetters, setPurchaseableLetters] = useState<Set<string>>(new Set<string>());
-  */
   const [activeShopItems, setActiveShopItems] = useState<Set<number>>(new Set<number>());
   const [visibleShopItems, setVisibleShopItems] = useState<Set<number>>(new Set<number>());
   const [unlockAvailable, setUnlockAvailable] = useState<boolean>(false);
+  const [repeatAvailable, setRepeatAvailable] = useState<boolean>(false);
 
   const [currentPartialWord, setCurrentPartialWord] = useState<string>("");
   const [lastScoredWord, setLastScoredWord] = useState<string>("");
@@ -167,16 +169,20 @@ const GameArea = () => {
   const [doProcessTimeouts, setDoProcessTimeouts] = useState<boolean>(false);
 
   //tmp
-  const [isB1Active, setB1Active] = React.useState<boolean>(false);
-  const [isB2Active, setB2Active] = React.useState<boolean>(false);
+  const [isB1Active, setB1Active] = useState<boolean>(false);
+  const [isB2Active, setB2Active] = useState<boolean>(false);
+
+  //const [autoRepeat, setAutorepeat] = useState<Set<([key: string]: number)>>();
+  const [repeatSelectMode, setRepeatSelectMode] = useState<boolean>(false);
 
   const processTimeouts = () => {
+    // TODO : implement key repetition rate
     /*
     // Fine timeout control not need (yet?)
      const now = Date.now();
      const elapsed = now - lastTimeUpdate.current;
      lastTimeUpdate.current = now;
-     */
+    */
     pressedKeys.current.forEach(
       (key: string) =>
         handleKey(key));
@@ -251,6 +257,7 @@ const GameArea = () => {
           setMaxWordSize(n); // should always be maxWordSize+1
           break;
         case ShopAction.REPEATUNLOCK:
+          setRepeatAvailable(true)
           break;
         default:
       }
@@ -291,10 +298,18 @@ const GameArea = () => {
   const keyboardCallback = (key: string) => {
     if (unlockAvailable && !boughtKeys.has(key))
     {
-      console.log("bought " + key);
       setUnlockAvailable(false);
-      boughtKeys.add(key);
+      setBoughtKeys(boughtKeys.add(key));
     }
+    else if (repeatAvailable && !repeatKeys.has(key))
+    {
+      setRepeatAvailable(false);
+      setRepeatKeys(repeatKeys.add(key));
+    }
+  }
+
+  const repeatCallback = () => {
+    setRepeatSelectMode (!repeatSelectMode);
   }
 
   /*
@@ -314,17 +329,19 @@ const GameArea = () => {
     <>
       <Log log={log}></Log>
       <ScoreBoard score={score} glyphs={glyphs} words={words} maxWordSize={maxWordSize}/>
+      <WordTest currentPartialWord={currentPartialWord} lastWord={lastScoredWord} />
       <Shop score={score}
             shopItems={GameData.shopEntries}
             visibleShopItems={visibleShopItems}
             activeShopItems={activeShopItems}
             callback={shopCallback}></Shop>
-      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, glyphs, unlockAvailable)}
+      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, repeatKeys, repeatAvailable, unlockAvailable, score)}
                 clickCallback={keyboardCallback}
+                repeatCallback={repeatCallback}
+                repeatVisible={true}
                 focusedKey={keyHighlight ? lastPressed : ""} />
       {inputVisible &&
       <InputArea input={inputBuffer} />}
-      <WordTest currentPartialWord={currentPartialWord} lastWord={lastScoredWord} />
     </>
   );
 };
