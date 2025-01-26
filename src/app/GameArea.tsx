@@ -9,6 +9,8 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 */
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import ScoreBoard from "./ScoreBoard";
+import DictArea from "./DictArea";
+import InputArea from "./InputArea";
 
 import { Trie } from "./trie/trie";
 /*
@@ -46,15 +48,6 @@ const getKeyStatus = (keyInfo: Array<KeyInfo>,
     })
   );
 };
-
-// Adding a temporary basic InputArea to enable the implementation of word typing.
-const InputArea = ({ input }: { input: string }) => {
-  return (
-    <div className={styles.inputArea}>
-      <span>{input}</span>
-    </div>
-  )
-}
 
 // Temporary area to see the current and last words
 const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
@@ -337,6 +330,7 @@ const GameArea = () => {
     <>
       <Log log={log}></Log>
       <ScoreBoard score={score} glyphs={glyphs} words={words} maxWordSize={maxWordSize}/>
+      <DictArea />
       <WordTest currentPartialWord={currentPartialWord} lastWord={lastScoredWord} />
       <Shop score={score}
             shopItems={GameData.shopEntries}
