@@ -244,34 +244,6 @@ const GameArea = () => {
     }
   }
 
-  const shopCallback = (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) =>
-  {
-    const entry:ShopEntry = shopEntries[index];
-    const price = entry.price;
-
-    if (!activeShopItems.has(index) &&
-        (glyphs >= price) ) {
-      setGlyphs(glyphs - price);
-      setActiveShopItems(activeShopItems.add(index));
-      addLog("Bought : " + entry.text + " for " + price);
-      // TODO : Insert side effects here
-      switch(action) {
-        case ShopAction.LETTERUNLOCK:
-          setUnlockAvailable(true);
-          break;
-        case ShopAction.WORDUNLOCK:
-          setInputVisible(true);
-          console.assert(n == (maxWordSize + 1), n, maxWordSize);
-          setMaxWordSize(n); // should always be maxWordSize+1
-          break;
-        case ShopAction.REPEATUNLOCK:
-          setRepeatAvailable(true)
-          break;
-        default:
-      }
-    }
-  }
-
   const handleKey = (key: string) => {
     if (boughtKeys.has(key)) {
       // Highlight key in Keyboard
@@ -303,7 +275,7 @@ const GameArea = () => {
     }
   }
 
-  const keyboardCallback = (key: string) => {
+  const keyboardClick = (key: string) => {
     if (repeatSelectMode && repeatableKeys.has(key))
     {
       if (repeatKeys.has(key))
@@ -329,16 +301,36 @@ const GameArea = () => {
     }
   }
 
-  const repeatModeCallback = () => {
-    setRepeatSelectMode (!repeatSelectMode);
+  const shopClick = (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) => {
+    const entry: ShopEntry = shopEntries[index];
+    const price = entry.price;
+
+    if (!activeShopItems.has(index) &&
+      (glyphs >= price)) {
+      setGlyphs(glyphs - price);
+      setActiveShopItems(activeShopItems.add(index));
+      addLog("Bought : " + entry.text + " for " + price);
+      // TODO : Insert side effects here
+      switch (action) {
+        case ShopAction.LETTERUNLOCK:
+          setUnlockAvailable(true);
+          break;
+        case ShopAction.WORDUNLOCK:
+          setInputVisible(true);
+          console.assert(n == (maxWordSize + 1), n, maxWordSize);
+          setMaxWordSize(n); // should always be maxWordSize+1
+          break;
+        case ShopAction.REPEATUNLOCK:
+          setRepeatAvailable(true)
+          break;
+        default:
+      }
+    }
   }
 
-  /*
-  Letter unlocks
-  Implement purchaseLetter() called by a callback fn on every letter
-  Allow only if letter is included in purchaseable Set (which gets deleted immediately)
-  */
-
+  const repeatModeClick = () => {
+    setRepeatSelectMode (!repeatSelectMode);
+  }
 
   if (doProcessTimeouts)
   {
@@ -355,10 +347,10 @@ const GameArea = () => {
             shopItems={GameData.shopEntries}
             visibleShopItems={visibleShopItems}
             activeShopItems={activeShopItems}
-            callback={shopCallback}></Shop>
+            callback={shopClick}></Shop>
       <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, boughtKeys, repeatableKeys, repeatSelectMode, repeatAvailable, unlockAvailable, score)}
-                clickCallback={keyboardCallback}
-                repeatModeCallback={repeatModeCallback}
+                clickCallback={keyboardClick}
+                repeatModeCallback={repeatModeClick}
                 repeatVisible={true}
                 focusedKey={keyHighlight ? lastPressed : ""} />
       {inputVisible &&
