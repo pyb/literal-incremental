@@ -11,7 +11,8 @@ import { useImmer } from "use-immer";
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 */
 
-import { KeyInfo, GameData, ShopEntry, ShopAction } from "./gamedata";
+import { KeyInfo, GameData, ShopEntry, ShopAction } from "./GameData";
+import { GameState, initialGameState } from "./GameState";
 
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import ScoreBoard from "./ScoreBoard";
@@ -53,14 +54,6 @@ const getKeyStatus = (keyInfo: Array<KeyInfo>,
     })
   );
 };
-
-// Temporary area to see the current and last words
-const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
-  return (
-    <>
-      <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
-    </>)
-}
 
 const isPartialWord = (partialWord: string, tdict: Trie) => {
   const node = tdict.prefixSearch(partialWord);
@@ -136,72 +129,6 @@ for (const keyInfo of GameData.keyInfo)
   keyScores[keyInfo.key] = keyInfo.score;
 }
 
-
-interface GameState {
-  //scores
-  score: number,
-  glyphs: number,
-  words: number,
-  maxWordSize: number,
-
-  // typing / word construction
-  lastPressed: string,
-  inputBuffer: string,
-  currentPartialWord: string,
-  lastScoredWord: string,
-
-  boughtKeys: Set<string>,
-  repeatableKeys: Set<string>,
-  repeatKeys: Set<string>,
-
-  activeShopItems: Set<number>,
-  visibleShopItems: Set<number>,
-
-  inputVisible: boolean,
-  unlockAvailable: boolean,
-  repeatAvailable: boolean,
-  //autoRepeat: useState<Set<([key: string]: number)>>();
-  repeatSelectMode: boolean,
-
-
-  log: Array<string>,
-};
-
-// Some of this stuff may be redundant/not belong here. eg visibleShopItems can be computed ? or nearly. not quite
-// Consider using reducer as per https://react.dev/learn/extracting-state-logic-into-a-reducer
-// dispatch messages might be increaseScore (glyph/word/maxWord, could be negative ie decrease);
-//  makeVisible, makeActive ; toggleUIMode (select unlock, repeat, ...) ; log ; updateBuffer (input, partialword...)
-
-const initialGameState: GameState =
-{
-  score: 0,
-  glyphs: 0,
-  words: 0,
-  maxWordSize: 0,
-
-  lastPressed: "",
-  inputBuffer: "",
-
-  currentPartialWord: "",
-  lastScoredWord: "",
-
-  boughtKeys: new Set<string>(["i"]),
-  repeatableKeys: new Set<string>(),
-  repeatKeys: new Set<string>(),
-
-  activeShopItems: new Set<number>(),
-  visibleShopItems: new Set<number>(),
-
-  inputVisible: false,
-  unlockAvailable: false,
-  repeatAvailable: false,
-  //autoRepeat: useState<Set<([key: string]: number)>>();
-  repeatSelectMode: false,
-
-  log: ["", "", "", "", GameData.welcomeMessage],
-};
-
-
 const GameArea = () => {
   const [GS, setGS] = useImmer<GameState>(initialGameState);
 
@@ -248,6 +175,7 @@ const GameArea = () => {
     };
   }, []);
 
+  // Utility function
   const addLog = (message: string) =>
   {
     const log = GS.log.slice(1, GS.log.length); // drop last
@@ -354,12 +282,20 @@ const GameArea = () => {
     setGS(gs => {gs.repeatSelectMode = !gs.repeatSelectMode});
   }
 
+  // Temporary area to see the current and last words
+  const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
+    return (
+      <>
+        <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
+      </>)
+  }
+
   if (doProcessTimeouts)
   {
     setDoProcessTimeouts(false);
     processTimeouts();
   }
-    
+  
   return (
     <>
       <Log log={GS.log}></Log>

@@ -1,5 +1,3 @@
-import { GiEntryDoor } from "react-icons/gi";
-
 export type KeyInfo = {
   key: string,
   visibilityPrice: number,
