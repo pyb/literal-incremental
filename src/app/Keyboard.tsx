@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useEffect } from "react";
-import { HStack, StackSeparator, Kbd } from "@chakra-ui/react"
-import styles from "./page.module.css"
+import { HStack, StackSeparator, Kbd } from "@chakra-ui/react";
+import styles from "./page.module.css";
+/*
 import { keyframes } from "motion";
+*/
 
 export interface KeyStatus {
   letter: string,

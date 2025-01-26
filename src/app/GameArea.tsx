@@ -3,27 +3,22 @@
 // 'etaoin schrldu'
 
 import styles from "./page.module.css"
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect} from "react";
+/*
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
+*/
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
+import ScoreBoard from "./ScoreBoard";
+
 import { Trie } from "./trie/trie";
+/*
 import { TrieNode } from "./trie/trieNode";
+*/
 import { KeyInfo, GameData, ShopEntry, ShopAction } from "./gamedata";
 import Log from "./Log";
 import Shop from "./Shop";
 
 const tdict = Trie.fromArray(GameData.tinydict);
-
-const ScoreBoard = ({ score, glyphs, words, maxWordSize }: { score: number, glyphs: number, words: number, maxWordSize: number}) => {
-  return (
-    <div className={styles.scoreBoard}>
-      <div>Score : {score}</div>
-      <div>Glyphs : {glyphs}</div>
-      <div>Words : {words}</div>
-      <div>Max Word Size : {maxWordSize}</div>
-    </div>
-  );
-};
 
 const getKeyMode = (key:string, boughtKeys: Set<string>, repeatableKeys: Set<string>,
    repeatAvailable: boolean, unlockAvailable: boolean, repeatSelectMode: boolean) =>
