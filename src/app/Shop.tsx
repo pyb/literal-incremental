@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useEffect } from "react";
-import styles from "./page.module.css"
-import {ShopAction, ShopEntry} from "./gamedata"
+import styles from "./shop.module.css"
+import {ShopAction, ShopEntry} from "./GameData"
 /*
 import { s } from "motion/react-client";
 */
