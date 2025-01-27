@@ -13,7 +13,8 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 
 import { KeyInfo, GameData, UIData, ShopEntry, ShopAction } from "./GameData";
 import { GameState, initialGameState } from "./GameState";
-import { nextWordState } from "./word"
+import { nextWordState } from "./word";
+import {load, save} from "./persist";
 
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import ScoreBoard from "./ScoreBoard";
@@ -65,6 +66,10 @@ const GameArea = () => {
     });
   }
 
+  const reset = () => {
+    setGS(initialGameState);
+  }
+
   /**************************************************************/
 
   // UI state, game timer state
@@ -85,6 +90,7 @@ const GameArea = () => {
     */
     GS.repeatKeys.forEach(handleKey);
     pressedKeys.current.forEach(handleKey);
+    save(GS);
   }
 
   const handleKeydown = (kev: KeyboardEvent) => {
@@ -117,6 +123,7 @@ const GameArea = () => {
   });
 
   useEffect(() => {;
+    setGS(load());
    // intervalId.current = window.setInterval(processTimeouts, GameData.tick);
     intervalId.current = window.setInterval(() => setDoProcessTimeouts(true),
                                             UIData.tick);
@@ -247,6 +254,7 @@ const GameArea = () => {
                 pressed={!(pressedKeys.current.size == 0)}/>
       {GS.inputVisible &&
       <InputArea input={GS.inputBuffer} />}
+      <button onClick={reset}>RESET</button>
     </>
   );
 };
