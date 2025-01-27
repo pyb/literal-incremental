@@ -231,7 +231,8 @@ const GameArea = () => {
       <Log log={GS.log}></Log>
       <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize}/>
       <DictArea />
-      <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />
+      {GS.inputVisible &&
+      <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
       <Shop score={GS.score}
             shopItems={GameData.shopEntries}
             visibleShopItems={GS.visibleShopItems}
