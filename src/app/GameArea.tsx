@@ -22,6 +22,8 @@ import InputArea from "./InputArea";
 import Log from "./Log";
 import Shop from "./Shop";
 
+/**************************************************************/
+
 const getKeyMode = (key:string, boughtKeys: Set<string>, repeatableKeys: Set<string>,
    repeatAvailable: boolean, unlockAvailable: boolean, repeatSelectMode: boolean) =>
 {
@@ -37,6 +39,7 @@ const getKeyMode = (key:string, boughtKeys: Set<string>, repeatableKeys: Set<str
     return KeyMode.VISIBLE;
 }
 
+// TODO : move to Keyboard.tsx?
 const getKeyStatus = (keyInfo: Array<KeyInfo>,
                       boughtKeys: Set<string>, repeatableKeys: Set<string>, repeatSelectMode: boolean,
                       repeatAvailable: boolean, unlockAvailable: boolean, score: number): KeyStatus[] => {
@@ -172,6 +175,10 @@ const GameArea = () => {
     }
   }
   
+  const repeatModeClick = () => {
+    setGS(gs => {gs.repeatSelectMode = !gs.repeatSelectMode});
+  }
+
   /**************************************************************************/
 
   // Temporary area to see the current and last words
@@ -211,9 +218,7 @@ const GameArea = () => {
     }
   }
 
-  const repeatModeClick = () => {
-    setGS(gs => {gs.repeatSelectMode = !gs.repeatSelectMode});
-  }
+  /**************************************************************************/
 
   if (doProcessTimeouts)
   {

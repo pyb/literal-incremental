@@ -69,18 +69,21 @@ const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, 
   
   const [keyHighlight, setKeyHighlight] = React.useState<boolean>(false);
 
-  const handleKeyHighlight = () => {
-    setKeyHighlight(true);
-    window.setTimeout(
-      () => setKeyHighlight(false),
-      UIData.highlightDuration);
+  const triggerKeyHighlight = () => {
+    if (!keyHighlight)
+    {
+      setKeyHighlight(true);
+      window.setTimeout(
+        () => setKeyHighlight(false),
+        UIData.highlightDuration);
+    }
   }
 
   React.useEffect(()=>{
     if (pressed)
-      handleKeyHighlight();
-  //},[pressed, focusedKey, keyHighlight]);
-  });
+      triggerKeyHighlight();
+  },[pressed, focusedKey, keyHighlight]);
+  //});
 
   return (
     <HStack className={styles.stack} separator={<StackSeparator />}>
