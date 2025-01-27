@@ -35,6 +35,12 @@ const keyInfo:Array<KeyInfo> = [
    */
 ];
 
+const keyScores: Record<string, number>= {};
+for (const kI of keyInfo)
+{
+  keyScores[kI.key] = kI.score;
+}
+
 const shopEntries:Array<ShopEntry> = ([
   {text: "Unlock a Letter", action: ShopAction.LETTERUNLOCK, n: 1, position: 0, visibilityPrice: 10, price: 40},
   {text: "Unlock another Letter", action: ShopAction.LETTERUNLOCK, n: 2, position: 10, visibilityPrice: 60, price: 150},
@@ -46,13 +52,16 @@ const shopEntries:Array<ShopEntry> = ([
   {text: "Unlock a Repeater", action: ShopAction.REPEATUNLOCK, n: 1, position: 300, visibilityPrice: 40, price: 80},
 ].map((entry: any, index: number) => { entry.index = index; return entry; })); // add an index property starting at 0
 
+export const UIData = 
+{
+  /* UI, internals stuff */
+  tick: 50, // setinterval delay
+  highlightDuration: 150
+};
+
 export const GameData =
 {
   welcomeMessage: "Welcome to Literal Incremental.",
-
-  /* UI, internals stuff */
-  tick: 50, // setinterval delay
-  highlightDuration: 150,
 
   //maxWordLength: 4,
   inputSize: 20,
@@ -61,5 +70,6 @@ export const GameData =
   /* Word / letter data */
   tinydict: ['i', 'sin', 'is', 'in', 'si', 'six', 'nix'],
   keyInfo: keyInfo,
+  keyScores: keyScores,
   shopEntries: shopEntries,
 };

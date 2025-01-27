@@ -11,7 +11,7 @@ import { useImmer } from "use-immer";
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 */
 
-import { KeyInfo, GameData, ShopEntry, ShopAction } from "./GameData";
+import { KeyInfo, GameData, UIData, ShopEntry, ShopAction } from "./GameData";
 import { GameState, initialGameState } from "./GameState";
 
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
@@ -123,16 +123,22 @@ const nextWordState = (key: string, currentPartialWord: string, tdict: Trie, max
       finishedWord: finishedWord
     });
 }
-const keyScores: Record<string, number>= {};
-for (const keyInfo of GameData.keyInfo)
-{
-  keyScores[keyInfo.key] = keyInfo.score;
-}
 
 const GameArea = () => {
   const [GS, setGS] = useImmer<GameState>(initialGameState);
 
-  const [keyHighlight, setKeyHighlight] = useState<boolean>(false);
+  // Utility function
+  const addLog = (message: string) => {
+    setGS(gs => {
+      gs.log.splice(0, 1) // remove first
+      gs.log.push(message)
+    });
+  }
+
+  /**************************************************************/
+
+  // UI state, game timer state
+
   //  const lastTimeUpdate = useRef<number>(Date.now());  
   const [doProcessTimeouts, setDoProcessTimeouts] = useState<boolean>(false);
 
@@ -147,13 +153,27 @@ const GameArea = () => {
      const elapsed = now - lastTimeUpdate.current;
      lastTimeUpdate.current = now;
     */
-    GS.repeatKeys.forEach(
-      (key: string) =>
-        handleKey(key));
+    GS.repeatKeys.forEach(handleKey);
+    pressedKeys.current.forEach(handleKey);
+  }
 
-    pressedKeys.current.forEach(
-      (key: string) =>
-        handleKey(key));
+  const handleKeydown = (kev: KeyboardEvent) => {
+    let key: string = kev.key.toLowerCase();
+    if (key.length == 1 &&
+      key >= 'a' && key <= 'z') {
+      if (!pressedKeys.current.has(key)) {
+        pressedKeys.current.add(key);
+        handleKey(key); // maybe try removing this later (it will add latency but will integrate better with processTimeouts)
+      }
+    }
+  }
+
+  const handleKeyup = (kev: KeyboardEvent) => {
+    let key: string = kev.key.toLowerCase();
+    if (key.length == 1 &&
+      key >= 'a' && key <= 'z') {
+      pressedKeys.current.delete(key);
+    }
   }
 
   useEffect(() => {
@@ -169,19 +189,14 @@ const GameArea = () => {
   useEffect(() => {;
    // intervalId.current = window.setInterval(processTimeouts, GameData.tick);
     intervalId.current = window.setInterval(() => setDoProcessTimeouts(true),
-                                            GameData.tick);
+                                            UIData.tick);
     return () => {
       window.clearInterval(intervalId.current);
     };
   }, []);
 
-  // Utility function
-  const addLog = (message: string) =>
-  {
-    const log = GS.log.slice(1, GS.log.length); // drop last
-    log.push(message);
-    setGS(gs => {gs.log = log});
-  }
+  /**************************************************************************/
+  // Keypress handling, scoring, word formation
 
   const processGlyph = (key: string) => {
     let buffer = GS.inputBuffer;
@@ -197,7 +212,7 @@ const GameArea = () => {
       setGS(gs => {gs.words++});
     }
     setGS(gs => {gs.glyphs++});
-    setGS(gs => {gs.score += keyScores[key]});
+    setGS(gs => {gs.score += GameData.keyScores[key]});
 
     for (const entry of GameData.shopEntries) {
       if ((GS.glyphs + 1) >= entry.visibilityPrice)
@@ -207,32 +222,8 @@ const GameArea = () => {
 
   const handleKey = (key: string) => {
     if (GS.boughtKeys.has(key)) {
-      // Highlight key in Keyboard
       setGS(gs => {gs.lastPressed = key});
-      setKeyHighlight(true);
-      window.setTimeout(
-        () => setKeyHighlight(false),
-        GameData.highlightDuration);
       processGlyph(key);
-    }
-  }
-
-  const handleKeydown = (kev: KeyboardEvent) => {
-    let key: string = kev.key.toLowerCase();
-    if (key.length == 1 &&
-      key >= 'a' && key <= 'z') {
-      if (!pressedKeys.current.has(key)) {
-        pressedKeys.current.add(key);
-        handleKey(key);
-      }
-    }
-  }
-
-  const handleKeyup = (kev: KeyboardEvent) => {
-    let key: string = kev.key.toLowerCase();
-    if (key.length == 1 &&
-      key >= 'a' && key <= 'z') {
-      pressedKeys.current.delete(key);
     }
   }
 
@@ -251,14 +242,27 @@ const GameArea = () => {
                    gs.repeatableKeys.add(key);});
     }
   }
+  
+  /**************************************************************************/
+
+  // Temporary area to see the current and last words
+  const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
+    return (
+      <>
+        <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
+      </>)
+  }
+
+  /**************************************************************************/
+  // Shop
 
   const shopClick = (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) => {
     const entry: ShopEntry = shopEntries[index];
     const price = entry.price;
 
     if (!GS.activeShopItems.has(index) && (GS.glyphs >= price)) {
-      setGS(gs => {gs.glyphs -= price});
-      setGS(gs => {gs.activeShopItems.add(index)});
+      setGS(gs => {gs.glyphs -= price;
+                   gs.activeShopItems.add(index)});
       addLog("Bought : " + entry.text + " for " + price);
       // TODO : Insert side effects here
       switch (action) {
@@ -266,9 +270,9 @@ const GameArea = () => {
           setGS(gs => {gs.unlockAvailable = true});
           break;
         case ShopAction.WORDUNLOCK:
-          setGS(gs => {gs.inputVisible = true});
           console.assert(n == (GS.maxWordSize + 1), n, GS.maxWordSize);
-          setGS(gs => {gs.maxWordSize = n}); // should always be maxWordSize+1
+          setGS(gs => {gs.inputVisible = true;
+                       gs.maxWordSize = n}); // should always be maxWordSize+1
           break;
         case ShopAction.REPEATUNLOCK:
           setGS(gs => {gs.repeatAvailable = true});
@@ -280,14 +284,6 @@ const GameArea = () => {
 
   const repeatModeClick = () => {
     setGS(gs => {gs.repeatSelectMode = !gs.repeatSelectMode});
-  }
-
-  // Temporary area to see the current and last words
-  const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
-    return (
-      <>
-        <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
-      </>)
   }
 
   if (doProcessTimeouts)
@@ -312,7 +308,8 @@ const GameArea = () => {
                 clickCallback={keyboardClick}
                 repeatModeCallback={repeatModeClick}
                 repeatVisible={true}
-                focusedKey={keyHighlight ? GS.lastPressed : ""} />
+                focusedKey={GS.lastPressed}
+                pressed={!(pressedKeys.current.size == 0)}/>
       {GS.inputVisible &&
       <InputArea input={GS.inputBuffer} />}
     </>

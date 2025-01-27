@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useEffect } from "react";
+import React from "react";
 import { HStack, StackSeparator, Kbd } from "@chakra-ui/react";
 import styles from "./page.module.css";
+import { UIData } from "./GameData";
 /*
 import { keyframes } from "motion";
 */
@@ -62,9 +63,25 @@ const Key = ({ letter, highlight, mode, onclick } :
   )
 }
 
-const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, repeatVisible}:
+const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, repeatVisible, pressed}:
    {allKeyStatus: KeyStatus[], focusedKey: string, repeatModeCallback: () => void,
-     clickCallback: (key: string) => void, repeatVisible: boolean}) => {
+     clickCallback: (key: string) => void, repeatVisible: boolean, pressed: boolean}) => {
+  
+  const [keyHighlight, setKeyHighlight] = React.useState<boolean>(false);
+
+  const handleKeyHighlight = () => {
+    setKeyHighlight(true);
+    window.setTimeout(
+      () => setKeyHighlight(false),
+      UIData.highlightDuration);
+  }
+
+  React.useEffect(()=>{
+    if (pressed)
+      handleKeyHighlight();
+  //},[pressed, focusedKey, keyHighlight]);
+  });
+
   return (
     <HStack className={styles.stack} separator={<StackSeparator />}>
     { repeatVisible &&
@@ -81,7 +98,7 @@ const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, 
     </div>}
     {allKeyStatus.map((keyStatus: KeyStatus) =>
        <Key key={keyStatus.letter}
-            highlight={(keyStatus.letter == focusedKey) ? true : false}
+            highlight={keyHighlight && (keyStatus.letter == focusedKey)}
             letter={keyStatus.letter}
             onclick={() => clickCallback(keyStatus.letter)}
             mode={keyStatus.mode}/>)} 
