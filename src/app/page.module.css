@@ -11,8 +11,10 @@
   align-items: center;
   justify-items: center;
   min-height: 100svh;
+  /*
   padding: 80px;
   gap: 64px;
+  */
   font-family: var(--font-geist-sans);
 }
 
@@ -25,23 +27,6 @@
     --button-primary-hover: #ccc;
     --button-secondary-hover: #1a1a1a;
   }
-}
-
-.boosterActive {
-  color: green;
-}
-
-.boosterInactive {
-  color: red;
-} 
-
-.key {
-  align-items: center;
-}
-
-.KbdKey {
-  margin-left: 5px;
-  margin-right: 5px;
 }
 
 .main {
@@ -182,4 +167,136 @@ a.secondary {
   .logo {
     filter: invert();
   }
+}
+
+/* Added */
+
+.teststyle
+{
+    font-weight: bold;
+}
+
+.inputArea
+{
+  font-family: monospace;
+  text-align: center;
+  font-size:1.3em;
+}
+
+.scoreBoard
+{
+  gap: 10px;
+}
+
+.shop
+{
+  font-size:.9rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: .5ch;
+}
+
+.shopButtonInactive {
+  color: grey;
+}
+
+.shopPrice {
+  font-weight: bold;
+  color: white;
+}
+
+/*
+https://uiverse.io/iZOXVL/wise-goat-75
+*/
+
+.botonElegante {
+  padding: 15px 30px;
+  border: 2px solid #2c2c2c;
+  /*
+  background-color: #1a1a1a;
+  */
+  background-color: #042504;
+  color: #ffffff;
+  /*
+  font-size: 1rem;
+  */
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.4s ease;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  /*
+  font-weight: bold;
+  */
+  /* Added */
+  height: 130px;
+  width: 9vw;
+}
+
+.botonElegante::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  transform: scale(0);
+  transition: transform 0.5s ease;
+}
+
+.botonElegante:hover::after {
+  transform: scale(4);
+}
+
+.botonElegante:hover {
+  border-color: #666666;
+  background: #292929;
+}
+
+.shopButtonActive .botonElegante {
+  background-color: rgb(5, 106, 45);
+  color: #AAAAAA;
+}
+
+.shopButtonActive .shopPrice {
+  color: #444444;
+}
+
+.key {
+  align-items: center;
+}
+
+.kbd {
+  flex-shrink: 0;
+  flex-basis: 22px;  
+}
+
+
+.KbdKey {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.log {
+  min-width: 25vw;
+  font-size: x-small;
+  font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+  background-color: black;
+  color: grey;
+}
+
+.lastLog {
+  color: white;
+}
+
+.stack {
+  align-items: center;
+  justify-content: center;
 }
