@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useEffect } from "react";
 import styles from "./page.module.css"
 
 let key: number = 0;

@@ -78,7 +78,7 @@ const GameArea = () => {
   const [doProcessTimeouts, setDoProcessTimeouts] = useState<boolean>(false);
 
   const intervalId = useRef<number>(0);
-  const pressedKeys = useRef<Set<string>>(new Set<string>());
+  const [pressedKeys,setPressedKeys] = useState<Set<string>>(new Set<string>());
 
   const processTimeouts = () => {
     // TODO : implement key repetition rate
@@ -89,7 +89,7 @@ const GameArea = () => {
      lastTimeUpdate.current = now;
     */
     GS.repeatKeys.forEach(handleKey);
-    pressedKeys.current.forEach(handleKey);
+    pressedKeys.forEach(handleKey);
     save(GS);
   }
 
@@ -97,8 +97,8 @@ const GameArea = () => {
     let key: string = kev.key.toLowerCase();
     if (key.length == 1 &&
       key >= 'a' && key <= 'z') {
-      if (!pressedKeys.current.has(key)) {
-        pressedKeys.current.add(key);
+      if (!pressedKeys.has(key)) {
+        setPressedKeys(new Set<string>(pressedKeys.add(key)));
         handleKey(key); // maybe try removing this later (it will add latency but will integrate better with processTimeouts)
       }
     }
@@ -108,11 +108,13 @@ const GameArea = () => {
     let key: string = kev.key.toLowerCase();
     if (key.length == 1 &&
       key >= 'a' && key <= 'z') {
-      pressedKeys.current.delete(key);
+        pressedKeys.delete(key);
+        setPressedKeys(new Set<string>(pressedKeys));
     }
   }
 
   useEffect(() => {
+ //   console.log(pressedKeys)
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('keyup', handleKeyup);
 
@@ -251,7 +253,7 @@ const GameArea = () => {
                 repeatModeCallback={repeatModeClick}
                 repeatVisible={true}
                 focusedKey={GS.lastPressed}
-                pressed={!(pressedKeys.current.size == 0)}/>
+                pressedKeys={pressedKeys}/>
       {GS.inputVisible &&
       <InputArea input={GS.inputBuffer} />}
       <button onClick={reset}>RESET</button>

@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useEffect } from "react";
-import { HStack, StackSeparator, Kbd } from "@chakra-ui/react";
 import styles from "./page.module.css";
-
 
 // Adding a temporary basic InputArea to enable the implementation of word typing.
 const InputArea = ({ input }: { input: string }) => {

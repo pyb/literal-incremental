@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-import { HStack, StackSeparator, Kbd } from "@chakra-ui/react";
+import { HStack, StackSeparator, Kbd, Theme } from "@chakra-ui/react";
 import styles from "./keyboard.module.css";
 import { UIData } from "./GameData";
 /*
@@ -63,9 +63,9 @@ const Key = ({ letter, highlight, mode, onclick } :
   )
 }
 
-const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, repeatVisible, pressed}:
+const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, repeatVisible, pressedKeys}:
    {allKeyStatus: KeyStatus[], focusedKey: string, repeatModeCallback: () => void,
-     clickCallback: (key: string) => void, repeatVisible: boolean, pressed: boolean}) => {
+     clickCallback: (key: string) => void, repeatVisible: boolean, pressedKeys: Set<string>}) => {
   
   const [keyHighlight, setKeyHighlight] = React.useState<boolean>(false);
 
@@ -80,32 +80,40 @@ const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, 
   }
 
   React.useEffect(()=>{
-    if (pressed)
+    if (pressedKeys.has(focusedKey)){
       triggerKeyHighlight();
-  },[pressed, focusedKey, keyHighlight]);
-  //});
+      console.log("foo")
+    }
+    else {
+      console.log("bar")
+      console.log(focusedKey)
+      console.log(pressedKeys)
+    }
+  },[pressedKeys, focusedKey, keyHighlight]);
 
   return (
-    <HStack className={styles.stack} separator={<StackSeparator />}>
-    { repeatVisible &&
-    <div className={styles.kbd}>
-      <Kbd size='lg'
-          variant='subtle'
-          className={styles.Kbd}
-          onClick={repeatModeCallback}
-          colorPalette='blue'>
-      <div className={styles.KbdKey}>
-        rpt
-        </div>
-      </Kbd>
-    </div>}
-    {allKeyStatus.map((keyStatus: KeyStatus) =>
-       <Key key={keyStatus.letter}
+    <Theme appearance="dark">
+      <HStack className={styles.stack} separator={<StackSeparator />}>
+        {repeatVisible &&
+          <div className={styles.kbd}>
+            <Kbd size='lg'
+              variant='subtle'
+              className={styles.Kbd}
+              onClick={repeatModeCallback}
+              colorPalette='blue'>
+              <div className={styles.KbdKey}>
+                rpt
+              </div>
+            </Kbd>
+          </div>}
+        {allKeyStatus.map((keyStatus: KeyStatus) =>
+          <Key key={keyStatus.letter}
             highlight={keyHighlight && (keyStatus.letter == focusedKey)}
             letter={keyStatus.letter}
             onclick={() => clickCallback(keyStatus.letter)}
-            mode={keyStatus.mode}/>)} 
-    </HStack>
+            mode={keyStatus.mode} />)}
+      </HStack>
+    </Theme>
   )
 }
 

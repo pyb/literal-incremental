@@ -1,3 +1,4 @@
+/*
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -9,6 +10,7 @@
     --foreground: #ededed;
   }
 }
+*/
 
 html,
 body {
@@ -35,8 +37,20 @@ a {
   text-decoration: none;
 }
 
+/*
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
+}
+*/
+
+/* Added */
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+html {
+  color-scheme: dark;
 }
