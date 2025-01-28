@@ -57,7 +57,6 @@ export const initialGameState: GameState =
   inputVisible: false,
   unlockAvailable: false,
   repeatAvailable: false,
-  //autoRepeat: useState<Set<([key: string]: number)>>();
   repeatSelectMode: false,
 
   log: ["", "", "", "", GameData.welcomeMessage],

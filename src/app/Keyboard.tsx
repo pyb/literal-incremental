@@ -2,7 +2,7 @@
 
 import React from "react";
 import { HStack, StackSeparator, Kbd } from "@chakra-ui/react";
-import styles from "./page.module.css";
+import styles from "./keyboard.module.css";
 import { UIData } from "./GameData";
 /*
 import { keyframes } from "motion";

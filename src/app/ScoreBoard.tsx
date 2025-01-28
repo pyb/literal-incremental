@@ -2,7 +2,7 @@
 'use client'
 
 import React from "react";
-import styles from "./page.module.css";
+import styles from "./score.module.css";
 
 const ScoreBoard = ({ score, glyphs, words, maxWordSize }: { score: number, glyphs: number, words: number, maxWordSize: number}) => {
   return (

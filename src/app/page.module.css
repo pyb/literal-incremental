@@ -171,36 +171,11 @@ a.secondary {
 
 /* Added */
 
-.teststyle
-{
-    font-weight: bold;
-}
-
 .inputArea
 {
   font-family: monospace;
   text-align: center;
   font-size:1.3em;
-}
-
-.scoreBoard
-{
-  gap: 10px;
-}
-
-.key {
-  align-items: center;
-}
-
-.kbd {
-  flex-shrink: 0;
-  flex-basis: 22px;  
-}
-
-
-.KbdKey {
-  margin-left: 5px;
-  margin-right: 5px;
 }
 
 .log {
@@ -213,9 +188,4 @@ a.secondary {
 
 .lastLog {
   color: white;
-}
-
-.stack {
-  align-items: center;
-  justify-content: center;
 }
