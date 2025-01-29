@@ -21,8 +21,14 @@ export enum KeyMode {
   REPEAT_TOGGLE
 }
 
-const Key = ({ letter, highlight, mode, onclick } :
-   { letter: string, highlight: boolean, mode: KeyMode, onclick: () => void}) => {
+interface KeyProps {
+  letter: string;
+  highlight: boolean;
+  mode: KeyMode;
+  onclick: () => void;
+}
+
+const Key = ({ letter, highlight, mode, onclick }: KeyProps) => {
   let palette:string = "";
 
   switch(mode)
@@ -63,10 +69,16 @@ const Key = ({ letter, highlight, mode, onclick } :
   )
 }
 
-const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, repeatVisible, pressedKeys}:
-   {allKeyStatus: KeyStatus[], focusedKey: string, repeatModeCallback: () => void,
-     clickCallback: (key: string) => void, repeatVisible: boolean, pressedKeys: Set<string>}) => {
-  
+interface Props {
+  allKeyStatus: KeyStatus[];
+  focusedKey: string;
+  repeatModeCallback: () => void;
+  clickCallback: (key: string) => void;
+  repeatVisible: boolean;
+  pressedKeys: Set<string>;
+}
+
+const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, repeatVisible, pressedKeys}: Props) => {
   const [keyHighlight, setKeyHighlight] = React.useState<boolean>(false);
 
   const triggerKeyHighlight = () => {

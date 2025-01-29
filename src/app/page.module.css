@@ -21,10 +21,6 @@
 */
 
 .page {
-  /*
-  background-color: black;
-  */
-
   --gray-rgb: 255, 255, 255;
   --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
   --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
@@ -188,34 +184,3 @@ a.secondary {
   }
 }
 
-/*
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-}
-*/
-.logo {
-  filter: invert();
-}
-
-/* Added */
-
-.inputArea
-{
-  font-family: monospace;
-  text-align: center;
-  font-size:1.3em;
-}
-
-.log {
-  min-width: 25vw;
-  font-size: x-small;
-  font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
-  background-color: black;
-  color: grey;
-}
-
-.lastLog {
-  color: white;
-}

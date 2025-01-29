@@ -2,10 +2,11 @@
 
 // 'etaoin schrldu'
 
-import styles from "./page.module.css"
+import styles from "./game.module.css";
+
 import React, { useState, useRef, useEffect} from "react";
 import { enableMapSet} from "immer";
-enableMapSet();
+enableMapSet(); // immer setup call, to make Maps and Sets work
 import { useImmer } from "use-immer";
 /*
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
@@ -235,6 +236,16 @@ const GameArea = () => {
     processTimeouts();
   }
   
+  interface FooterProps {
+    children: React.ReactNode;
+  };
+
+  const Footer = ({children}: FooterProps) => {
+    return (<>
+      {children}
+    </>)
+  }
+  /*
   return (
     <>
       <Log log={GS.log}></Log>
@@ -257,6 +268,34 @@ const GameArea = () => {
       {GS.inputVisible &&
       <InputArea input={GS.inputBuffer} />}
       <button onClick={reset}>RESET</button>
+    </>
+  );
+  */
+//  <div className={styles.game}>
+  return (
+    <>
+      <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize}/>
+      <DictArea />
+      {GS.inputVisible &&
+      <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
+      <Shop score={GS.score}
+            shopItems={GameData.shopEntries}
+            visibleShopItems={GS.visibleShopItems}
+            activeShopItems={GS.activeShopItems}
+            callback={shopClick}></Shop>
+      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
+                                           GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
+                clickCallback={keyboardClick}
+                repeatModeCallback={repeatModeClick}
+                repeatVisible={true}
+                focusedKey={GS.lastPressed}
+                pressedKeys={pressedKeys}/>
+      {GS.inputVisible &&
+      <InputArea input={GS.inputBuffer} />}
+      <Footer>
+        <Log log={GS.log}></Log>
+        <button onClick={reset}>RESET</button>
+      </Footer>
     </>
   );
 };

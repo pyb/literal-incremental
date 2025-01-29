@@ -1,11 +1,15 @@
 'use client'
 
-import styles from "./page.module.css"
+import styles from "./game.module.css"
 
 let key: number = 0;
 
+ interface Props {
+    log: Array<string>;
+  };
+
 // Log area a la Paperclips
-const Log = ({ log }: { log: Array<string> }) => {
+const Log = ({log}: Props) => {
     const l = log.length;
     return (
         <ul className={styles.log}>

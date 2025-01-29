@@ -4,12 +4,18 @@ import React, { useEffect } from "react";
 
 import styles from "./shop.module.css"
 import {ShopAction, ShopEntry} from "./GameData"
-
 /*
 import { s } from "motion/react-client";
 */
 
-const ShopButton = ({ label, price, isActive, callback }: { label: string, price: number, isActive: boolean, callback: () => void }) => {
+interface ButtonProps {
+    label: string;
+    price: number;
+    isActive: boolean;
+    callback: () => void;
+}
+
+const ShopButton = ({ label, price, isActive, callback }: ButtonProps) => {
     return (
         <div>
             <div className={isActive ? styles.shopButtonActive : styles.shopButtonInactive}>
@@ -21,9 +27,15 @@ const ShopButton = ({ label, price, isActive, callback }: { label: string, price
         </div></div>);
 }
 
-const Shop = ({ score, callback, shopItems, visibleShopItems, activeShopItems }:
-     { score: number, shopItems: Array<ShopEntry>, visibleShopItems: Set<number>, activeShopItems: Set<number>,
-         callback: (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) => void }) => {
+interface Props {
+    score: number;
+    shopItems: Array<ShopEntry>;
+    visibleShopItems: Set<number>;
+    activeShopItems: Set<number>;
+    callback: (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) => void;
+};
+
+const Shop = ({ score, callback, shopItems, visibleShopItems, activeShopItems }: Props) => {
     const sortedShopItems = shopItems.toSorted((item1: ShopEntry, item2: ShopEntry) =>
                                                 item1.position - item2.position);
     return (

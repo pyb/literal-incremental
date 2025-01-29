@@ -4,7 +4,14 @@
 import React from "react";
 import styles from "./score.module.css";
 
-const ScoreBoard = ({ score, glyphs, words, maxWordSize }: { score: number, glyphs: number, words: number, maxWordSize: number}) => {
+interface Props {
+  score: number;
+  glyphs: number;
+  words: number;
+  maxWordSize: number;
+};
+
+const ScoreBoard = ({ score, glyphs, words, maxWordSize }: Props) => {
   return (
     <div className={styles.scoreBoard}>
       <div>Score : {score}</div>
