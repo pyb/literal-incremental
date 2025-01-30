@@ -2,10 +2,12 @@
 
 import styles from "./game.module.css"
 
-let key: number = 0;
-
+export interface LogItem {
+    key: number,
+    text: string
+}
 interface Props {
-    log: Array<string>;
+    log: Array<LogItem>;
 };
 
 // Log area a la Paperclips
@@ -14,9 +16,9 @@ const Log = ({ log }: Props) => {
     return (
         <ul className={styles.log}>
             {log.slice(0, l - 1).map(
-                (logItem: string) => <li key={key++}><span>&nbsp;.&nbsp;</span><span>{logItem}</span></li>
+                (logItem: LogItem) => <li key={logItem.key}><span>&nbsp;.&nbsp;</span><span>{logItem.text}</span></li>
             )}
-            <li className={styles.lastLog} key={key++}><span>&nbsp;&gt;&nbsp;</span><span>{log[l - 1]}</span></li>
+            <li className={styles.lastLog} key={log[l-1].key}><span>&nbsp;&gt;&nbsp;</span><span>{log[l-1].text}</span></li>
         </ul>);
 }
 

@@ -56,7 +56,8 @@ export const UIData =
 {
   /* UI, internals stuff */
   tick: 50, // setinterval delay
-  highlightDuration: 150
+  highlightDuration: 150,
+  logSize: 5
 };
 
 export const GameData =

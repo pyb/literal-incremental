@@ -14,7 +14,7 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 */
 
 import { KeyInfo, GameData, UIData, ShopEntry, ShopAction } from "./GameData";
-import { GameState, initialGameState } from "./GameState";
+import { GameState, initialGameState} from "./GameState";
 import { nextWordState } from "./word";
 import { load, save } from "./persist";
 
@@ -22,7 +22,7 @@ import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import ScoreBoard from "./ScoreBoard";
 import DictArea from "./DictArea";
 import InputArea from "./InputArea";
-import Log from "./Log";
+import Log, { LogItem } from "./Log";
 import Shop from "./Shop";
 
 /**************************************************************/
@@ -71,7 +71,6 @@ const RCScout = () => {
     </div>);
   }
 
-
 interface FooterProps {
   items: Array<React.ReactNode>;
 };
@@ -86,7 +85,7 @@ const MultiFooter = ({ items }: FooterProps) => {
 
   return (
     <div className={styles.multifooter}>
-      <button className={styles.footerButton} onClick={rotate}> Rotate </button>
+      <button className={styles.footerButton} onClick={rotate}> More... </button>
       <div className={styles.footerContent}>{items[idx]}</div>
     </div>);
 };
@@ -113,7 +112,12 @@ const GameArea = () => {
   const addLog = (message: string) => {
     setGS(gs => {
       gs.log.splice(0, 1) // remove first
-      gs.log.push(message)
+      const logItem:LogItem = {
+        text: message,
+        key:GS.logKey
+      }
+      gs.logKey += 1;
+      gs.log.push(logItem);
     });
   }
 

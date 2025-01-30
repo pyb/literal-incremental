@@ -68,15 +68,16 @@
 }
 
 .footerButton {
-    border-width: 1px;
+    border-width: 2px;
     min-width: 80px;
     height: 45px;
     border-color: grey;
     flex-grow: 0;
+    border-style: dashed;
 }
 
 .footerContent {
-    flex-grow: 1
+    flex-grow: 1;
 }
 
 .footerContent > * {
