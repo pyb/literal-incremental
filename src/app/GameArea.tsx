@@ -21,7 +21,7 @@ import { load, save } from "./persist";
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import ScoreBoard from "./ScoreBoard";
 import DictArea from "./DictArea";
-import InputArea from "./InputArea";
+import {InputItem, InputArea} from "./InputArea";
 import Log, { LogItem } from "./Log";
 import Shop from "./Shop";
 
@@ -324,36 +324,51 @@ const GameArea = () => {
     </>
   );
   */
-  //  <div className={styles.game}>
-  return (
-    <>
-      <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize}/>
-      <DictArea />
+  
+  /*
       {GS.inputVisible &&
       <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
-      <Shop score={GS.score}
-            shopItems={GameData.shopEntries}
-            visibleShopItems={GS.visibleShopItems}
-            activeShopItems={GS.activeShopItems}
-            callback={shopClick}></Shop>
-      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
-                                           GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
-                clickCallback={keyboardClick}
-                repeatModeCallback={repeatModeClick}
-                repeatVisible={true}
-                focusedKey={GS.lastPressed}
-                pressedKeys={pressedKeys}/>
-      {GS.inputVisible &&
-      <InputArea input={GS.inputBuffer} />}
+  */      
+ /*
+  return (
+    <div className={styles.game}>
+      <div className={styles.gameHeader}>
+        <DictArea />
+        <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize} />
+      </div>
+      <div className={styles.gameMain}>
+        <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
+          GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
+          clickCallback={keyboardClick}
+          repeatModeCallback={repeatModeClick}
+          repeatVisible={true}
+          focusedKey={GS.lastPressed}
+          pressedKeys={pressedKeys} />
+        <InputArea input={GS.inputBuffer} />
+      </div>
       <MultiFooter items={[
         <Log log={GS.log}></Log>,
         <button className={styles.resetButton} onClick={reset}>RESET</button>,
         <RCScout />
-      ]}>
-      </MultiFooter>
-    </>
+      ]} />
+    </div>
   );
+*/
+  const testPrevInput: Array<InputItem> = [
+    {letter: "i", word: "", score: 10},
+    {letter: "n", word: "", score: 10},
+    {letter: "", word: "baz", score: 10},
+    {letter: "", word: "qux", score: 10},
+    {letter: "t", word: "", score: 10},
+  ];
 
+  const testCurrentInput:InputItem = {
+    letter: "",
+    word: "fol",
+    score: 0
+  };
+
+  return (<InputArea prevInput={testPrevInput} currentInput={testCurrentInput} len={10}></InputArea>);
 };
 
 export default GameArea;
