@@ -1,13 +1,5 @@
 /* Added */
 
-.inputArea {
-    font-family: monospace;
-    font-size: 1.3em;
-    min-height:10vh;
-    margin-top:auto;
-    margin-bottom: auto;
-}
-
 .log {
     min-width: 25vw;
     font-size: x-small;

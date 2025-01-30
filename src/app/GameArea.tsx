@@ -328,8 +328,27 @@ const GameArea = () => {
   /*
       {GS.inputVisible &&
       <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
-  */      
- /*
+  */       
+
+  const testPrevInput: Array<InputItem> = [
+    {letter: "i", word: "", score: 10, key: 0},
+    {letter: "n", word: "", score: 10, key: 1},
+    {letter: "", word: "baz", score: 10, key: 2},
+    {letter: "", word: "qux", score: 10, key: 3},
+    {letter: "t", word: "", score: 10, key: 4},
+  ];
+
+  const testCurrentInput:InputItem = {
+    letter: "",
+    word: "fol",
+    score: 0,
+    key: 100
+  };
+
+  /*
+  <InputArea input={GS.inputBuffer} />
+  */
+
   return (
     <div className={styles.game}>
       <div className={styles.gameHeader}>
@@ -344,7 +363,8 @@ const GameArea = () => {
           repeatVisible={true}
           focusedKey={GS.lastPressed}
           pressedKeys={pressedKeys} />
-        <InputArea input={GS.inputBuffer} />
+        <InputArea prevInput={testPrevInput} currentInput={testCurrentInput} len={10}></InputArea>  
+        
       </div>
       <MultiFooter items={[
         <Log log={GS.log}></Log>,
@@ -353,22 +373,6 @@ const GameArea = () => {
       ]} />
     </div>
   );
-*/
-  const testPrevInput: Array<InputItem> = [
-    {letter: "i", word: "", score: 10},
-    {letter: "n", word: "", score: 10},
-    {letter: "", word: "baz", score: 10},
-    {letter: "", word: "qux", score: 10},
-    {letter: "t", word: "", score: 10},
-  ];
-
-  const testCurrentInput:InputItem = {
-    letter: "",
-    word: "fol",
-    score: 0
-  };
-
-  return (<InputArea prevInput={testPrevInput} currentInput={testCurrentInput} len={10}></InputArea>);
 };
 
 export default GameArea;

@@ -1,0 +1,67 @@
+.inputArea {
+    min-height:10vh;
+    margin-top:auto;
+    margin-bottom: auto;
+    white-space: nowrap;
+    flex-grow: 1;
+    max-width: 50%;
+    text-align: end;
+}
+
+.inputText {
+    word-spacing: -.7ch;
+    font-family: monospace;
+    font-size: 1.3em;
+    padding-right: 7%;
+}
+
+.prio1 {
+    color: red;
+}
+
+.prio2 {
+    color: green;
+}
+
+.prio3 {
+    color: blue;
+}
+
+.prio4 {
+    color: lightgray;
+}
+
+.prio5 {
+    color: gray;
+}
+
+.prio6 {
+    color: #606060;
+}
+
+.prioDefault {
+    color: #505050;
+    opacity: 0.5;
+}
+
+.letter {
+    color: grey;
+}
+
+.firstLetter {
+    font-size: 160%;
+}
+
+.firstWord {
+    color: #3333ff;
+}
+
+.firstWordSecondLast {
+    composes: firstWord;
+    font-size: 150%;
+}
+
+.firstWordLast {
+    composes: firstWord;
+    composes: firstLetter;
+}
