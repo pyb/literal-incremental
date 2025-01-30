@@ -12,12 +12,6 @@ export type InputItem = {
     order?: number
 };
 
-interface Props {
-    prevInput: Array<InputItem>, // previous words/letters typed and scored
-    currentInput: InputItem, // word currently being typed (could be letter, prefix or expandable word)
-    len: number, // total in characters
-};
-
 const stylesArr: Array<string> = [
     "",
     styles.prio1,
@@ -35,7 +29,12 @@ const prioStyle = (prio: number) => {
         return styles.prioDefault;
 }
 
-export const InputArea = ({ prevInput, currentInput, len }: Props) => {
+interface Props {
+    prevInput: Array<InputItem>, // previous words/letters typed and scored
+    currentInput: InputItem, // word currently being typed (could be letter, prefix or expandable word)
+};
+
+export const InputArea = ({ prevInput, currentInput }: Props) => {
     /*
     const prevText: string = prevInput.map((item: InputItem) => item.letter ? item.letter : item.word).join(" ");
     const text: string = prevText.concat(" ",
