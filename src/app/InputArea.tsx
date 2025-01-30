@@ -5,7 +5,6 @@ import styles from "./game.module.css";
 
 // Adding a temporary basic InputArea to enable the implementation of word typing.
 
-
 interface Props {
     input: string;
 };

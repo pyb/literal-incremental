@@ -46,3 +46,39 @@
     border-radius: 4px;
     font-weight: 600;
 }
+
+.multifooter {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-width: 50vw;
+    min-height: 7vw;;
+}
+
+.resetButton {
+    border-width: 1px;
+    min-width: 80px;
+    height: 45px;
+}
+
+.footerButton {
+    border-width: 1px;
+    min-width: 80px;
+    height: 45px;
+    border-color: grey;
+    flex-grow: 0;
+}
+
+.footerContent {
+    flex-grow: 1
+}
+
+.footerContent > * {
+    display: block;
+    margin: auto;
+}
+
+.scout {
+    margin: auto;
+}

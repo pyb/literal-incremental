@@ -3,9 +3,10 @@
 // 'etaoin schrldu'
 
 import styles from "./game.module.css";
+import RCstyles from "./rcscout.module.css";
 
-import React, { useState, useRef, useEffect} from "react";
-import { enableMapSet} from "immer";
+import React, { useState, useRef, useEffect, Children } from "react";
+import { enableMapSet } from "immer";
 enableMapSet(); // immer setup call, to make Maps and Sets work
 import { useImmer } from "use-immer";
 /*
@@ -15,7 +16,7 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import { KeyInfo, GameData, UIData, ShopEntry, ShopAction } from "./GameData";
 import { GameState, initialGameState } from "./GameState";
 import { nextWordState } from "./word";
-import {load, save} from "./persist";
+import { load, save } from "./persist";
 
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
 import ScoreBoard from "./ScoreBoard";
@@ -26,9 +27,8 @@ import Shop from "./Shop";
 
 /**************************************************************/
 
-const getKeyMode = (key:string, boughtKeys: Set<string>, repeatableKeys: Set<string>,
-   repeatAvailable: boolean, unlockAvailable: boolean, repeatSelectMode: boolean) =>
-{
+const getKeyMode = (key: string, boughtKeys: Set<string>, repeatableKeys: Set<string>,
+  repeatAvailable: boolean, unlockAvailable: boolean, repeatSelectMode: boolean) => {
   if (repeatSelectMode && repeatableKeys.has(key))
     return KeyMode.REPEAT_TOGGLE;
   if (repeatAvailable && !repeatableKeys.has(key) && boughtKeys.has(key))
@@ -43,8 +43,8 @@ const getKeyMode = (key:string, boughtKeys: Set<string>, repeatableKeys: Set<str
 
 // TODO : move to Keyboard.tsx?
 const getKeyStatus = (keyInfo: Array<KeyInfo>,
-                      boughtKeys: Set<string>, repeatableKeys: Set<string>, repeatSelectMode: boolean,
-                      repeatAvailable: boolean, unlockAvailable: boolean, score: number): KeyStatus[] => {
+  boughtKeys: Set<string>, repeatableKeys: Set<string>, repeatSelectMode: boolean,
+  repeatAvailable: boolean, unlockAvailable: boolean, score: number): KeyStatus[] => {
   const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
   return visibleKeys.map(
     (kInfo: KeyInfo): KeyStatus => ({
@@ -53,6 +53,56 @@ const getKeyStatus = (keyInfo: Array<KeyInfo>,
     })
   );
 };
+
+/***************************************************************************************** */
+// Various components
+
+const RCScout = () => {
+  return (
+    <div className={styles.scout}>
+      <div className={RCstyles.rcScout} data-scout-rendered={true}>
+        <p className={RCstyles.rcScout__text}>
+          <i className={RCstyles.rcScout__logo}></i>
+          Want to become a better programmer?
+          <a className={RCstyles.rcScout__link} href="https://www.recurse.com/scout/click?t=af9a73dda60f0a29147b1aaddbc4a088">
+            Join the Recurse Center!</a>
+        </p>
+      </div>
+    </div>);
+  }
+
+
+interface FooterProps {
+  items: Array<React.ReactNode>;
+};
+
+const MultiFooter = ({ items }: FooterProps) => {
+  const [idx, setIdx] = useState<number>(0);
+
+  const rotate = () => {
+    const n = items.length;
+    setIdx(((idx + 1) % n));
+  };
+
+  return (
+    <div className={styles.multifooter}>
+      <button className={styles.footerButton} onClick={rotate}> Rotate </button>
+      <div className={styles.footerContent}>{items[idx]}</div>
+    </div>);
+};
+
+// Temporary area to see the current and last words
+const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
+
+  useEffect(() => {
+    console.log("wt created");
+  }, []);
+
+  return (
+    <>
+      <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
+    </>)
+}
 
 /**************************************************************/
 
@@ -79,7 +129,7 @@ const GameArea = () => {
   const [doProcessTimeouts, setDoProcessTimeouts] = useState<boolean>(false);
 
   const intervalId = useRef<number>(0);
-  const [pressedKeys,setPressedKeys] = useState<Set<string>>(new Set<string>());
+  const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set<string>());
 
   const processTimeouts = () => {
     // TODO : implement key repetition rate
@@ -109,13 +159,13 @@ const GameArea = () => {
     let key: string = kev.key.toLowerCase();
     if (key.length == 1 &&
       key >= 'a' && key <= 'z') {
-        pressedKeys.delete(key);
-        setPressedKeys(new Set<string>(pressedKeys));
+      pressedKeys.delete(key);
+      setPressedKeys(new Set<string>(pressedKeys));
     }
   }
 
   useEffect(() => {
- //   console.log(pressedKeys)
+    //   console.log(pressedKeys)
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('keyup', handleKeyup);
 
@@ -125,11 +175,12 @@ const GameArea = () => {
     };
   });
 
-  useEffect(() => {;
+  useEffect(() => {
+    ;
     setGS(load());
-   // intervalId.current = window.setInterval(processTimeouts, GameData.tick);
+    // intervalId.current = window.setInterval(processTimeouts, GameData.tick);
     intervalId.current = window.setInterval(() => setDoProcessTimeouts(true),
-                                            UIData.tick);
+      UIData.tick);
     return () => {
       window.clearInterval(intervalId.current);
     };
@@ -147,21 +198,24 @@ const GameArea = () => {
 
       const nextState = nextWordState(key, GS.currentPartialWord, GS.maxWordSize);
       if (nextState.finishedWord) {
-        setGS(gs => {gs.lastScoredWord = nextState.finishedWord;
-                     gs.words++});
-        }
+        setGS(gs => {
+          gs.lastScoredWord = nextState.finishedWord;
+          gs.words++
+        });
+      }
 
       setGS(gs => {
         gs.inputBuffer = buffer + key;
         gs.currentPartialWord = nextState.currentPartialWord;
         gs.lastPressed = key;
         gs.glyphs++;
-        gs.score += GameData.keyScores[key]; });
-  
+        gs.score += GameData.keyScores[key];
+      });
+
       // TODO : maybe move this to shop component
       for (const entry of GameData.shopEntries) {
         if ((GS.glyphs + 1) >= entry.visibilityPrice)
-          setGS(gs => {gs.visibleShopItems.add(entry.index)});
+          setGS(gs => { gs.visibleShopItems.add(entry.index) });
       }
     }
   }
@@ -171,33 +225,30 @@ const GameArea = () => {
 
   const keyboardClick = (key: string) => {
     if (GS.repeatSelectMode && GS.repeatableKeys.has(key)) {
-      setGS(gs => {gs.repeatKeys.has(key)?
-                      gs.repeatKeys.delete(key) :
-                      gs.repeatKeys.add(key)});
+      setGS(gs => {
+        gs.repeatKeys.has(key) ?
+        gs.repeatKeys.delete(key) :
+        gs.repeatKeys.add(key)
+      });
     }
     else if (GS.unlockAvailable && !GS.boughtKeys.has(key)) {
-      setGS(gs => {gs.unlockAvailable = false;
-                   gs.boughtKeys.add(key);});
+      setGS(gs => {
+        gs.unlockAvailable = false;
+        gs.boughtKeys.add(key);
+      });
     }
     else if (GS.repeatAvailable && !GS.repeatableKeys.has(key)) {
-      setGS(gs => {gs.repeatAvailable = false;
-                   gs.repeatableKeys.add(key);});
+      setGS(gs => {
+        gs.repeatAvailable = false;
+        gs.repeatableKeys.add(key);
+      });
     }
   }
-  
+
   const repeatModeClick = () => {
-    setGS(gs => {gs.repeatSelectMode = !gs.repeatSelectMode});
+    setGS(gs => { gs.repeatSelectMode = !gs.repeatSelectMode });
   }
 
-  /**************************************************************************/
-
-  // Temporary area to see the current and last words
-  const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
-    return (
-      <>
-        <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
-      </>)
-  }
 
   /**************************************************************************/
   // Shop
@@ -207,21 +258,25 @@ const GameArea = () => {
     const price = entry.price;
 
     if (!GS.activeShopItems.has(index) && (GS.glyphs >= price)) {
-      setGS(gs => {gs.glyphs -= price;
-                   gs.activeShopItems.add(index)});
+      setGS(gs => {
+        gs.glyphs -= price;
+        gs.activeShopItems.add(index)
+      });
       addLog("Bought : " + entry.text + " for " + price);
       // TODO : Insert side effects here
       switch (action) {
         case ShopAction.LETTERUNLOCK:
-          setGS(gs => {gs.unlockAvailable = true});
+          setGS(gs => { gs.unlockAvailable = true });
           break;
         case ShopAction.WORDUNLOCK:
           console.assert(n == (GS.maxWordSize + 1), n, GS.maxWordSize);
-          setGS(gs => {gs.inputVisible = true;
-                       gs.maxWordSize = n}); // should always be maxWordSize+1
+          setGS(gs => {
+            gs.inputVisible = true;
+            gs.maxWordSize = n
+          }); // should always be maxWordSize+1
           break;
         case ShopAction.REPEATUNLOCK:
-          setGS(gs => {gs.repeatAvailable = true});
+          setGS(gs => { gs.repeatAvailable = true });
           break;
         default:
       }
@@ -230,28 +285,14 @@ const GameArea = () => {
 
   /**************************************************************************/
 
-  if (doProcessTimeouts)
-  {
+  if (doProcessTimeouts) {
     setDoProcessTimeouts(false);
     processTimeouts();
   }
-  
-  const scoutHTML = '<div class="rc-scout-wrapper"><div class="rc-scout" data-scout-rendered="true"><p class="rc-scout__text"><i class="rc-scout__logo"></i> Want to become a better programmer? <a class="rc-scout__link" href="https://www.recurse.com/scout/click?t=af9a73dda60f0a29147b1aaddbc4a088">Join the Recurse Center!</a></p></div> <style class="rc-scout__style" type="text/css">.rc-scout { display: block; padding: 0; border: 0; margin: 0; } .rc-scout__text { display: block; padding: 0; border: 0; margin: 0; height: 100%; font-size: 100%; } .rc-scout__logo { display: inline-block; padding: 0; border: 0; margin: 0; width: 0.85em; height: 0.85em; background: no-repeat center url(\'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2012%2015%22%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%2212%22%20height%3D%2210%22%20fill%3D%22%23000%22%3E%3C%2Frect%3E%3Crect%20x%3D%221%22%20y%3D%221%22%20width%3D%2210%22%20height%3D%228%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%228%22%20height%3D%226%22%20fill%3D%22%23000%22%3E%3C%2Frect%3E%3Crect%20x%3D%222%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%233dc06c%22%3E%3C%2Frect%3E%3Crect%20x%3D%224%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%233dc06c%22%3E%3C%2Frect%3E%3Crect%20x%3D%226%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%233dc06c%22%3E%3C%2Frect%3E%3Crect%20x%3D%223%22%20y%3D%225%22%20width%3D%222%22%20height%3D%221%22%20fill%3D%22%233dc06c%22%3E%3C%2Frect%3E%3Crect%20x%3D%226%22%20y%3D%225%22%20width%3D%222%22%20height%3D%221%22%20fill%3D%22%233dc06c%22%3E%3C%2Frect%3E%3Crect%20x%3D%224%22%20y%3D%229%22%20width%3D%224%22%20height%3D%223%22%20fill%3D%22%23000%22%3E%3C%2Frect%3E%3Crect%20x%3D%221%22%20y%3D%2211%22%20width%3D%2210%22%20height%3D%224%22%20fill%3D%22%23000%22%3E%3C%2Frect%3E%3Crect%20x%3D%220%22%20y%3D%2212%22%20width%3D%2212%22%20height%3D%223%22%20fill%3D%22%23000%22%3E%3C%2Frect%3E%3Crect%20x%3D%222%22%20y%3D%2213%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3Crect%20x%3D%223%22%20y%3D%2212%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3Crect%20x%3D%224%22%20y%3D%2213%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3Crect%20x%3D%225%22%20y%3D%2212%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3Crect%20x%3D%226%22%20y%3D%2213%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3Crect%20x%3D%227%22%20y%3D%2212%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3Crect%20x%3D%228%22%20y%3D%2213%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3Crect%20x%3D%229%22%20y%3D%2212%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23fff%22%3E%3C%2Frect%3E%3C%2Fsvg%3E\'); } .rc-scout__link:link, .rc-scout__link:visited { color: #3dc06c; text-decoration: underline; } .rc-scout__link:hover, .rc-scout__link:active { color: #4e8b1d; }</style></div>';
 
-  const Scout = () => {
-    return (
-      <div dangerouslySetInnerHTML={{__html: scoutHTML}}></div>
-    );}
 
-  interface FooterProps {
-    children: React.ReactNode;
-  };
+  //     
 
-  const Footer = ({children}: FooterProps) => {
-    return (<>
-      {children}
-    </>)
-  }
 
   /*
   return (
@@ -260,7 +301,7 @@ const GameArea = () => {
       <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize}/>
       <DictArea />
       {GS.inputVisible &&
-      <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
+
       <Shop score={GS.score}
             shopItems={GameData.shopEntries}
             visibleShopItems={GS.visibleShopItems}
@@ -279,7 +320,7 @@ const GameArea = () => {
     </>
   );
   */
-//  <div className={styles.game}>
+  //  <div className={styles.game}>
   return (
     <>
       <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize}/>
@@ -300,13 +341,15 @@ const GameArea = () => {
                 pressedKeys={pressedKeys}/>
       {GS.inputVisible &&
       <InputArea input={GS.inputBuffer} />}
-      <Footer>
-        <Log log={GS.log}></Log>
-        <button onClick={reset}>RESET</button>
-        <Scout />
-      </Footer>
+      <MultiFooter items={[
+        <Log log={GS.log}></Log>,
+        <button className={styles.resetButton} onClick={reset}>RESET</button>,
+        <RCScout />
+      ]}>
+      </MultiFooter>
     </>
   );
+
 };
 
 export default GameArea;

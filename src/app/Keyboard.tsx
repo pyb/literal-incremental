@@ -94,12 +94,6 @@ const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, 
   React.useEffect(()=>{
     if (pressedKeys.has(focusedKey)){
       triggerKeyHighlight();
-      console.log("foo")
-    }
-    else {
-      console.log("bar")
-      console.log(focusedKey)
-      console.log(pressedKeys)
     }
   },[pressedKeys, focusedKey, keyHighlight]);
 
