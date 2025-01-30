@@ -54,6 +54,11 @@
     justify-content: center;
     min-width: 50vw;
     min-height: 7vw;;
+    gap: 10px;
+}
+
+.multifooter button {
+    border-radius: 7px;
 }
 
 .resetButton {
