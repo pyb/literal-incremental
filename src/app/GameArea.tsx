@@ -2,8 +2,8 @@
 
 // 'etaoin schrldu'
 
-import styles from "./game.module.css";
-import RCstyles from "./rcscout.module.css";
+import styles from "./css/game.module.css";
+import RCstyles from "./css/rcscout.module.css";
 
 import React, { useState, useRef, useEffect, Children } from "react";
 import { enableMapSet } from "immer";
@@ -85,8 +85,8 @@ const MultiFooter = ({ items }: FooterProps) => {
 
   return (
     <div className={styles.multifooter}>
-      <button className={styles.footerButton} onClick={rotate}> More... </button>
       <div className={styles.footerContent}>{items[idx]}</div>
+      <button className={styles.footerButton} onClick={rotate}> More... </button>
     </div>);
 };
 

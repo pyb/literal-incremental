@@ -2,7 +2,7 @@
 
 import React from "react";
 import { HStack, StackSeparator, Kbd, Theme } from "@chakra-ui/react";
-import styles from "./keyboard.module.css";
+import styles from "./css/keyboard.module.css";
 import { UIData } from "./GameData";
 /*
 import { keyframes } from "motion";
@@ -56,15 +56,15 @@ const Key = ({ letter, highlight, mode, onclick }: KeyProps) => {
 
   return (
     <div className={styles.kbd}>
-    <Kbd size='lg'
-         variant={highlight ? 'subtle' : 'raised'}
-         className={styles.Kbd}
-         onClick={onclick}
-         colorPalette={palette}>
-      <div className={styles.KbdKey}>
-        {letter}
+      <Kbd size='lg'
+        variant={highlight ? 'subtle' : 'raised'}
+        className={styles.Kbd}
+        onClick={onclick}
+        colorPalette={palette}>
+        <div className={styles.KbdKey}>
+          {letter}
         </div>
-    </Kbd>
+      </Kbd>
     </div>
   )
 }
@@ -99,7 +99,7 @@ const Keyboard = ({allKeyStatus, focusedKey, clickCallback, repeatModeCallback, 
 
   return (
     <Theme appearance="dark">
-      <HStack className={styles.stack} separator={<StackSeparator />}>
+      <HStack className={styles.stack} separator={<StackSeparator colorPalette="pink"/>}>
         {repeatVisible &&
           <div className={styles.kbd}>
             <Kbd size='lg'

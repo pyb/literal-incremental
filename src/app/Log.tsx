@@ -1,6 +1,6 @@
 'use client'
 
-import styles from "./game.module.css"
+import styles from "./css/game.module.css"
 
 export interface LogItem {
     key: number,

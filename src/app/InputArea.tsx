@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect } from "react";
-import styles from "./game.module.css";
+import styles from "./css/input.module.css";
 
 // Adding a temporary basic InputArea to enable the implementation of word typing.
 
@@ -12,7 +12,7 @@ interface Props {
 const InputArea = ({ input }: Props) => {
     return (
         <div className={styles.inputArea}>
-            <span>{input}</span>
+            <div>{input}</div>
         </div>
     )
 }

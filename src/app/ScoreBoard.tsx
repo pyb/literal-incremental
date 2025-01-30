@@ -2,7 +2,7 @@
 'use client'
 
 import React from "react";
-import styles from "./score.module.css";
+import styles from "./css/score.module.css";
 
 interface Props {
   score: number;

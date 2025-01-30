@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 
-import styles from "./shop.module.css"
+import styles from "./css/shop.module.css"
 import {ShopAction, ShopEntry} from "./GameData"
 /*
 import { s } from "motion/react-client";

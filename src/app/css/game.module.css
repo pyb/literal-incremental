@@ -2,8 +2,10 @@
 
 .inputArea {
     font-family: monospace;
-    text-align: center;
     font-size: 1.3em;
+    min-height:10vh;
+    margin-top:auto;
+    margin-bottom: auto;
 }
 
 .log {
@@ -12,6 +14,7 @@
     font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
     background-color: black;
     color: grey;
+    background-color: #0a0a0a;
 }
 
 .lastLog {
@@ -21,30 +24,30 @@
 .game {
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    grid-row-start: 2;
+    min-width: 60vw;
 }
 
-.game ol {
-    font-family: var(--font-geist-mono);
-    padding-left: 0;
-    margin: 0;
-    font-size: 14px;
-    line-height: 24px;
-    letter-spacing: -0.01em;
-    list-style-position: inside;
+.gameHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
-.game li:not(:last-of-type) {
-    margin-bottom: 8px;
+.gameHeader > *
+{
+    border-width: 0px;
 }
 
-.game code {
-    font-family: inherit;
-    background: var(--gray-alpha-100);
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-weight: 600;
+.gameMain {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    min-height: 30vh;
+}
+
+.gameMain > *
+{
+    border-width: 0px;
 }
 
 .multifooter {
@@ -87,4 +90,8 @@
 
 .scout {
     margin: auto;
+}
+
+.dictArea {
+    background-color: #333333;
 }
