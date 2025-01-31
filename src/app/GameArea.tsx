@@ -48,7 +48,7 @@ const getKeyStatus = (keyInfo: Array<KeyInfo>,
   const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
   return visibleKeys.map(
     (kInfo: KeyInfo): KeyStatus => ({
-      letter: kInfo.key,
+      key: kInfo.key,
       mode: getKeyMode(kInfo.key, boughtKeys, repeatableKeys, repeatAvailable, unlockAvailable, repeatSelectMode)
     })
   );
@@ -253,6 +253,10 @@ const GameArea = () => {
     setGS(gs => { gs.repeatSelectMode = !gs.repeatSelectMode });
   }
 
+  const fkeyCallback = (fkey: string) => {
+    console.log(fkey + " pressed.");
+  }
+
 
   /**************************************************************************/
   // Shop
@@ -348,7 +352,42 @@ const GameArea = () => {
   /*
   <InputArea input={GS.inputBuffer} />
   */
+  /*
+  return (
+    <Keyboard
+      allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
+                                 GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
+      clickCallback={keyboardClick}
+      repeatModeCallback={repeatModeClick}
+      repeatVisible={true}
+      focusedKey={GS.lastPressed}
+      pressedKeys={pressedKeys} />
+  );
+  */
+  const keyStati = [
+    {key: "a", mode: KeyMode.VISIBLE},
+    {key: "b", mode: KeyMode.BOUGHT},
+    {key: "c", mode: KeyMode.BOUGHT},
+    {key: "d", mode: KeyMode.PURCHASEABLE},
+  ];
 
+  const functionKeyStati = [
+    {key: "tab", mode: KeyMode.FUNCTION_TOGGLED},
+    {key: "rpt", mode: KeyMode.FUNCTION_VISIBLE},
+  ];
+
+  return (
+    <Keyboard
+      keyStatus={keyStati}
+      functionKeyStatus={functionKeyStati}
+      clickCallback={keyboardClick}
+      fkeyCallback={fkeyCallback}
+      focusedKey={"b"}
+      pressedKeys={new Set(["b"])} />
+  );
+};
+
+/*
   return (
     <div className={styles.game}>
       <div className={styles.gameHeader}>
@@ -363,7 +402,7 @@ const GameArea = () => {
           repeatVisible={true}
           focusedKey={GS.lastPressed}
           pressedKeys={pressedKeys} />
-        <InputArea prevInput={testPrevInput} currentInput={testCurrentInput} len={10}></InputArea>  
+        <InputArea prevInput={testPrevInput} currentInput={testCurrentInput} /> 
         
       </div>
       <MultiFooter items={[
@@ -374,5 +413,6 @@ const GameArea = () => {
     </div>
   );
 };
+*/
 
 export default GameArea;
