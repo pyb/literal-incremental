@@ -1,3 +1,9 @@
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
 .key {
     align-items: center;
 }
@@ -5,6 +11,7 @@
 .kbd {
     flex-shrink: 0;
     flex-basis: 22px;
+    min-width: 22px;
 }
 
 .KbdKey {
@@ -17,4 +24,10 @@
     justify-content: center;
     margin-top:auto;
     margin-bottom: auto;
+}
+
+.separator {
+    color: blue;
+    border-color: grey;
+    color-scheme: normal;
 }

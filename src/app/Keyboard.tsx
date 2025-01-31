@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-import { HStack, StackSeparator, Kbd, Theme } from "@chakra-ui/react";
+import { HStack, StackSeparator, Kbd, Theme, VStack } from "@chakra-ui/react";
 import styles from "./css/keyboard.module.css";
 import { UIData } from "./GameData";
 /*
@@ -69,18 +69,37 @@ const Key = ({ text, highlight, mode, onclick }: KeyProps) => {
     variant = highlight? "subtle" : "raised";
 
   return (
-    <div className={styles.kbd}>
-      <Kbd size='lg'
-        variant={variant}
-        className={styles.Kbd}
-        onClick={onclick}
-        colorPalette={palette}>
-        <div className={styles.KbdKey}>
-          {text}
-        </div>
-      </Kbd>
+    <div className="dark">
+      <div className={styles.kbd}>
+        <Kbd size='lg'
+          variant={variant}
+          className={styles.Kbd}
+          onClick={onclick}
+          colorPalette={palette}>
+          <div className={styles.KbdKey}>
+            {text}
+          </div>
+        </Kbd>
+      </div>
     </div>
   )
+}
+
+const computeRows = (len:number, mx:number):Array<number> => {
+  // Divide in rows.
+  const rows = Math.ceil(len / mx);
+  const basecols = Math.floor(len / rows);
+  const rem = len % rows;
+
+  let rowSizes = new Array(rows);
+  for (let i = 0 ; i < rows ; i++)
+  {
+    if (i < rem) 
+      rowSizes[i] = basecols + 1;
+    else
+      rowSizes[i] = basecols;
+  }
+  return rowSizes;
 }
 
 interface Props {
@@ -104,6 +123,7 @@ const Keyboard = ({keyStatus, functionKeyStatus, focusedKey, clickCallback, fkey
         UIData.highlightDuration);
     }
   }
+  
 
   React.useEffect(()=>{
     if (pressedKeys.has(focusedKey)){
@@ -111,22 +131,47 @@ const Keyboard = ({keyStatus, functionKeyStatus, focusedKey, clickCallback, fkey
     }
   },[pressedKeys, focusedKey, keyHighlight]);
 
+  let allKeys = keyStatus.map(
+    (keyStatus: KeyStatus) =>
+      <Key text={keyStatus.key}
+        key={keyStatus.key}
+        highlight={keyHighlight && (keyStatus.key == focusedKey)}
+        onclick={() => clickCallback(keyStatus.key)}
+        mode={keyStatus.mode} />);
+
+  const rowSizes:Array<number> = computeRows(keyStatus.length, UIData.maxKeyboardRowSize);
+  
+  let layeredKeys = new Array<Array<React.ReactNode>>();
+  for (let size of rowSizes)
+  {
+    layeredKeys.push(allKeys.splice(0, size));
+  }
+
   return (
-    <Theme appearance="dark">
-      <HStack className={styles.stack} separator={<StackSeparator colorPalette="pink"/>}>
-        {functionKeyStatus.map((keyStatus: KeyStatus) =>
-          <Key text={keyStatus.key}
-            highlight={false}
-            onclick={() => fkeyCallback(keyStatus.key)}
-            mode={keyStatus.mode} />)}
-        {keyStatus.map((keyStatus: KeyStatus) =>
-          <Key text={keyStatus.key}
-            highlight={keyHighlight && (keyStatus.key == focusedKey)}
-            onclick={() => clickCallback(keyStatus.key)}
-            mode={keyStatus.mode} />)}
-      </HStack>
-    </Theme>
+      <div className={styles.keyboard}>
+        <div className={styles.keyboardTop}>
+        <VStack className={styles.stack} separator={<StackSeparator className={styles.separator} />}>
+          {layeredKeys.map ((keyRow:Array<React.ReactNode>) =>
+          <HStack className={styles.stack} separator={<StackSeparator className={styles.separator} />}>
+            {keyRow}
+          </HStack>)}
+        </VStack>
+        </div>
+        <div className={styles.keyboardBottom}>
+        <HStack className={styles.stack} separator={<StackSeparator className={styles.separator}/>}>
+          {functionKeyStatus.map((keyStatus: KeyStatus) =>
+            <Key text={keyStatus.key}
+              key={keyStatus.key} // for React
+              highlight={false}
+              onclick={() => fkeyCallback(keyStatus.key)}
+              mode={keyStatus.mode} />)}
+        </HStack>
+        </div>
+
+      </div>
   );
 }
 
 export default Keyboard;
+
+//    <Theme appearance="dark">

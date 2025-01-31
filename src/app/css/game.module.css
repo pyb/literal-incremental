@@ -87,3 +87,9 @@
 .dictArea {
     background-color: #333333;
 }
+
+/* Testing only */
+.kbdContainer {
+    width: 400px;
+    height: 350px;
+}

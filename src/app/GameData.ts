@@ -57,7 +57,8 @@ export const UIData =
   /* UI, internals stuff */
   tick: 50, // setinterval delay
   highlightDuration: 150,
-  logSize: 5
+  logSize: 5,
+  maxKeyboardRowSize: 6,
 };
 
 export const GameData =

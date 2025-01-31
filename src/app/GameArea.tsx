@@ -376,7 +376,19 @@ const GameArea = () => {
     {key: "rpt", mode: KeyMode.FUNCTION_VISIBLE},
   ];
 
+/*
+return (
+        <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
+          GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
+          clickCallback={keyboardClick}
+          repeatModeCallback={repeatModeClick}
+          repeatVisible={true}
+          focusedKey={GS.lastPressed}
+          pressedKeys={pressedKeys} />
+);
+*/
   return (
+    <div className={styles.kbdContainer}>
     <Keyboard
       keyStatus={keyStati}
       functionKeyStatus={functionKeyStati}
@@ -384,8 +396,8 @@ const GameArea = () => {
       fkeyCallback={fkeyCallback}
       focusedKey={"b"}
       pressedKeys={new Set(["b"])} />
+    </div>
   );
-};
 
 /*
   return (
@@ -395,15 +407,15 @@ const GameArea = () => {
         <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize} />
       </div>
       <div className={styles.gameMain}>
-        <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
-          GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
+        <Keyboard
+          keyStatus={keyStati}
+          functionKeyStatus={functionKeyStati}
           clickCallback={keyboardClick}
-          repeatModeCallback={repeatModeClick}
-          repeatVisible={true}
-          focusedKey={GS.lastPressed}
-          pressedKeys={pressedKeys} />
-        <InputArea prevInput={testPrevInput} currentInput={testCurrentInput} /> 
-        
+          fkeyCallback={fkeyCallback}
+          focusedKey={"b"}
+          pressedKeys={new Set(["b"])} />
+        <InputArea prevInput={testPrevInput} currentInput={testCurrentInput} />
+
       </div>
       <MultiFooter items={[
         <Log log={GS.log}></Log>,
@@ -412,7 +424,8 @@ const GameArea = () => {
       ]} />
     </div>
   );
-};
 */
+};
+
 
 export default GameArea;
