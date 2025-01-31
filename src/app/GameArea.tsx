@@ -370,8 +370,47 @@ const GameArea = () => {
     longDesc: "Make repeat rate three times faster", 
   };
 
+  const item4:DictItem = {
+    word: "barqux4",
+    shortDesc: "REP",
+    longDesc: "Make repeat rate three times faster", 
+  };
+  const item5:DictItem = {
+    word: "barqux5",
+    shortDesc: "REP",
+    longDesc: "Make repeat rate three times faster", 
+  };
+  const item6:DictItem = {
+    word: "barqux6",
+    shortDesc: "REP",
+    longDesc: "Make repeat rate three times faster", 
+  };
+  const item7:DictItem = {
+    word: "barqux7",
+    shortDesc: "REP",
+    longDesc: "Make repeat rate three times faster", 
+  };
+  const item8:DictItem = {
+    word: "barqu8",
+    shortDesc: "REP",
+    longDesc: "Make repeat rate three times faster", 
+  };
+  const item9:DictItem = {
+    word: "barqux9",
+    shortDesc: "REP",
+    longDesc: "Make repeat rate three times faster", 
+  };
+  const item10:DictItem = {
+    word: "barqux10",
+    shortDesc: "REP",
+    longDesc: "Make repeat rate three times faster", 
+  };
+
   const shortItems:Array<DictItem> = [
-    item1, item2, item3
+    item1, item2, item3,
+    item4, item5, item6,
+    item7, item8, item9,
+    item10
   ];
   
   const longItems:Array<DictItem> = [

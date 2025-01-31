@@ -3,27 +3,107 @@
     font-size: large;
     flex-basis: 25%;
     text-align: center;
+    margin: auto;
 }
 
 .dictScoreArea {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    height: 100%;
 }
 
 .dictArea {
-    background-color: #333333;
+    border-width: 1px;
     flex-basis: 75%;
 }
 
+.longArea {
+    margin-left: 4px;
+}
+
+.number {
+    font-size: 120%;
+}
+
 .score {
+    composes: number;
     color: red;
 }
 
 .glyphs {
+    composes: number;
     color: yellow;
 }
 
 .mws {
+    composes: number;
     color: green;
+}
+
+.LIword {
+    margin-right: 10px;
+    font-family: monospace;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.LIdesc {
+    font-size: 85%;
+    color: #aaaaff;
+}
+
+.SIword {
+    margin-right: 10px;
+    font-family: monospace;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.SIdesc {
+    font-size: 85%;
+    color: #aaaaff;
+}
+
+/*
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+*/
+
+.tooltiptext {
+    composes: LIdesc;
+}
+
+/* Tooltip text */
+.shortItem .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #444444;
+    opacity: 50%;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+.shortItem:hover .tooltiptext {
+    visibility: visible;
+}
+
+.itemScore {
+    font-size: 85%; 
+    color: #aa44ee;
+}
+
+.shortArea {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-column-gap: 10px;
+    grid-row-gap: 10px; 
 }

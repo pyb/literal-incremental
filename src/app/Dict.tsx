@@ -30,14 +30,41 @@ export interface DictItem {
   score?: number,
 };
 
+const LongItem = ({item}: {item: DictItem}) => {
+  const content = item.longDesc ? item.longDesc : item.score;
+  const contentStyle = item.longDesc? styles.LIdesc : styles.itemScore;
+
+  return (
+  <div className={styles.longItem}>
+    <span className={styles.LIword}>{item.word}</span><span className={contentStyle}>{content}</span>
+  </div>
+)};
+
+const ShortItem = ({item}: {item: DictItem}) => {
+  const content = item.shortDesc ? item.shortDesc : item.score;
+  const contentStyle = item.shortDesc? styles.SIdesc : styles.itemScore;
+
+  return (
+  <div className={styles.shortItem}>
+    <span className={styles.SIword}>{item.word}</span><span className={contentStyle}>{content}</span>
+    {item.longDesc && <span className={styles.tooltiptext}>{item.longDesc}</span>}
+  </div>
+)};
+
 interface DictProps {
   longItems: Array<DictItem>,
   shortItems: Array<DictItem>,
 };
 
-const Dict = ({ }: DictProps) => {
+const Dict = ({ longItems, shortItems }: DictProps) => {
   return (
     <div className={styles.dictArea}>
+      <div className={styles.longArea}>
+        {longItems.map((item: DictItem) => <LongItem key={item.word} item={item} />)}
+      </div>
+      <div className={styles.shortArea}>
+        {shortItems.map((item: DictItem) => <ShortItem key={item.word} item={item} />)}
+      </div>
     </div>
   );
 };
