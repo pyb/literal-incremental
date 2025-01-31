@@ -14,12 +14,18 @@
 }
 
 .dictArea {
-    border-width: 1px;
+    display: flex;
+    flex-direction: column;
+    border-width: 0px;
     flex-basis: 75%;
 }
 
 .longArea {
-    margin-left: 4px;
+    flex-basis: 25%;
+    margin-left: 6%;
+    margin-right: 6%;
+    margin-top: 5%;
+    border-bottom: 1px dashed;
 }
 
 .number {
@@ -81,7 +87,7 @@
     visibility: hidden;
     width: 120px;
     background-color: #444444;
-    opacity: 50%;
+    opacity: 80%;
     text-align: center;
     padding: 5px 0;
     border-radius: 6px;
@@ -101,9 +107,14 @@
 }
 
 .shortArea {
+    flex-basis: 75%;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    grid-column-gap: 10px;
-    grid-row-gap: 10px; 
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-column-gap: 5%;
+    grid-row-gap: 5%;
+    margin-left: 6%;
+    margin-right: 6%;
+    margin-top: 5%;
+    margin-bottom: 5%;
 }

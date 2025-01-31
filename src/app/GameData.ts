@@ -59,6 +59,8 @@ export const UIData =
   highlightDuration: 150,
   logSize: 5,
   maxKeyboardRowSize: 6,
+  dictRows: 3,
+  dictColumns: 3,
 };
 
 export const GameData =

@@ -2,6 +2,7 @@
 
 import React from "react";
 import styles from "./css/dict.module.css";
+import { UIData } from "./GameData";
 
 interface ScoreProps {
   score: number;
@@ -57,13 +58,15 @@ interface DictProps {
 };
 
 const Dict = ({ longItems, shortItems }: DictProps) => {
+  const maxShortItems = UIData.dictColumns * UIData.dictRows;
+
   return (
     <div className={styles.dictArea}>
       <div className={styles.longArea}>
         {longItems.map((item: DictItem) => <LongItem key={item.word} item={item} />)}
       </div>
       <div className={styles.shortArea}>
-        {shortItems.map((item: DictItem) => <ShortItem key={item.word} item={item} />)}
+        {shortItems.slice(0, maxShortItems).map((item: DictItem) => <ShortItem key={item.word} item={item} />)}
       </div>
     </div>
   );
