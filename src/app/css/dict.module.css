@@ -1,0 +1,12 @@
+.scoreBoard
+{
+  gap: 10px;
+  font-size: large;
+}
+
+
+.dictScoreArea {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

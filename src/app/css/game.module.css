@@ -19,17 +19,6 @@
     min-width: 60vw;
 }
 
-.gameHeader {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
-
-.gameHeader > *
-{
-    border-width: 0px;
-}
-
 .gameMain {
     display: flex;
     flex-direction: row;
@@ -93,3 +82,4 @@
     width: 400px;
     height: 350px;
 }
+

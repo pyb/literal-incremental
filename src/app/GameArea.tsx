@@ -19,8 +19,7 @@ import { nextWordState } from "./word";
 import { load, save } from "./persist";
 
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
-import ScoreBoard from "./ScoreBoard";
-import DictArea from "./DictArea";
+import {DictScoreArea, Scores, Dict} from "./Dict";
 import {InputItem, InputArea} from "./InputArea";
 import Log, { LogItem } from "./Log";
 import Shop from "./Shop";
@@ -298,10 +297,6 @@ const GameArea = () => {
     processTimeouts();
   }
 
-
-  //     
-
-
   /*
   return (
     <>
@@ -334,20 +329,6 @@ const GameArea = () => {
       <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
   */       
 
-  const testPrevInput: Array<InputItem> = [
-    {letter: "i", word: "", score: 10, key: 0},
-    {letter: "n", word: "", score: 10, key: 1},
-    {letter: "", word: "baz", score: 10, key: 2},
-    {letter: "", word: "qux", score: 10, key: 3},
-    {letter: "t", word: "", score: 10, key: 4},
-  ];
-
-  const testCurrentInput:InputItem = {
-    letter: "",
-    word: "fol",
-    score: 0,
-    key: 100
-  };
 
   /*
   <InputArea input={GS.inputBuffer} />
@@ -364,45 +345,60 @@ const GameArea = () => {
       pressedKeys={pressedKeys} />
   );
   */
-  const keyStati = [
-    {key: "a", mode: KeyMode.VISIBLE},
-    {key: "b", mode: KeyMode.BOUGHT},
-    {key: "c", mode: KeyMode.BOUGHT},
-    {key: "d", mode: KeyMode.PURCHASEABLE},
-  ];
 
-  const functionKeyStati = [
-    {key: "tab", mode: KeyMode.FUNCTION_TOGGLED},
-    {key: "rpt", mode: KeyMode.FUNCTION_VISIBLE},
-  ];
+  return (
+    <DictScoreArea score={GS.score}
+                   glyphs={GS.glyphs}
+                   words={GS.words}
+                   maxWordSize={GS.maxWordSize}/>
+  );
+};
 
-/*
-return (
-        <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
-          GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
-          clickCallback={keyboardClick}
-          repeatModeCallback={repeatModeClick}
-          repeatVisible={true}
-          focusedKey={GS.lastPressed}
-          pressedKeys={pressedKeys} />
-);
-*/
+
+const testPrevInput: Array<InputItem> = [
+  {letter: "i", word: "", score: 10, key: 0},
+  {letter: "n", word: "", score: 10, key: 1},
+  {letter: "", word: "baz", score: 10, key: 2},
+  {letter: "", word: "qux", score: 10, key: 3},
+  {letter: "t", word: "", score: 10, key: 4},
+];
+
+const testCurrentInput:InputItem = {
+  letter: "",
+  word: "fol",
+  score: 0,
+  key: 100
+};
+
+const keyStati = [
+  {key: "a", mode: KeyMode.VISIBLE},
+  {key: "b", mode: KeyMode.BOUGHT},
+  {key: "c", mode: KeyMode.BOUGHT},
+  {key: "d", mode: KeyMode.PURCHASEABLE},
+];
+
+const functionKeyStati = [
+  {key: "tab", mode: KeyMode.FUNCTION_TOGGLED},
+  {key: "rpt", mode: KeyMode.FUNCTION_VISIBLE},
+];
+  /*
   return (
     <div className={styles.kbdContainer}>
-    <Keyboard
-      keyStatus={keyStati}
-      functionKeyStatus={functionKeyStati}
-      clickCallback={keyboardClick}
-      fkeyCallback={fkeyCallback}
-      focusedKey={"b"}
-      pressedKeys={new Set(["b"])} />
+      <Keyboard
+        keyStatus={keyStati}
+        functionKeyStatus={functionKeyStati}
+        clickCallback={keyboardClick}
+        fkeyCallback={fkeyCallback}
+        focusedKey={"b"}
+        pressedKeys={new Set(["b"])} />
     </div>
   );
+*/
 
 /*
   return (
     <div className={styles.game}>
-      <div className={styles.gameHeader}>
+      <div className={styles.dictScoreArea}>
         <DictArea />
         <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize} />
       </div>
@@ -425,7 +421,5 @@ return (
     </div>
   );
 */
-};
-
 
 export default GameArea;
