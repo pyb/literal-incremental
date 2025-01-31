@@ -24,6 +24,8 @@ import {InputItem, InputArea} from "./InputArea";
 import Log, { LogItem } from "./Log";
 import Shop from "./Shop";
 
+import * as fs from "./fakeState";
+
 /**************************************************************/
 
 const getKeyMode = (key: string, boughtKeys: Set<string>, repeatableKeys: Set<string>,
@@ -297,43 +299,54 @@ const GameArea = () => {
     processTimeouts();
   }
 
-  /*
   return (
     <>
-      <Log log={GS.log}></Log>
-      <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize}/>
-      <DictArea />
-      {GS.inputVisible &&
+      <div className={styles.game}>
+        <div className={styles.dictContainer}>
+          <DictScoreArea score={GS.score}
+            glyphs={GS.glyphs}
+            words={GS.words}
+            maxWordSize={GS.maxWordSize}
+            longItems={fs.longItems}
+            shortItems={fs.shortItems} />
+        </div>
+        <div className={styles.gameMain}>
+          <Keyboard
+            keyStatus={fs.keyStati}
+            functionKeyStatus={fs.functionKeyStati}
+            clickCallback={keyboardClick}
+            fkeyCallback={fkeyCallback}
+            focusedKey={"b"}
+            pressedKeys={new Set(["b"])} />
+          <InputArea prevInput={fs.testPrevInput} currentInput={fs.testCurrentInput} />
+        </div>
+        <MultiFooter items={[
+          <Log log={GS.log}></Log>,
+          <button className={styles.resetButton} onClick={reset}>RESET</button>,
+          <RCScout />
+        ]} />
+      </div >
+    </>
+  );
+};
 
+export default GameArea;
+
+  /*
       <Shop score={GS.score}
             shopItems={GameData.shopEntries}
             visibleShopItems={GS.visibleShopItems}
             activeShopItems={GS.activeShopItems}
             callback={shopClick}></Shop>
-      <Keyboard allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
-                                           GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
-                clickCallback={keyboardClick}
-                repeatModeCallback={repeatModeClick}
-                repeatVisible={true}
-                focusedKey={GS.lastPressed}
-                pressedKeys={pressedKeys}/>
-      {GS.inputVisible &&
-      <InputArea input={GS.inputBuffer} />}
-      <button onClick={reset}>RESET</button>
-    </>
-  );
   */
-  
   /*
       {GS.inputVisible &&
       <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
-  */       
-
+  */   
   /*
   <InputArea input={GS.inputBuffer} />
   */
   /*
-  return (
     <Keyboard
       allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
                                  GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
@@ -342,159 +355,4 @@ const GameArea = () => {
       repeatVisible={true}
       focusedKey={GS.lastPressed}
       pressedKeys={pressedKeys} />
-  );
   */
-  /*
-  interface DictItem {
-    word: string,
-    shortDesc: string,
-    longDesc: string,
-    score?: number
-  };
-  
-  */
-  const item1:DictItem = {
-    word: "foo",
-    shortDesc: "BAR1",
-    longDesc: "frobinates your thingmebobs by +1", 
-  };
-
-  const item2:DictItem = {
-    word: "X",
-    score: 10000,
-  };
-
-  const item3:DictItem = {
-    word: "barqux",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster", 
-  };
-
-  const item4:DictItem = {
-    word: "barqux4",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster", 
-  };
-  const item5:DictItem = {
-    word: "barqux5",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster", 
-  };
-  const item6:DictItem = {
-    word: "barqux6",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster", 
-  };
-  const item7:DictItem = {
-    word: "barqux7",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster", 
-  };
-  const item8:DictItem = {
-    word: "barqu8",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster", 
-  };
-  const item9:DictItem = {
-    word: "barqux9",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster", 
-  };
-  const item10:DictItem = {
-    word: "barqux10",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster", 
-  };
-
-  const shortItems:Array<DictItem> = [
-    item1, item2, item3,
-    item4, item5, item6,
-    item7, item8, item9,
-    item10
-  ];
-  
-  const longItems:Array<DictItem> = [
-    item1, item2
-  ];
-
-  return (
-    <div className={styles.dictContainer}>
-    <DictScoreArea score={GS.score}
-                   glyphs={GS.glyphs}
-                   words={GS.words}
-                   maxWordSize={GS.maxWordSize}
-                   longItems={longItems}
-                   shortItems={shortItems}/>
-                   </div>
-  );
-};
-
-const testPrevInput: Array<InputItem> = [
-  {letter: "i", word: "", score: 10, key: 0},
-  {letter: "n", word: "", score: 10, key: 1},
-  {letter: "", word: "baz", score: 10, key: 2},
-  {letter: "", word: "qux", score: 10, key: 3},
-  {letter: "t", word: "", score: 10, key: 4},
-];
-
-const testCurrentInput:InputItem = {
-  letter: "",
-  word: "fol",
-  score: 0,
-  key: 100
-};
-
-const keyStati = [
-  {key: "a", mode: KeyMode.VISIBLE},
-  {key: "b", mode: KeyMode.BOUGHT},
-  {key: "c", mode: KeyMode.BOUGHT},
-  {key: "d", mode: KeyMode.PURCHASEABLE},
-];
-
-const functionKeyStati = [
-  {key: "tab", mode: KeyMode.FUNCTION_TOGGLED},
-  {key: "rpt", mode: KeyMode.FUNCTION_VISIBLE},
-];
-
-/*
-  return (
-    <div className={styles.kbdContainer}>
-      <Keyboard
-        keyStatus={keyStati}
-        functionKeyStatus={functionKeyStati}
-        clickCallback={keyboardClick}
-        fkeyCallback={fkeyCallback}
-        focusedKey={"b"}
-        pressedKeys={new Set(["b"])} />
-    </div>
-  );
-*/
-
-/*
-  return (
-    <div className={styles.game}>
-      <div className={styles.dictScoreArea}>
-        <DictArea />
-        <ScoreBoard score={GS.score} glyphs={GS.glyphs} words={GS.words} maxWordSize={GS.maxWordSize} />
-      </div>
-      <div className={styles.gameMain}>
-        <Keyboard
-          keyStatus={keyStati}
-          functionKeyStatus={functionKeyStati}
-          clickCallback={keyboardClick}
-          fkeyCallback={fkeyCallback}
-          focusedKey={"b"}
-          pressedKeys={new Set(["b"])} />
-        <InputArea prevInput={testPrevInput} currentInput={testCurrentInput} />
-
-      </div>
-      <MultiFooter items={[
-        <Log log={GS.log}></Log>,
-        <button className={styles.resetButton} onClick={reset}>RESET</button>,
-        <RCScout />
-      ]} />
-    </div>
-  );
-*/
-
-export default GameArea;
