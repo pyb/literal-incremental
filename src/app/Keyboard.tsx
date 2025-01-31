@@ -151,8 +151,8 @@ const Keyboard = ({keyStatus, functionKeyStatus, focusedKey, clickCallback, fkey
       <div className={styles.keyboard}>
         <div className={styles.keyboardTop}>
         <VStack className={styles.stack} separator={<StackSeparator className={styles.separator} />}>
-          {layeredKeys.map ((keyRow:Array<React.ReactNode>) =>
-          <HStack className={styles.stack} separator={<StackSeparator className={styles.separator} />}>
+          {layeredKeys.map ((keyRow:Array<React.ReactNode>, index: number) =>
+          <HStack className={styles.stack} key={index} separator={<StackSeparator className={styles.separator} />}>
             {keyRow}
           </HStack>)}
         </VStack>
