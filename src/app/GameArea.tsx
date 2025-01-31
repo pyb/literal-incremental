@@ -19,7 +19,7 @@ import { nextWordState } from "./word";
 import { load, save } from "./persist";
 
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
-import {DictScoreArea, Scores, Dict} from "./Dict";
+import {DictScoreArea, DictItem} from "./Dict";
 import {InputItem, InputArea} from "./InputArea";
 import Log, { LogItem } from "./Log";
 import Shop from "./Shop";
@@ -329,7 +329,6 @@ const GameArea = () => {
       <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
   */       
 
-
   /*
   <InputArea input={GS.inputBuffer} />
   */
@@ -345,15 +344,51 @@ const GameArea = () => {
       pressedKeys={pressedKeys} />
   );
   */
+  /*
+  interface DictItem {
+    word: string,
+    shortDesc: string,
+    longDesc: string,
+    score?: number
+  };
+  
+  */
+  const item1:DictItem = {
+    word: "foo",
+    shortDesc: "BAR1",
+    longDesc: "frobinates your thingmebobs by +1", 
+  };
+
+  const item2:DictItem = {
+    word: "X",
+    score: 10000,
+  };
+
+  const item3:DictItem = {
+    word: "barqux",
+    shortDesc: "REP",
+    longDesc: "Make repeat rate three times faster", 
+  };
+
+  const shortItems:Array<DictItem> = [
+    item1, item2, item3
+  ];
+  
+  const longItems:Array<DictItem> = [
+    item1, item2
+  ];
 
   return (
+    <div className={styles.dictContainer}>
     <DictScoreArea score={GS.score}
                    glyphs={GS.glyphs}
                    words={GS.words}
-                   maxWordSize={GS.maxWordSize}/>
+                   maxWordSize={GS.maxWordSize}
+                   longItems={longItems}
+                   shortItems={shortItems}/>
+                   </div>
   );
 };
-
 
 const testPrevInput: Array<InputItem> = [
   {letter: "i", word: "", score: 10, key: 0},
@@ -381,7 +416,8 @@ const functionKeyStati = [
   {key: "tab", mode: KeyMode.FUNCTION_TOGGLED},
   {key: "rpt", mode: KeyMode.FUNCTION_VISIBLE},
 ];
-  /*
+
+/*
   return (
     <div className={styles.kbdContainer}>
       <Keyboard

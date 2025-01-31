@@ -1,12 +1,29 @@
-.scoreBoard
-{
-  gap: 10px;
-  font-size: large;
+.scoreBoard {
+    gap: 10px;
+    font-size: large;
+    flex-basis: 25%;
+    text-align: center;
 }
-
 
 .dictScoreArea {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+}
+
+.dictArea {
+    background-color: #333333;
+    flex-basis: 75%;
+}
+
+.score {
+    color: red;
+}
+
+.glyphs {
+    color: yellow;
+}
+
+.mws {
+    color: green;
 }

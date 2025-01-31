@@ -1,5 +1,7 @@
 'use client'
 
+// TODO: extra display for: last word scored, current prefix.
+
 import React, { useEffect } from "react";
 import styles from "./css/input.module.css";
 
