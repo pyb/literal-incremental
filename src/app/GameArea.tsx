@@ -302,15 +302,14 @@ const GameArea = () => {
   return (
     <>
       <div className={styles.game}>
-        <div className={styles.dictContainer}>
-          <DictScoreArea score={GS.score}
-            glyphs={GS.glyphs}
-            words={GS.words}
-            maxWordSize={GS.maxWordSize}
-            longItems={fs.longItems}
-            shortItems={fs.shortItems} />
-        </div>
+        <DictScoreArea score={GS.score}
+          glyphs={GS.glyphs}
+          words={GS.words}
+          maxWordSize={GS.maxWordSize}
+          longItems={fs.longItems}
+          shortItems={fs.shortItems} />
         <div className={styles.gameMain}>
+          <InputArea prevInput={fs.testPrevInput} currentInput={fs.testCurrentInput} />
           <Keyboard
             keyStatus={fs.keyStati}
             functionKeyStatus={fs.functionKeyStati}
@@ -318,7 +317,6 @@ const GameArea = () => {
             fkeyCallback={fkeyCallback}
             focusedKey={"b"}
             pressedKeys={new Set(["b"])} />
-          <InputArea prevInput={fs.testPrevInput} currentInput={fs.testCurrentInput} />
         </div>
         <MultiFooter items={[
           <Log log={GS.log}></Log>,

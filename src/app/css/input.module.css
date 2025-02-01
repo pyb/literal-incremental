@@ -3,16 +3,23 @@
     margin-top:auto;
     margin-bottom: auto;
     white-space: nowrap;
+    flex-basis: 50%;
     flex-grow: 1;
     max-width: 50%;
     text-align: end;
-}
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
+    }
 
 .inputText {
     word-spacing: -.7ch;
     font-family: monospace;
     font-size: 1.3em;
-    padding-right: 7%;
+    padding-right: 25%;
+    margin: auto;
+    width: 100%;
 }
 
 .prio1 {
