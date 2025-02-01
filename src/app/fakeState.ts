@@ -9,8 +9,9 @@ export const item1: DictItem = {
 };
 
 export const item2: DictItem = {
+    n: 2,
     word: "X",
-    score: 10000,
+    output: "blabla",
 };
 
 export const item3: DictItem = {
@@ -30,10 +31,11 @@ export const item5: DictItem = {
     longDesc: "Make repeat rate three times faster",
 };
 export const item6: DictItem = {
-    word: "barqux6",
-    shortDesc: "REP",
-    longDesc: "Make repeat rate three times faster",
+    n: 10,
+    word: "I",
+    output: "E",
 };
+
 export const item7: DictItem = {
     word: "barqux7",
     shortDesc: "REP",

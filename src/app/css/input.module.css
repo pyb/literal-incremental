@@ -1,6 +1,6 @@
 .inputArea {
-    min-height:10vh;
-    margin-top:auto;
+    min-height: 10vh;
+    margin-top: auto;
     margin-bottom: auto;
     white-space: nowrap;
     flex-basis: 50%;
@@ -10,8 +10,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: end;
-    }
+    align-items: flex-end;
+}
 
 .inputText {
     word-spacing: -.7ch;
@@ -21,7 +21,6 @@
     margin: auto;
     width: 100%;
 }
-
 .prio1 {
     color: red;
 }

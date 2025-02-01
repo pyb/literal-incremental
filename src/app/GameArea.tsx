@@ -302,9 +302,7 @@ const GameArea = () => {
   return (
     <>
       <div className={styles.game}>
-        <DictScoreArea score={GS.score}
-          glyphs={GS.glyphs}
-          words={GS.words}
+        <DictScoreArea
           maxWordSize={GS.maxWordSize}
           longItems={fs.longItems}
           shortItems={fs.shortItems} />

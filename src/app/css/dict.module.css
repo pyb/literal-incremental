@@ -39,6 +39,13 @@
     color: red;
 }
 
+.qty {
+    composes: number;
+    color: lightyellow;
+    font-size: 100%;
+    margin-right: 2px;
+}
+
 .glyphs {
     composes: number;
     color: yellow;
