@@ -27,6 +27,7 @@
     margin-top: 5%;
     padding-bottom: 2%;
     border-bottom: 1px dashed;
+    border-bottom-color: #888888;
 }
 
 .number {
@@ -48,7 +49,12 @@
     color: green;
 }
 
+.word {
+    color: #cccccc;
+}
+
 .LIword {
+    composes: word;
     margin-right: 10px;
     font-family: monospace;
     font-size: 120%;
@@ -62,6 +68,7 @@
 }
 
 .SIword {
+    composes: word;
     margin-right: 10px;
     font-family: monospace;
     font-size: 120%;
@@ -90,8 +97,8 @@
 .shortItem .tooltiptext {
     visibility: hidden;
     width: 120px;
-    background-color: #444444;
-    opacity: 80%;
+    background-color: #222222;
+    opacity: 60%;
     text-align: center;
     padding: 5px 0;
     border-radius: 6px;
