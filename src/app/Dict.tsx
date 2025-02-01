@@ -31,13 +31,17 @@ export interface DictItem {
   score?: number,
 };
 
+const wordOrLetter = (item:DictItem) => {
+  return ((item.word.length > 1) ? item.word : (<span className={styles.letter}>{item.word}</span>));
+}
 const LongItem = ({item}: {item: DictItem}) => {
   const content = item.longDesc ? item.longDesc : item.score;
   const contentStyle = item.longDesc? styles.LIdesc : styles.itemScore;
 
   return (
   <div className={styles.longItem}>
-    <span className={styles.LIword}>{item.word}</span><span className={contentStyle}>{content}</span>
+    <span className={styles.LIword}>{wordOrLetter(item)}</span>
+    <span className={contentStyle}>{content}</span>
   </div>
 )};
 
@@ -47,7 +51,7 @@ const ShortItem = ({item}: {item: DictItem}) => {
 
   return (
   <div className={styles.shortItem}>
-    <span className={styles.SIword}>{item.word}</span><span className={contentStyle}>{content}</span>
+    <span className={styles.SIword}>{wordOrLetter(item)}</span><span className={contentStyle}>{content}</span>
     {item.longDesc && <span className={styles.tooltiptext}>{item.longDesc}</span>}
   </div>
 )};
