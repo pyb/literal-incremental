@@ -103,15 +103,15 @@ const computeRows = (len:number, mx:number):Array<number> => {
 }
 
 interface Props {
-  keyStatus: KeyStatus[],
-  functionKeyStatus: KeyStatus[],
-  focusedKey: string,
-  pressedKeys: Set<string>,
+  keyStatus: KeyStatus[], // what Keys are available, and their status
+  functionKeyStatus: KeyStatus[], // what modifier Keys are available, and their status
+  lastPressedKey: string, // last pressed key?
+  pressedKeys: Set<string>, // currently pressed keys
   fkeyCallback: (key: string) => void,
   clickCallback: (key: string) => void,
 }
 
-const Keyboard = ({keyStatus, functionKeyStatus, focusedKey, clickCallback, fkeyCallback, pressedKeys}: Props) => {
+const Keyboard = ({keyStatus, functionKeyStatus, lastPressedKey, clickCallback, fkeyCallback, pressedKeys}: Props) => {
   const [keyHighlight, setKeyHighlight] = React.useState<boolean>(false);
 
   const triggerKeyHighlight = () => {
@@ -123,19 +123,18 @@ const Keyboard = ({keyStatus, functionKeyStatus, focusedKey, clickCallback, fkey
         UIData.highlightDuration);
     }
   }
-  
 
   React.useEffect(()=>{
-    if (pressedKeys.has(focusedKey)){
+    if (pressedKeys.has(lastPressedKey)){
       triggerKeyHighlight();
     }
-  },[pressedKeys, focusedKey, keyHighlight]);
+  },[pressedKeys, lastPressedKey, keyHighlight]);
 
   let allKeys = keyStatus.map(
     (keyStatus: KeyStatus) =>
       <Key text={keyStatus.key}
         key={keyStatus.key}
-        highlight={keyHighlight && (keyStatus.key == focusedKey)}
+        highlight={keyHighlight && (keyStatus.key == lastPressedKey)}
         onclick={() => clickCallback(keyStatus.key)}
         mode={keyStatus.mode} />);
 

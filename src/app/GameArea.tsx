@@ -44,15 +44,13 @@ const getKeyMode = (key: string, boughtKeys: Set<string>, repeatableKeys: Set<st
 
 // TODO : move to Keyboard.tsx?
 const getKeyStatus = (keyInfo: Array<KeyInfo>,
-  boughtKeys: Set<string>, repeatableKeys: Set<string>, repeatSelectMode: boolean,
-  repeatAvailable: boolean, unlockAvailable: boolean, score: number): KeyStatus[] => {
-  const visibleKeys = keyInfo.filter((key) => (score >= key.visibilityPrice));
-  return visibleKeys.map(
+  availableKeys: Set<string>, repeatableKeys: Set<string>, repeatSelectMode: boolean,
+  repeatAvailable: boolean, unlockAvailable: boolean): KeyStatus[] => {
+  return keyInfo.map(
     (kInfo: KeyInfo): KeyStatus => ({
       key: kInfo.key,
-      mode: getKeyMode(kInfo.key, boughtKeys, repeatableKeys, repeatAvailable, unlockAvailable, repeatSelectMode)
-    })
-  );
+      mode: getKeyMode(kInfo.key, availableKeys, repeatableKeys, repeatAvailable, unlockAvailable, repeatSelectMode)
+    }));
 };
 
 /***************************************************************************************** */
@@ -195,7 +193,7 @@ const GameArea = () => {
   // Keypress handling, scoring, word formation
 
   const handleKey = (key: string) => {
-    if (GS.boughtKeys.has(key)) {
+    if (GS.availableKeys.has(key)) {
       let buffer = GS.inputBuffer;
       if (buffer.length == GameData.inputSize) {
         buffer = buffer.slice(GameData.inputSize / 2, GameData.inputSize);
@@ -205,7 +203,6 @@ const GameArea = () => {
       if (nextState.finishedWord) {
         setGS(gs => {
           gs.lastScoredWord = nextState.finishedWord;
-          gs.words++
         });
       }
 
@@ -214,7 +211,6 @@ const GameArea = () => {
         gs.currentPartialWord = nextState.currentPartialWord;
         gs.lastPressed = key;
         gs.glyphs++;
-        gs.score += GameData.keyScores[key];
       });
 
       // TODO : maybe move this to shop component
@@ -236,10 +232,10 @@ const GameArea = () => {
         gs.repeatKeys.add(key)
       });
     }
-    else if (GS.unlockAvailable && !GS.boughtKeys.has(key)) {
+    else if (GS.unlockAvailable && !GS.availableKeys.has(key)) {
       setGS(gs => {
         gs.unlockAvailable = false;
-        gs.boughtKeys.add(key);
+        gs.availableKeys.add(key);
       });
     }
     else if (GS.repeatAvailable && !GS.repeatableKeys.has(key)) {
@@ -309,13 +305,27 @@ const GameArea = () => {
         <div className={styles.gameMain}>
           <InputArea prevInput={fs.testPrevInput} currentInput={fs.testCurrentInput} />
           <Keyboard
+          /*
+            keyStatus={getKeyStatus(GameData.keyInfo, GS.availableKeys, GS.repeatableKeys,
+              GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable)}
+            */
+            keyStatus= {[{key: "i", mode: KeyMode.BOUGHT}]}
+            functionKeyStatus={[]}
+            clickCallback={keyboardClick}
+            fkeyCallback={fkeyCallback}
+            lastPressedKey={GS.lastPressed}
+            pressedKeys={pressedKeys} />
+        </div>
+  {/*   // Fake Keyboard
+          <Keyboard
             keyStatus={fs.keyStati}
             functionKeyStatus={fs.functionKeyStati}
             clickCallback={keyboardClick}
             fkeyCallback={fkeyCallback}
-            focusedKey={"b"}
-            pressedKeys={new Set(["b"])} />
+            focusedKey={fs.fakeFocusedKey}
+            pressedKeys={fs.fakePressedKeys} />
         </div>
+  */}
         <MultiFooter items={[
           <Log log={GS.log}></Log>,
           <button className={styles.resetButton} onClick={reset}>RESET</button>,

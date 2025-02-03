@@ -2,7 +2,7 @@ export type KeyInfo = {
   key: string,
   visibilityPrice: number,
   repeaterPrice: number,
-  score: number
+  score?: number // no longer needed?
 }
 
 export enum ShopAction {
@@ -24,22 +24,14 @@ export type ShopEntry = {
 // Obsolete? Do keys still have a repeaterPrice?
 const keyInfo:Array<KeyInfo> = [
   { key: 'i', visibilityPrice: 0, repeaterPrice: 50, score: 1},
-  { key: 's', visibilityPrice: 10, repeaterPrice: 5000 , score: 2},
-  { key: 'x', visibilityPrice: 50, repeaterPrice: 50000, score: 50 },
-  { key: 'n', visibilityPrice: 100, repeaterPrice: 5000, score: 3 },
-  /*
-  { key: 'c', visibilityPrice: 200, price: 300, repeaterPrice: 500000 },
-  { key: 'h', visibilityPrice: 350, price: 500, repeaterPrice: 5000000 },
-  { key: 'o', visibilityPrice: 600, price: 750, repeaterPrice: 50000000 },
-  { key: 'r', visibilityPrice: 800, price: 1000, repeaterPrice: 500000000 }
-   */
+  { key: 's', visibilityPrice: 10, repeaterPrice: 5000},
+  { key: 'x', visibilityPrice: 50, repeaterPrice: 50000 },
+  { key: 'n', visibilityPrice: 100, repeaterPrice: 5000 },
 ];
 
+/*
 const keyScores: Record<string, number>= {};
-for (const kI of keyInfo)
-{
-  keyScores[kI.key] = kI.score;
-}
+*/
 
 const shopEntries:Array<ShopEntry> = ([
   {text: "Unlock a Letter", action: ShopAction.LETTERUNLOCK, n: 1, position: 0, visibilityPrice: 10, price: 40},
@@ -74,6 +66,6 @@ export const GameData =
   /* Word / letter data */
   tinydict: ['i', 'sin', 'is', 'in', 'si', 'six', 'nix'],
   keyInfo: keyInfo,
-  keyScores: keyScores,
+  //keyScores: keyScores,
   shopEntries: shopEntries,
 };

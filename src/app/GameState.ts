@@ -3,10 +3,7 @@ import { GameData, UIData } from "./GameData";
 import { LogItem } from "./Log";
 
 export interface GameState {
-  //scores
-  score: number,
   glyphs: number,
-  words: number,
   maxWordSize: number,
 
   // typing / word construction
@@ -15,7 +12,7 @@ export interface GameState {
   currentPartialWord: string,
   lastScoredWord: string,
 
-  boughtKeys: Set<string>,
+  availableKeys: Set<string>,
   repeatableKeys: Set<string>,
   repeatKeys: Set<string>,
 
@@ -46,18 +43,16 @@ log.push({text: GameData.welcomeMessage, key: UIData.logSize - 1});
 
 export const initialGameState: GameState =
 {
-  score: 0,
-  glyphs: 0,
-  words: 0,
+  glyphs: 0, // internal Glyphs score only needed for visibility?
   maxWordSize: 0,
 
-  lastPressed: "",
+  lastPressed: "", // FIXME/review : is this game state or ui state?
   inputBuffer: "",
 
   currentPartialWord: "",
   lastScoredWord: "",
 
-  boughtKeys: new Set<string>(["i"]),
+  availableKeys: new Set<string>(["i"]),
   repeatableKeys: new Set<string>(),
   repeatKeys: new Set<string>(),
 

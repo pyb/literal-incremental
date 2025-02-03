@@ -94,3 +94,7 @@ export const functionKeyStati = [
     { key: "tab", mode: KeyMode.FUNCTION_TOGGLED },
     { key: "rpt", mode: KeyMode.FUNCTION_VISIBLE },
 ];
+
+export const fakeFocusedKey = "b";
+
+export const fakePressedKeys = new Set(["b"]);
