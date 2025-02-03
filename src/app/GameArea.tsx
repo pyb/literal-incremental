@@ -70,6 +70,14 @@ const RCScout = () => {
     </div>);
   }
 
+const Debug = ({GS}: {GS: GameState}) => {
+  return (
+    <>
+      <p> Glyphs : {GS.glyphs}</p>
+    </>
+  );
+}
+
 interface FooterProps {
   items: Array<React.ReactNode>;
 };
@@ -329,7 +337,8 @@ const GameArea = () => {
         <MultiFooter items={[
           <Log log={GS.log}></Log>,
           <button className={styles.resetButton} onClick={reset}>RESET</button>,
-          <RCScout />
+          <RCScout />,
+          <Debug GS={GS} />
         ]} />
       </div >
     </>
