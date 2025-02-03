@@ -262,40 +262,6 @@ const GameArea = () => {
     console.log(fkey + " pressed.");
   }
 
-
-  /**************************************************************************/
-  // Shop
-
-  const shopClick = (action: ShopAction, n: number, index: number, shopEntries: Array<ShopEntry>) => {
-    const entry: ShopEntry = shopEntries[index];
-    const price = entry.price;
-
-    if (!GS.activeShopItems.has(index) && (GS.glyphs >= price)) {
-      setGS(gs => {
-        gs.glyphs -= price;
-        gs.activeShopItems.add(index)
-      });
-      addLog("Bought : " + entry.text + " for " + price);
-      // TODO : Insert side effects here
-      switch (action) {
-        case ShopAction.LETTERUNLOCK:
-          setGS(gs => { gs.unlockAvailable = true });
-          break;
-        case ShopAction.WORDUNLOCK:
-          console.assert(n == (GS.maxWordSize + 1), n, GS.maxWordSize);
-          setGS(gs => {
-            gs.inputVisible = true;
-            gs.maxWordSize = n
-          }); // should always be maxWordSize+1
-          break;
-        case ShopAction.REPEATUNLOCK:
-          setGS(gs => { gs.repeatAvailable = true });
-          break;
-        default:
-      }
-    }
-  }
-
   /**************************************************************************/
 
   if (doProcessTimeouts) {
