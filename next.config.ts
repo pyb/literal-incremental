@@ -2,9 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  devIndicators: {
-    appIsrStatus: false,
-  },
 };
 
 export default {
@@ -15,5 +12,8 @@ export default {
   },
   experimental: {
     optimizePackageImports: ['@chakra-ui/react'],
+  },
+  devIndicators: {
+    appIsrStatus: false,
   },
 }
