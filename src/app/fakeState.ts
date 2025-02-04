@@ -1,5 +1,5 @@
 import { InputItem, DictItem } from "./GameTypes";
-import { KeyMode } from "./Keyboard";
+import { KeyMode } from "./GameTypes";
 
 export const item1: DictItem = {
     word: "foo",
@@ -85,8 +85,8 @@ export const testCurrentInput: InputItem = {
 
 export const keyStati = [
     { key: "a", mode: KeyMode.VISIBLE },
-    { key: "b", mode: KeyMode.BOUGHT },
-    { key: "c", mode: KeyMode.BOUGHT },
+    { key: "b", mode: KeyMode.UNLOCKED },
+    { key: "c", mode: KeyMode.UNLOCKED },
     { key: "d", mode: KeyMode.PURCHASEABLE },
 ];
 

@@ -21,4 +21,14 @@ export interface DictItem {
     longDesc?: string,
     output?: string
   };
-  
+
+export enum KeyMode {
+    INVISIBLE,
+    UNLOCKED,
+    VISIBLE, // but not yet purchaseable
+    PURCHASEABLE,
+    REPEAT_PURCHASEABLE,
+    REPEAT_TOGGLE,
+    FUNCTION_VISIBLE,
+    FUNCTION_TOGGLED
+}

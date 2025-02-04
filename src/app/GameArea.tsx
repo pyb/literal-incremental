@@ -18,9 +18,9 @@ import { emptyInputItem, GameState, initialGameState} from "./GameState";
 import { nextWordState, WordState } from "./word";
 import { load, save } from "./persist";
 
-import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
+import Keyboard, { KeyStatus } from "./Keyboard";
 import DictArea from "./Dict";
-import {InputItem, LogItem, DictItem} from "./GameTypes"
+import {InputItem, LogItem, KeyMode, DictItem} from "./GameTypes"
 
 import InputArea from "./InputArea";
 import Log from "./Log";
@@ -30,28 +30,34 @@ import next from "next";
 
 /**************************************************************/
 
-const getKeyMode = (key: string, boughtKeys: Set<string>, repeatableKeys: Set<string>,
-  repeatAvailable: boolean, unlockAvailable: boolean, repeatSelectMode: boolean) => {
+const getKeyMode = (key: string, glyphs: number, visibilityThreshold:number, availableKeys: Set<string>, repeatableKeys: Set<string>,
+  repeatAvailable: boolean, repeatSelectMode: boolean) =>
+{
   if (repeatSelectMode && repeatableKeys.has(key))
     return KeyMode.REPEAT_TOGGLE;
-  if (repeatAvailable && !repeatableKeys.has(key) && boughtKeys.has(key))
+  if (repeatAvailable && !repeatableKeys.has(key) && availableKeys.has(key))
     return KeyMode.REPEAT_PURCHASEABLE;
-  else if (boughtKeys.has(key))
-    return KeyMode.BOUGHT
+  else if (availableKeys.has(key))
+    return KeyMode.UNLOCKED
+  /* // guess it'll no longer work like this 
   else if (unlockAvailable)
     return KeyMode.PURCHASEABLE;
-  else
+  */
+  else if (glyphs >= visibilityThreshold)
     return KeyMode.VISIBLE;
+  else
+    return KeyMode.INVISIBLE;
 }
 
 // TODO : move to Keyboard.tsx?
-const getKeyStatus = (keyInfo: Array<KeyInfo>,
+const getKeyStatus = (keyInfo: Array<KeyInfo>, glyphs: number,
   availableKeys: Set<string>, repeatableKeys: Set<string>, repeatSelectMode: boolean,
-  repeatAvailable: boolean, unlockAvailable: boolean): KeyStatus[] => {
+  repeatAvailable: boolean): KeyStatus[] => 
+{
   return keyInfo.map(
     (kInfo: KeyInfo): KeyStatus => ({
       key: kInfo.key,
-      mode: getKeyMode(kInfo.key, availableKeys, repeatableKeys, repeatAvailable, unlockAvailable, repeatSelectMode)
+      mode: getKeyMode(kInfo.key, glyphs, kInfo.visibilityThreshold, availableKeys, repeatableKeys, repeatAvailable, repeatSelectMode)
     }));
 };
 
@@ -276,12 +282,15 @@ const GameArea = () => {
         gs.repeatKeys.add(key)
       });
     }
+    /*
+    // old style key purchase. To delete
     else if (GS.unlockAvailable && !GS.availableKeys.has(key)) {
       setGS(gs => {
         gs.unlockAvailable = false;
         gs.availableKeys.add(key);
       });
     }
+    */
     else if (GS.repeatAvailable && !GS.repeatableKeys.has(key)) {
       setGS(gs => {
         gs.repeatAvailable = false;
@@ -317,11 +326,8 @@ const GameArea = () => {
           */}
           <InputArea prevInput={GS.inputHistory} partialInput={GS.currentInput} />
           <Keyboard
-          /*
-            keyStatus={getKeyStatus(GameData.keyInfo, GS.availableKeys, GS.repeatableKeys,
-              GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable)}
-            */
-            keyStatus= {[{key: "i", mode: KeyMode.BOUGHT}]}
+            keyStatus={getKeyStatus(GameData.keyInfo, GS.glyphs, GS.availableKeys, GS.repeatableKeys,
+              GS.repeatSelectMode, GS.repeatAvailable)}
             functionKeyStatus={[]}
             clickCallback={keyboardClick}
             fkeyCallback={fkeyCallback}
@@ -350,7 +356,6 @@ const GameArea = () => {
 };
 
 export default GameArea;
-
   /*
       <Shop score={GS.score}
             shopItems={GameData.shopEntries}

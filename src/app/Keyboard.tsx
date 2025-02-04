@@ -4,6 +4,7 @@ import React from "react";
 import { HStack, StackSeparator, Kbd, Theme, VStack } from "@chakra-ui/react";
 import styles from "./css/keyboard.module.css";
 import { UIData, GameData } from "./GameData";
+import { KeyMode } from "./GameTypes";
 /*
 import { keyframes } from "motion";
 */
@@ -11,16 +12,6 @@ import { keyframes } from "motion";
 export interface KeyStatus {
   key: string,
   mode: KeyMode
-}
-
-export enum KeyMode {
-  BOUGHT,
-  PURCHASEABLE,
-  REPEAT_PURCHASEABLE,
-  VISIBLE,
-  REPEAT_TOGGLE,
-  FUNCTION_VISIBLE,
-  FUNCTION_TOGGLED
 }
 
 interface KeyProps {
@@ -36,7 +27,9 @@ const Key = ({ text, highlight, mode, onclick }: KeyProps) => {
 
   switch(mode)
   {
-    case KeyMode.BOUGHT:
+    case KeyMode.INVISIBLE:
+      throw new Error("Trying to display Invisible key!");
+    case KeyMode.UNLOCKED:
       if (highlight)
         palette = 'yellow';
       else
@@ -124,14 +117,15 @@ const Keyboard = ({keyStatus, functionKeyStatus, lastPressedKey, clickCallback, 
         highlightDuration);
     }
   }
-
   React.useEffect(()=>{
     if (pressedKeys.has(lastPressedKey)){
       triggerKeyHighlight();
     }
   },[pressedKeys, lastPressedKey, keyHighlight]);
 
-  let allKeys = keyStatus.map(
+  const allKeys = keyStatus
+    .filter((keyStatus: KeyStatus) => keyStatus.mode != KeyMode.INVISIBLE)
+    .map(
     (keyStatus: KeyStatus) =>
       <Key text={keyStatus.key}
         key={keyStatus.key}

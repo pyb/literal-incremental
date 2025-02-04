@@ -3,15 +3,15 @@ import * as fake from "./fakeState"
 
 export type KeyInfo = {
   key: string,
-  visibilityPrice: number,
+  visibilityThreshold: number,
 }
 
 // Obsolete? Do keys still have a repeaterPrice?
 const keyInfo:Array<KeyInfo> = [
-  { key: 'i', visibilityPrice: 0 },
-  { key: 'n', visibilityPrice: 100 },
-  { key: 'w', visibilityPrice: 1000},
-  { key: 'e', visibilityPrice: 3000 },
+  { key: 'i', visibilityThreshold: 0 },
+  { key: 'n', visibilityThreshold: 100 },
+  { key: 'w', visibilityThreshold: 1000},
+  { key: 'e', visibilityThreshold: 3000 },
 ];
 
 const dict: Array<DictItem> = [
