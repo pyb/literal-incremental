@@ -149,17 +149,17 @@ const Keyboard = ({keyStatus, functionKeyStatus, lastPressedKey, clickCallback, 
   }
 
   return (
-      <div className={styles.keyboard}>
-        <div className={styles.keyboardTop}>
-        <VStack className={styles.stack} separator={<StackSeparator className={styles.separator} />}>
-          {layeredKeys.map ((keyRow:Array<React.ReactNode>, index: number) =>
-          <HStack className={styles.stack} key={index} separator={<StackSeparator className={styles.separator} />}>
-            {keyRow}
-          </HStack>)}
+    <div className={styles.keyboard}>
+      <div className={styles.keyboardTop}>
+        <VStack className={styles.vstack} separator={<StackSeparator className={styles.separator} />}>
+          {layeredKeys.map((keyRow: Array<React.ReactNode>, index: number) =>
+            <HStack className={styles.hstack} key={index} separator={<StackSeparator className={styles.separator} />}>
+              {keyRow}
+            </HStack>)}
         </VStack>
-        </div>
-        <div className={styles.keyboardBottom}>
-        <HStack className={styles.stack} separator={<StackSeparator className={styles.separator}/>}>
+      </div>
+      <div className={styles.keyboardBottom}>
+        <HStack className={styles.vstack} separator={<StackSeparator className={styles.separator} />}>
           {functionKeyStatus.map((keyStatus: KeyStatus) =>
             <Key text={keyStatus.key}
               key={keyStatus.key} // for React
@@ -167,7 +167,7 @@ const Keyboard = ({keyStatus, functionKeyStatus, lastPressedKey, clickCallback, 
               onclick={() => fkeyCallback(keyStatus.key)}
               mode={keyStatus.mode} />)}
         </HStack>
-        </div>
+      </div>
 
       </div>
   );

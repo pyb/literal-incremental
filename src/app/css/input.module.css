@@ -21,7 +21,12 @@
     margin: auto;
     width: 100%;
     overflow: hidden;
+/*
+    position:absolute;
+    bottom: 25%;
+*/
 }
+
 .prio1 {
     color: red;
 }
