@@ -45,6 +45,12 @@ const dict: Array<DictItem> = [
     shortDesc: "REPI",
     longDesc: "Unlock I repeater"
   },
+  { // should there be something required to unlock this?
+    visibility: 30,
+    word: "I",
+    shortDesc: "2LW",
+    longDesc: "Unlock two-letter words"
+  },
 
   fake.item1,
   fake.item3,
