@@ -3,10 +3,12 @@
 import React from "react";
 import { HStack, StackSeparator, Kbd, Theme, VStack } from "@chakra-ui/react";
 import styles from "./css/keyboard.module.css";
-import { UIData } from "./GameData";
+import { UIData, GameData } from "./GameData";
 /*
 import { keyframes } from "motion";
 */
+
+const highlightDuration = Math.max(UIData.highlightDuration, UIData.tick/1.5)
 
 export interface KeyStatus {
   key: string,
@@ -120,7 +122,7 @@ const Keyboard = ({keyStatus, functionKeyStatus, lastPressedKey, clickCallback, 
       setKeyHighlight(true);
       window.setTimeout(
         () => setKeyHighlight(false),
-        UIData.highlightDuration);
+        highlightDuration);
     }
   }
 
