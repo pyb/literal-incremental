@@ -11,15 +11,16 @@
     flex-direction: column;
     justify-content: center;
     align-items: flex-end;
+    padding-right: 10vh;
 }
 
 .inputText {
     word-spacing: -.7ch;
     font-family: monospace;
     font-size: 1.3em;
-    padding-right: 25%;
     margin: auto;
     width: 100%;
+    overflow: hidden;
 }
 .prio1 {
     color: red;

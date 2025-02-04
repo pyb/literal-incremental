@@ -16,7 +16,7 @@
 .game {
     display: flex;
     flex-direction: column;
-    min-width: 60vw;
+    width: 60vw;
     gap: 10vh;
 }
 
