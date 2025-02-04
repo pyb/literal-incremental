@@ -57,7 +57,9 @@
 }
 
 .letter {
-    color: #888899;
+/*    color: #888899;*/
+    color: rgb(221, 127, 26);
+    margin-left: 2px;
 }
 .word {
     color: #cccccc;
@@ -124,7 +126,7 @@
 
 .itemScore {
     font-size: 85%;
-    color: rgb(253, 186, 116)
+    color: rgb(253, 186, 116);
 /*
     color: #1a3478;
     color: #aa44ee;*/

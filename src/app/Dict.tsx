@@ -3,14 +3,7 @@
 import React from "react";
 import styles from "./css/dict.module.css";
 import { UIData } from "./GameData";
-
-export interface DictItem {
-  n?: number,
-  word: string,
-  shortDesc?: string,
-  longDesc?: string,
-  output?: string
-};
+import { DictItem } from "./GameTypes";
 
 const wordOrLetter = (item:DictItem) => {
   return ((item.word.length > 1) ? item.word : (<span className={styles.letter}>{item.word}</span>));
@@ -68,7 +61,7 @@ interface DictScoreProps {
   shortItems: Array<DictItem>,
 };
 
-export const DictScoreArea = ({ maxWordSize, longItems, shortItems }: DictScoreProps) => {
+const DictArea = ({ maxWordSize, longItems, shortItems }: DictScoreProps) => {
   return (
     <div className={styles.dictScoreArea}>
       <Dict longItems={longItems} shortItems={shortItems}/>
@@ -76,3 +69,5 @@ export const DictScoreArea = ({ maxWordSize, longItems, shortItems }: DictScoreP
     </div>
   )
 };
+
+export default DictArea;

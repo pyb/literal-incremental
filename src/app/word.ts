@@ -3,6 +3,7 @@ import { Trie } from "./trie/trie";
 import { TrieNode } from "./trie/trieNode";
 */
 import { GameData } from "./GameData";
+import { current } from "immer";
 
 const tdict = Trie.fromArray(GameData.tinydict);
 
@@ -14,8 +15,8 @@ const isPartialWord = (partialWord: string, tdict: Trie) => {
   return true;
 }
 
-// Is it a word, and am I unable to extend it?
-const isWordTerminal = (word: string, tdict: Trie, maxLength: number): boolean => {
+// Is it a word ; and am I unable to extend it.
+const isWordTerminal = (word: string, tdict: Trie, maxLength?: number): boolean => {
   if (!tdict.find(word))
     return false;
   const node = tdict.prefixSearch(word);
@@ -40,38 +41,37 @@ const isWordTerminal = (word: string, tdict: Trie, maxLength: number): boolean =
   Q : Is state transition completely determined by an op (key, currentWord) -> (currentWord, lastWord) ?
 */
 
-//TODO : implement maxWordLength properly.
-// Complete next state.  
-export const nextWordState = (letter: string, currentPartialWord: string, maxWordLength: number) => {
-  if (maxWordLength == 0)
-  {
-    return (
-      {
-        currentPartialWord: "",
-        finishedWord: ""
-      });
-  }
+// Return value of nextWordState. 
+export interface WordState {
+  currentPartialWord?: string,
+  finishedWord?: string,
+}
 
-  let finishedWord = "";
+// TODO : implement maxWordLength properly.
+// Compute next state.
+export const nextWordState = (letter: string, currentPartialWord: string, maxWordLength?: number):WordState => {
+  if (maxWordLength == 0)
+    return ({});
+
   const tentativeWord = currentPartialWord.concat(letter);
 
   if (isPartialWord(tentativeWord, tdict)) {
-    if (isWordTerminal(tentativeWord, tdict, maxWordLength)) {
-      finishedWord = tentativeWord;
-      currentPartialWord = "";
-    }
+    if (isWordTerminal(tentativeWord, tdict, maxWordLength))
+      return {
+        finishedWord: tentativeWord
+      }
     else
-      currentPartialWord = tentativeWord;
+      return {
+        currentPartialWord: tentativeWord
+      }
   }
-  else if (tdict.has(currentPartialWord)) {
-    finishedWord = currentPartialWord;
-    currentPartialWord = isPartialWord(letter, tdict) ? letter : "";
-  }
-  // TODO : re-check if else statement needed
-
-  return (
-    {
-      currentPartialWord: currentPartialWord,
-      finishedWord: finishedWord
-    });
+  else if (tdict.has(currentPartialWord))  // Is this always true?
+    return {
+      finishedWord: currentPartialWord,
+      currentPartialWord: isPartialWord(letter, tdict) ? letter : ""
+    }
+  else
+    return {};
+    // Normally unreachable?
+    //throw new Error("Error : " + currentPartialWord + " should be in dict");
 }

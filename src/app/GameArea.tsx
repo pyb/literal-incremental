@@ -14,17 +14,19 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 */
 
 import { KeyInfo, GameData, UIData, ShopEntry, ShopAction } from "./GameData";
-import { GameState, initialGameState} from "./GameState";
-import { nextWordState } from "./word";
+import { emptyInputItem, GameState, initialGameState} from "./GameState";
+import { nextWordState, WordState } from "./word";
 import { load, save } from "./persist";
 
 import Keyboard, { KeyStatus, KeyMode } from "./Keyboard";
-import {DictScoreArea, DictItem} from "./Dict";
-import {InputItem, InputArea} from "./InputArea";
-import Log, { LogItem } from "./Log";
-import Shop from "./Shop";
+import DictArea from "./Dict";
+import {InputItem, LogItem, DictItem} from "./GameTypes"
+
+import InputArea from "./InputArea";
+import Log from "./Log";
 
 import * as fs from "./fakeState";
+import next from "next";
 
 /**************************************************************/
 
@@ -200,32 +202,65 @@ const GameArea = () => {
   /**************************************************************************/
   // Keypress handling, scoring, word formation
 
-  const handleKey = (key: string) => {
-    if (GS.availableKeys.has(key)) {
-      let buffer = GS.inputBuffer;
-      if (buffer.length == GameData.inputSize) {
-        buffer = buffer.slice(GameData.inputSize / 2, GameData.inputSize);
-      }
+  type LetterInput = {
+    letter: string,
+    rep?: number
+  }
 
-      const nextState = nextWordState(key, GS.currentPartialWord, GS.maxWordSize);
-      if (nextState.finishedWord) {
+  type WordInput = {
+    word: string,
+    rep?: number
+  }
+  type Input = {
+    foo : LetterInput | WordInput;
+  }
+  
+  let inputKey = 10;
+  const nextInputKey = () => {
+    return inputKey++;
+  }
+
+  const handleKey = (key: string):void => {
+    if (GS.availableKeys.has(key)) {
+      let input:InputItem = structuredClone(GS.input);
+      const currentPartialWord = input.letter || input.word || input.prefix || '';
+      
+      const nextState:WordState = nextWordState(key, currentPartialWord, GS.maxWordSize);
+
+      if (nextState.finishedWord !== undefined) {
+        input.word = nextState.finishedWord;
+        input.prefix = "";
+        input.letter = "";
+        //input.key = nextInputKey();
+        
+        const word = input.word;
+
         setGS(gs => {
-          gs.lastScoredWord = nextState.finishedWord;
+          gs.lastScoredWord = word; // Workaround for bug in type checker ; input.word cannot be empty
+          gs.inputHistory.push(input);
+          gs.input = emptyInputItem;
+        })
+      }
+      else if (nextState.currentPartialWord) {
+        input.prefix = nextState.currentPartialWord;
+        setGS(gs => {
+          gs.input = input;
+        });
+      }
+      else { //score a bunch of sparse letters
+        setGS(gs => {
+          gs.inputHistory.push({ letter: key });
+          for (let l of currentPartialWord) {
+            gs.inputHistory.push({ letter: l });
+          }
+          gs.input = emptyInputItem;
         });
       }
 
       setGS(gs => {
-        gs.inputBuffer = buffer + key;
-        gs.currentPartialWord = nextState.currentPartialWord;
         gs.lastPressed = key;
         gs.glyphs++;
       });
-
-      // TODO : maybe move this to shop component
-      for (const entry of GameData.shopEntries) {
-        if ((GS.glyphs + 1) >= entry.visibilityPrice)
-          setGS(gs => { gs.visibleShopItems.add(entry.index) });
-      }
     }
   }
 
@@ -272,12 +307,15 @@ const GameArea = () => {
   return (
     <>
       <div className={styles.game}>
-        <DictScoreArea
+        <DictArea
           maxWordSize={GS.maxWordSize}
           longItems={fs.longItems}
           shortItems={fs.shortItems} />
         <div className={styles.gameMain}>
-          <InputArea prevInput={fs.testPrevInput} currentInput={fs.testCurrentInput} />
+          {/* // Fake inputarea
+          <InputArea prevInput={fs.testPrevInput} partialInput={fs.testCurrentInput} />
+          */}
+          <InputArea prevInput={GS.inputHistory} partialInput={GS.input} />
           <Keyboard
           /*
             keyStatus={getKeyStatus(GameData.keyInfo, GS.availableKeys, GS.repeatableKeys,
@@ -324,16 +362,3 @@ export default GameArea;
       {GS.inputVisible &&
       <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
   */   
-  /*
-  <InputArea input={GS.inputBuffer} />
-  */
-  /*
-    <Keyboard
-      allKeyStatus={getKeyStatus(GameData.keyInfo, GS.boughtKeys, GS.repeatableKeys,
-                                 GS.repeatSelectMode, GS.repeatAvailable, GS.unlockAvailable, GS.score)}
-      clickCallback={keyboardClick}
-      repeatModeCallback={repeatModeClick}
-      repeatVisible={true}
-      focusedKey={GS.lastPressed}
-      pressedKeys={pressedKeys} />
-  */

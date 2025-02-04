@@ -2,10 +2,8 @@
 
 import styles from "./css/game.module.css"
 
-export interface LogItem {
-    key: number,
-    text: string
-}
+import { LogItem } from "./GameTypes";
+
 interface Props {
     log: Array<LogItem>;
 };
