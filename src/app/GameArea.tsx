@@ -222,38 +222,39 @@ const GameArea = () => {
 
   const handleKey = (key: string):void => {
     if (GS.availableKeys.has(key)) {
-      let input:InputItem = structuredClone(GS.input);
+      let input:InputItem = structuredClone(GS.currentInput);
       const currentPartialWord = input.letter || input.word || input.prefix || '';
       
       const nextState:WordState = nextWordState(key, currentPartialWord, GS.maxWordSize);
 
-      if (nextState.finishedWord !== undefined) {
-        input.word = nextState.finishedWord;
+      const word = nextState.finishedWord;
+      if (word !== undefined) {
+        input.word = word;
         input.prefix = "";
         input.letter = "";
-        //input.key = nextInputKey();
-        
-        const word = input.word;
-
         setGS(gs => {
-          gs.lastScoredWord = word; // Workaround for bug in type checker ; input.word cannot be empty
+          gs.lastScoredWord = word;
           gs.inputHistory.push(input);
-          gs.input = emptyInputItem;
+          gs.currentInput = emptyInputItem;
         })
       }
       else if (nextState.currentPartialWord) {
         input.prefix = nextState.currentPartialWord;
         setGS(gs => {
-          gs.input = input;
+          gs.currentInput = input;
         });
       }
       else { //score a bunch of sparse letters
         setGS(gs => {
-          gs.inputHistory.push({ letter: key });
+          let prev = gs.inputHistory.at(-1);
+          if (prev !== undefined && prev.letter == key) 
+            prev.n += 1;
+          else 
+            gs.inputHistory.push({ letter: key, n: 1 });
           for (let l of currentPartialWord) {
-            gs.inputHistory.push({ letter: l });
+            gs.inputHistory.push({ letter: l, n: 1 });
           }
-          gs.input = emptyInputItem;
+          gs.currentInput = emptyInputItem;
         });
       }
 
@@ -315,7 +316,7 @@ const GameArea = () => {
           {/* // Fake inputarea
           <InputArea prevInput={fs.testPrevInput} partialInput={fs.testCurrentInput} />
           */}
-          <InputArea prevInput={GS.inputHistory} partialInput={GS.input} />
+          <InputArea prevInput={GS.inputHistory} partialInput={GS.currentInput} />
           <Keyboard
           /*
             keyStatus={getKeyStatus(GameData.keyInfo, GS.availableKeys, GS.repeatableKeys,

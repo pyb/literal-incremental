@@ -53,6 +53,7 @@ export const UIData =
   maxKeyboardRowSize: 6,
   dictRows: 3,
   dictColumns: 3,
+  letterRepeatThreshold: 5,
 };
 
 export const GameData =

@@ -7,7 +7,7 @@ export interface GameState {
 
   // typing / word construction
   lastPressed: string,
-  input: InputItem,
+  currentInput: InputItem,
   inputHistory: Array<InputItem>,
   lastScoredWord: string,
 
@@ -40,7 +40,7 @@ for (let i = 0 ; i < UIData.logSize - 1 ; i++)
 }
 log.push({text: GameData.welcomeMessage, key: UIData.logSize - 1});
 
-export const emptyInputItem:InputItem = {letter: "", word: "", prefix: ""};//, key:0};
+export const emptyInputItem:InputItem = {letter: "", word: "", prefix: "", n: 1};//, key:0};
 
 export const initialGameState: GameState =
 {
@@ -48,7 +48,7 @@ export const initialGameState: GameState =
   maxWordSize: 0,
 
   lastPressed: "", // FIXME/review : is this game state or ui state?
-  input: emptyInputItem,
+  currentInput: emptyInputItem,
   inputHistory: [],
 
   lastScoredWord: "",

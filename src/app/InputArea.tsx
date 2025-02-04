@@ -5,6 +5,7 @@
 import React from "react";
 import styles from "./css/input.module.css";
 import { InputItem } from "./GameTypes"
+import { UIData } from "./GameData";
 
 const stylesArr: Array<string> = [
     "",
@@ -29,14 +30,9 @@ interface Props {
 };
 
 const InputArea = ({ prevInput, partialInput }: Props) => {
-    /*
-    const prevText: string = prevInput.map((item: InputItem) => item.letter ? item.letter : item.word).join(" ");
-    const text: string = prevText.concat(" ",
-        partialInput.letter ? partialInput.letter : partialInput.word);
-    */
+    //console.log(prevInput)
+    //console.log(partialInput)
 
-    //console.log(prevInput);
-    //console.log(partialInput);
     let prio = 1;
     const prevInputWithPriority: Array<InputItem> = prevInput.map(
         (item: InputItem):InputItem => {
@@ -48,20 +44,26 @@ const InputArea = ({ prevInput, partialInput }: Props) => {
             return ({...item, order: order});
         });
 
-    const spans: Array<React.ReactNode> = prevInputWithPriority.map ((item: InputItem, index) => {
-        let text:string;
-
-        if (item.word) 
+    const spans: Array<React.ReactNode> = prevInputWithPriority.map((item: InputItem, index) => {
+        let text:string = "";
+        const letter: string = (item.letter || '');
+        if (item.word) {
             text = item.word;
-        else if (item.prefix)
+        }
+        else if (item.prefix) {
             text = item.prefix;
-        else
-            text = item.letter || '';
+        }
+        else if (item.n > UIData.letterRepeatThreshold) {
+            text += letter;
+            text += ("(" + item.n + ")");
+        }
+        else {
+            text += letter.repeat(item.n);
+        }
+        text += (" ");
+        const style: string = item.order ? prioStyle(item.order) : styles.letter;
 
-        text = text.concat(" ");
-        const style:string = item.order ? prioStyle(item.order) : styles.letter;
-
-        return (<span key={index+10} className={style}>{text}</span>);
+        return (<span key={10*index+10} className={style}>{text}</span>);
     });
 
     const currentSpans:Array<React.ReactNode> = [];
