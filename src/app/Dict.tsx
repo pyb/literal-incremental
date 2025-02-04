@@ -48,7 +48,7 @@ const Dict = ({ items }: DictProps) => {
   return (
     <div className={styles.dictArea}>
       <div className={styles.longArea}>
-        {longItems.map((item: DictItem) => <LongItem key={item.word} item={item} />)}
+        {longItems.map((item: DictItem, index:number) => <LongItem key={index} item={item} />)}
       </div>
       <div className={styles.shortArea}>
         {shortItems.slice(0, maxShortItems).map((item: DictItem) => <ShortItem key={item.word} item={item} />)}

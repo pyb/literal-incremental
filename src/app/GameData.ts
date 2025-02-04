@@ -4,25 +4,48 @@ import * as fake from "./fakeState"
 export type KeyInfo = {
   key: string,
   visibilityPrice: number,
-  repeaterPrice: number,
 }
 
 // Obsolete? Do keys still have a repeaterPrice?
 const keyInfo:Array<KeyInfo> = [
-  { key: 'i', visibilityPrice: 0, repeaterPrice: 100},
-  { key: 'n', visibilityPrice: 100, repeaterPrice: 5000 },
-  { key: 'w', visibilityPrice: 1000, repeaterPrice: 5000 },
+  { key: 'i', visibilityPrice: 0 },
+  { key: 'n', visibilityPrice: 100 },
+  { key: 'w', visibilityPrice: 1000},
+  { key: 'e', visibilityPrice: 3000 },
 ];
 
-const dict:Array<DictItem> = [
-  { n: 10,
+const dict: Array<DictItem> = [
+  {
+    n: 10,
     visibility: 100,
     word: "I",
-    output: "E"},
-  { visibility: 300,
+    output: "N"
+  },
+  {
+    n: 10,
+    visibility: 1000,
+    word: "I",
+    output: "E"
+  },
+  {
+    visibility: 300,
     word: "WIN",
     shortDesc: "WIN",
-    longDesc: "Win the Game."},
+    longDesc: "Win the Game."
+  },
+  {
+    visibility: 500,
+    word: "IN",
+    shortDesc: "3LW",
+    longDesc: "Unlock three-letter words."
+  },
+  {
+    visibility: 3000,
+    word: "INN",
+    shortDesc: "REPI",
+    longDesc: "Unlock I repeater"
+  },
+
   fake.item1,
   fake.item3,
   fake.item2,
