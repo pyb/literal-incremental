@@ -13,7 +13,7 @@ import { useImmer } from "use-immer";
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 */
 
-import { KeyInfo, GameData, UIData, ShopEntry, ShopAction } from "./GameData";
+import { KeyInfo, GameData, UIData } from "./GameData";
 import { emptyInputItem, GameState, initialGameState} from "./GameState";
 import { nextWordState, WordState } from "./word";
 import { load, save } from "./persist";
@@ -310,8 +310,7 @@ const GameArea = () => {
       <div className={styles.game}>
         <DictArea
           maxWordSize={GS.maxWordSize}
-          longItems={fs.longItems}
-          shortItems={fs.shortItems} />
+          items={GameData.dict} />
         <div className={styles.gameMain}>
           {/* // Fake inputarea
           <InputArea prevInput={fs.testPrevInput} partialInput={fs.testCurrentInput} />

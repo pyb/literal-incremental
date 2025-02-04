@@ -1,5 +1,4 @@
-import { DictItem } from "./Dict";
-import { InputItem } from "./InputArea";
+import { InputItem, DictItem } from "./GameTypes";
 import { KeyMode } from "./Keyboard";
 
 export const item1: DictItem = {
@@ -68,6 +67,7 @@ export const longItems: Array<DictItem> = [
     item1, item2
 ];
 
+/*
 export const testPrevInput: Array<InputItem> = [
     { letter: "i", word: "", score: 10, key: 0 },
     { letter: "n", word: "", score: 10, key: 1 },
@@ -79,9 +79,9 @@ export const testPrevInput: Array<InputItem> = [
 export const testCurrentInput: InputItem = {
     letter: "",
     word: "fol",
-    score: 0,
     key: 100
 };
+*/
 
 export const keyStati = [
     { key: "a", mode: KeyMode.VISIBLE },

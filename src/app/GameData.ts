@@ -1,23 +1,10 @@
+import {DictItem} from "./GameTypes"
+import * as fake from "./fakeState"
+
 export type KeyInfo = {
   key: string,
   visibilityPrice: number,
   repeaterPrice: number,
-}
-
-export enum ShopAction {
-  LETTERUNLOCK,
-  WORDUNLOCK,
-  REPEATUNLOCK
-}
-
-export type ShopEntry = {
-  index: number,
-  text: string,
-  action: ShopAction,
-  n: number,
-  position: number,
-  visibilityPrice: number,
-  price: number
 }
 
 // Obsolete? Do keys still have a repeaterPrice?
@@ -27,9 +14,19 @@ const keyInfo:Array<KeyInfo> = [
   { key: 'w', visibilityPrice: 1000, repeaterPrice: 5000 },
 ];
 
-/*
-const keyScores: Record<string, number>= {};
-*/
+const dict:Array<DictItem> = [
+  { n: 10,
+    visibility: 100,
+    word: "I",
+    output: "E"},
+  { visibility: 300,
+    word: "WIN",
+    shortDesc: "WIN",
+    longDesc: "Win the Game."},
+  fake.item1,
+  fake.item3,
+  fake.item2,
+];
 
 export const UIData = 
 {
@@ -38,6 +35,7 @@ export const UIData =
   highlightDuration: 150,
   logSize: 5,
   maxKeyboardRowSize: 6,
+  dictLongForm: 3,
   dictRows: 3,
   dictColumns: 3,
   letterRepeatThreshold: 5,
@@ -54,6 +52,7 @@ export const GameData =
   /* Word / letter data */
   tinydict: ['i', 'sin', 'is', 'in', 'si', 'six', 'nix'],
   keyInfo: keyInfo,
+  dict: dict,
   //keyScores: keyScores,
 };
 

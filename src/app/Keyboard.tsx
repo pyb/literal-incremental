@@ -8,8 +8,6 @@ import { UIData, GameData } from "./GameData";
 import { keyframes } from "motion";
 */
 
-const highlightDuration = Math.max(UIData.highlightDuration, UIData.tick/1.5)
-
 export interface KeyStatus {
   key: string,
   mode: KeyMode
@@ -115,6 +113,7 @@ interface Props {
 
 const Keyboard = ({keyStatus, functionKeyStatus, lastPressedKey, clickCallback, fkeyCallback, pressedKeys}: Props) => {
   const [keyHighlight, setKeyHighlight] = React.useState<boolean>(false);
+  const highlightDuration = Math.max(UIData.highlightDuration, UIData.tick/1.5);
 
   const triggerKeyHighlight = () => {
     if (!keyHighlight)

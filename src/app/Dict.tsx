@@ -36,11 +36,13 @@ const ShortItem = ({item}: {item: DictItem}) => {
 )};
 
 interface DictProps {
-  longItems: Array<DictItem>,
-  shortItems: Array<DictItem>,
+  items: Array<DictItem>,
 };
 
-const Dict = ({ longItems, shortItems }: DictProps) => {
+const Dict = ({ items }: DictProps) => {
+  const longItems:Array<DictItem> = items.slice(0,UIData.dictLongForm);
+  const shortItems:Array<DictItem> = items.slice(UIData.dictLongForm);
+
   const maxShortItems = UIData.dictColumns * UIData.dictRows;
 
   return (
@@ -57,14 +59,13 @@ const Dict = ({ longItems, shortItems }: DictProps) => {
 
 interface DictScoreProps {
   maxWordSize: number,
-  longItems: Array<DictItem>,
-  shortItems: Array<DictItem>,
+  items: Array<DictItem>,
 };
 
-const DictArea = ({ maxWordSize, longItems, shortItems }: DictScoreProps) => {
+const DictArea = ({ maxWordSize,  items }: DictScoreProps) => {
   return (
     <div className={styles.dictScoreArea}>
-      <Dict longItems={longItems} shortItems={shortItems}/>
+      <Dict items={items}/>
 {/*      <Scores score={score} glyphs={glyphs} words={words} maxWordSize={maxWordSize} /> */}
     </div>
   )
