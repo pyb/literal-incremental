@@ -12,14 +12,11 @@ export interface GameState {
   lastScoredWord: string,
 
   availableKeys: Set<string>, // ie unlocked keys
-  repeatableKeys: Set<string>,
-  repeatKeys: Set<string>,
-
-  activeShopItems: Set<number>,
-  visibleShopItems: Set<number>,
-
+ 
   inputVisible: boolean,
 
+  repeatableKeys: Set<string>,
+  repeatKeys: Set<string>,
   // TODO : review this, probably unusable now
   repeatAvailable: boolean,
   //autoRepeat: useState<Set<([key: string]: number)>>();
@@ -58,11 +55,7 @@ export const initialGameState: GameState =
   repeatableKeys: new Set<string>(),
   repeatKeys: new Set<string>(),
 
-  activeShopItems: new Set<number>(),
-  visibleShopItems: new Set<number>(),
-
   inputVisible: false,
-  unlockAvailable: false,
   repeatAvailable: false,
   repeatSelectMode: false,
 

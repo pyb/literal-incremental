@@ -164,7 +164,7 @@ const GameArea = () => {
   }
 
   const handleKeydown = (kev: KeyboardEvent) => {
-    let key: string = kev.key.toLowerCase();
+    const key: string = kev.key.toLowerCase();
     if (key.length == 1 &&
       key >= 'a' && key <= 'z') {
       if (!pressedKeys.has(key)) {
@@ -175,7 +175,7 @@ const GameArea = () => {
   }
 
   const handleKeyup = (kev: KeyboardEvent) => {
-    let key: string = kev.key.toLowerCase();
+    const key: string = kev.key.toLowerCase();
     if (key.length == 1 &&
       key >= 'a' && key <= 'z') {
       pressedKeys.delete(key);
@@ -195,7 +195,6 @@ const GameArea = () => {
   });
 
   useEffect(() => {
-    ;
     setGS(load());
     // intervalId.current = window.setInterval(processTimeouts, GameData.tick);
     intervalId.current = window.setInterval(() => setDoProcessTimeouts(true),
@@ -208,6 +207,7 @@ const GameArea = () => {
   /**************************************************************************/
   // Keypress handling, scoring, word formation
 
+  /*
   type LetterInput = {
     letter: string,
     rep?: number
@@ -220,15 +220,11 @@ const GameArea = () => {
   type Input = {
     foo : LetterInput | WordInput;
   }
-  
-  let inputKey = 10;
-  const nextInputKey = () => {
-    return inputKey++;
-  }
+  */
 
   const handleKey = (key: string):void => {
     if (GS.availableKeys.has(key)) {
-      let input:InputItem = structuredClone(GS.currentInput);
+      const input:InputItem = structuredClone(GS.currentInput);
       const currentPartialWord = input.letter || input.word || input.prefix || '';
       
       const nextState:WordState = nextWordState(key, currentPartialWord, GS.maxWordSize);
@@ -252,12 +248,12 @@ const GameArea = () => {
       }
       else { //score a bunch of sparse letters
         setGS(gs => {
-          let prev = gs.inputHistory.at(-1);
+          const prev = gs.inputHistory.at(-1);
           if (prev !== undefined && prev.letter == key) 
             prev.n += 1;
           else 
             gs.inputHistory.push({ letter: key, n: 1 });
-          for (let l of currentPartialWord) {
+          for (const l of currentPartialWord) {
             gs.inputHistory.push({ letter: l, n: 1 });
           }
           gs.currentInput = emptyInputItem;
@@ -277,9 +273,10 @@ const GameArea = () => {
   const keyboardClick = (key: string) => {
     if (GS.repeatSelectMode && GS.repeatableKeys.has(key)) {
       setGS(gs => {
-        gs.repeatKeys.has(key) ?
-        gs.repeatKeys.delete(key) :
-        gs.repeatKeys.add(key)
+        if (gs.repeatKeys.has(key))
+          gs.repeatKeys.delete(key)
+        else
+          gs.repeatKeys.add(key)
       });
     }
     /*
@@ -299,10 +296,11 @@ const GameArea = () => {
     }
   }
 
+  /*
   const repeatModeClick = () => {
     setGS(gs => { gs.repeatSelectMode = !gs.repeatSelectMode });
   }
-
+  */
   const fkeyCallback = (fkey: string) => {
     console.log(fkey + " pressed.");
   }
@@ -345,10 +343,10 @@ const GameArea = () => {
         </div>
   */}
         <MultiFooter items={[
-          <Log log={GS.log}></Log>,
-          <button className={styles.resetButton} onClick={reset}>RESET</button>,
-          <RCScout />,
-          <Debug GS={GS} />
+          <Log key={0} log={GS.log}></Log>,
+          <button key={1} className={styles.resetButton} onClick={reset}>RESET</button>,
+          <RCScout key={2} />,
+          <Debug key={3} GS={GS} />
         ]} />
       </div >
     </>

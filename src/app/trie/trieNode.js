@@ -126,4 +126,4 @@ class TrieNode {
   }
 }
 
-exports.TrieNode = TrieNode;
+export default TrieNode;

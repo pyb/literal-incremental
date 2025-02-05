@@ -1,9 +1,8 @@
-import { Trie } from "./trie/trie";
+import {Trie} from "./trie/trie";
 /*
-import { TrieNode } from "./trie/trieNode";
+import TrieNode from "./trie/trieNode";
 */
 import { GameData } from "./GameData";
-import { current } from "immer";
 
 const tdict = Trie.fromArray(GameData.tinydict);
 

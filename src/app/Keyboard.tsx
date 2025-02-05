@@ -84,7 +84,7 @@ const computeRows = (len:number, mx:number):Array<number> => {
   const basecols = Math.floor(len / rows);
   const rem = len % rows;
 
-  let rowSizes = new Array(rows);
+  const rowSizes = new Array(rows);
   for (let i = 0 ; i < rows ; i++)
   {
     if (i < rem) 
@@ -104,22 +104,21 @@ interface Props {
   clickCallback: (key: string) => void,
 }
 
+const triggerKeyHighlight = (setKeyHighlight:any) => {
+  const highlightDuration = Math.max(UIData.highlightDuration, UIData.tick/1.5);
+  setKeyHighlight(true);
+  window.setTimeout(
+    () => setKeyHighlight(false),
+    highlightDuration);
+};
+
 const Keyboard = ({keyStatus, functionKeyStatus, lastPressedKey, clickCallback, fkeyCallback, pressedKeys}: Props) => {
   const [keyHighlight, setKeyHighlight] = React.useState<boolean>(false);
-  const highlightDuration = Math.max(UIData.highlightDuration, UIData.tick/1.5);
 
-  const triggerKeyHighlight = () => {
-    if (!keyHighlight)
-    {
-      setKeyHighlight(true);
-      window.setTimeout(
-        () => setKeyHighlight(false),
-        highlightDuration);
-    }
-  }
   React.useEffect(()=>{
     if (pressedKeys.has(lastPressedKey)){
-      triggerKeyHighlight();
+      if (!keyHighlight)
+        triggerKeyHighlight(setKeyHighlight);
     }
   },[pressedKeys, lastPressedKey, keyHighlight]);
 
@@ -135,8 +134,8 @@ const Keyboard = ({keyStatus, functionKeyStatus, lastPressedKey, clickCallback, 
 
   const rowSizes:Array<number> = computeRows(keyStatus.length, UIData.maxKeyboardRowSize);
   
-  let layeredKeys = new Array<Array<React.ReactNode>>();
-  for (let size of rowSizes)
+  const layeredKeys = new Array<Array<React.ReactNode>>();
+  for (const size of rowSizes)
   {
     layeredKeys.push(allKeys.splice(0, size));
   }

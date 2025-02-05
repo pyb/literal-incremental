@@ -60,7 +60,7 @@ const dict: Array<DictItem> = [
 export const UIData = 
 {
   /* UI, internals stuff */
-  tick: 2000, // setinterval delay
+  tick: 1000, // setinterval delay
   highlightDuration: 150,
   logSize: 5,
   maxKeyboardRowSize: 6,

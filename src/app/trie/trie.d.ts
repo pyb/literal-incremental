@@ -1,4 +1,4 @@
-import { TrieNode } from './trieNode';
+import TrieNode from './trieNode';
 
 export class Trie {
   insert(value: { toString: () => string }): Trie;

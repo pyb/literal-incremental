@@ -4,12 +4,12 @@
  * @license MIT
  */
 
-const { TrieNode } = require('./trieNode');
+import TrieNode from './trieNode';
 
 /**
  * @class Trie
  */
-class Trie {
+export class Trie {
   constructor() {
     this._root = new TrieNode('');
     this._wordsCount = 0;
@@ -226,5 +226,3 @@ class Trie {
     return trie;
   }
 }
-
-exports.Trie = Trie;
