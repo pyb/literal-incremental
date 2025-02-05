@@ -1,10 +1,5 @@
 import {Trie} from "./trie/trie";
-/*
-import TrieNode from "./trie/trieNode";
-*/
 import { GameData } from "./GameData";
-
-const tdict = Trie.fromArray(GameData.tinydict);
 
 const isPartialWord = (partialWord: string, tdict: Trie) => {
   const node = tdict.prefixSearch(partialWord);
@@ -53,6 +48,8 @@ export const nextWordState = (letter: string, currentPartialWord: string, maxWor
     return ({});
 
   const tentativeWord = currentPartialWord.concat(letter);
+
+  const tdict:Trie = GameData.tdict;
 
   if (isPartialWord(tentativeWord, tdict)) {
     if (isWordTerminal(tentativeWord, tdict, maxWordLength))

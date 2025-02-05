@@ -12,9 +12,10 @@ import { useImmer } from "use-immer";
 /*
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 */
+import {Trie} from "./trie/trie";
 
 import { KeyInfo, GameData, UIData } from "./GameData";
-import { emptyInputItem, GameState, initialGameState} from "./GameState";
+import * as g from "./GameState";
 import { nextWordState, WordState } from "./word";
 import { load, save } from "./persist";
 
@@ -43,7 +44,10 @@ const getKeyMode = (key: string, glyphs: number, visibilityThreshold:number, ava
   else if (unlockAvailable)
     return KeyMode.PURCHASEABLE;
   */
+ /*
   else if (glyphs >= visibilityThreshold)
+  */
+  else if (true) // temp. make all keys visible
     return KeyMode.VISIBLE;
   else
     return KeyMode.INVISIBLE;
@@ -78,7 +82,7 @@ const RCScout = () => {
     </div>);
   }
 
-const Debug = ({GS}: {GS: GameState}) => {
+const Debug = ({GS}: {GS: g.GameState}) => {
   return (
     <div className={styles.debug}>
       <p> Debug </p>
@@ -124,7 +128,7 @@ const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string
 /**************************************************************/
 
 const GameArea = () => {
-  const [GS, setGS] = useImmer<GameState>(initialGameState);
+  const [GS, setGS] = useImmer<g.GameState>(g.initialGameState);
 
   // Utility function
   const addLog = (message: string) => {
@@ -140,7 +144,7 @@ const GameArea = () => {
   }
 
   const reset = () => {
-    setGS(initialGameState);
+    setGS(g.initialGameState);
   }
 
   /**************************************************************/
@@ -199,6 +203,10 @@ const GameArea = () => {
 
   useEffect(() => {
     setGS(load());
+    setGS(gs => {
+       gs.tdict = Trie.fromArray(GameData.dict.filter((d) => d.word)
+                                              .map((d) => d.word || ''))}); // only update tdict once, as dict data is currently not changing
+
     // intervalId.current = window.setInterval(processTimeouts, GameData.tick);
     intervalId.current = window.setInterval(() => setDoProcessTimeouts(true),
       UIData.tick);
@@ -240,7 +248,7 @@ const GameArea = () => {
         setGS(gs => {
           gs.lastScoredWord = word;
           gs.inputHistory.push(input);
-          gs.currentInput = emptyInputItem;
+          gs.currentInput = g.emptyInputItem;
         })
       }
       else if (nextState.currentPartialWord) {
@@ -259,7 +267,7 @@ const GameArea = () => {
           for (const l of currentPartialWord) {
             gs.inputHistory.push({ letter: l, n: 1 });
           }
-          gs.currentInput = emptyInputItem;
+          gs.currentInput = g.emptyInputItem;
         });
       }
 

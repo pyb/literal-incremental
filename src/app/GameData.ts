@@ -1,5 +1,6 @@
 import {DictItem} from "./GameTypes"
 import * as fake from "./fakeState"
+import {Trie} from "./trie/trie";
 
 export type KeyInfo = {
   key: string,
@@ -24,7 +25,7 @@ const dict: Array<DictItem> = [
   {
     n: 10,
     visibility: 1000,
-    word: "N",
+    letter: "N",
     output: "E"
   },
   {
@@ -79,9 +80,13 @@ export const GameData =
   autorepeatDelay: 500,
 
   /* Word / letter data */
-  tinydict: ['i', 'sin', 'is', 'in', 'si', 'six', 'nix'],
+  tdict: new Trie(),
   keyInfo: keyInfo,
   dict: dict,
   //keyScores: keyScores,
 };
 
+export const updateTDict = () => {
+  GameData.tdict = Trie.fromArray(GameData.dict.filter((d) => d.word)
+                                               .map((d) => d.word || ''));
+}

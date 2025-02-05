@@ -16,7 +16,8 @@ export interface LogItem {
 export interface DictItem {
     n?: number,
     visibility?: number,
-    word: string,
+    letter?: string,
+    word?: string,
     shortDesc?: string,
     longDesc?: string,
     output?: string

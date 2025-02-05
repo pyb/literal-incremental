@@ -6,7 +6,7 @@ import { UIData } from "./GameData";
 import { DictItem } from "./GameTypes";
 
 const wordOrLetter = (item:DictItem) => {
-  return ((item.word.length > 1) ? item.word : (<span className={styles.letter}>{item.word}</span>));
+  return ((item.word && item.word.length > 1) ? item.word : (<span className={styles.letter}>{item.word}</span>));
 }
 const LongItem = ({item}: {item: DictItem}) => {
   const content = item.longDesc ? item.longDesc : item.output;

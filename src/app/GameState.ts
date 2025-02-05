@@ -1,5 +1,6 @@
 import { GameData, UIData } from "./GameData";
 import { InputItem, LogItem } from "./GameTypes";
+import {Trie} from "./trie/trie";
 
 export interface GameState {
   glyphs: number,
@@ -23,7 +24,8 @@ export interface GameState {
   repeatSelectMode: boolean,
 
   log: Array<LogItem>,
-  logKey: number
+  logKey: number,
+  tdict: Trie,
 };
 
 // Some of this stuff may be redundant/not belong here. eg visibleShopItems can be computed ? or nearly. not quite
@@ -60,6 +62,7 @@ export const initialGameState: GameState =
   repeatSelectMode: false,
 
   log: log,
-  logKey: UIData.logSize
+  logKey: UIData.logSize,
+  tdict: new Trie(),
 };
 
