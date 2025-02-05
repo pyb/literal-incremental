@@ -76,3 +76,7 @@
 .scout {
     margin: auto;
 }
+
+.debug {
+    font-weight: lighter;
+}

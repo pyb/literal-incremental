@@ -24,7 +24,7 @@ const dict: Array<DictItem> = [
   {
     n: 10,
     visibility: 1000,
-    word: "I",
+    word: "N",
     output: "E"
   },
   {

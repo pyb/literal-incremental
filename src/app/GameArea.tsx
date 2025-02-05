@@ -80,9 +80,12 @@ const RCScout = () => {
 
 const Debug = ({GS}: {GS: GameState}) => {
   return (
-    <>
+    <div className={styles.debug}>
+      <p> Debug </p>
+      <br></br>
+      <br></br>
       <p> Glyphs : {GS.glyphs}</p>
-    </>
+    </div>
   );
 }
 
