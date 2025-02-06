@@ -112,18 +112,18 @@ const MultiFooter = ({ items }: FooterProps) => {
     </div>);
 };
 
-// Temporary area to see the current and last words
-const WordTest = ({ currentPartialWord, lastWord }: { currentPartialWord: string, lastWord: string }) => {
 
-  useEffect(() => {
-    console.log("wt created");
-  }, []);
+type ActionItem = {
+  trigger: string, // letter to press. Later, also accept words
+  index: number, // position in input array
 
-  return (
-    <>
-      <span> {"Ongoing : " + currentPartialWord + "  Last : " + lastWord} </span>
-    </>)
 }
+
+const availableBuys = (input: Array<InputItem>, dict: Array<DictItem>): Array<ActionItem> => {
+  // for each input item, check if it's available in the dict, if so issue actionitems
+  return [];
+}
+
 
 /**************************************************************/
 
@@ -365,14 +365,4 @@ const GameArea = () => {
 };
 
 export default GameArea;
-  /*
-      <Shop score={GS.score}
-            shopItems={GameData.shopEntries}
-            visibleShopItems={GS.visibleShopItems}
-            activeShopItems={GS.activeShopItems}
-            callback={shopClick}></Shop>
-  */
-  /*
-      {GS.inputVisible &&
-      <WordTest currentPartialWord={GS.currentPartialWord} lastWord={GS.lastScoredWord} />}
-  */   
+

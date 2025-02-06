@@ -85,8 +85,3 @@ export const GameData =
   dict: dict,
   //keyScores: keyScores,
 };
-
-export const updateTDict = () => {
-  GameData.tdict = Trie.fromArray(GameData.dict.filter((d) => d.word)
-                                               .map((d) => d.word || ''));
-}

@@ -31,7 +31,6 @@ const isWordTerminal = (word: string, tdict: Trie, maxLength?: number): boolean 
   -Continue ongoing word
   -Complete a word
   
-
   Q : Is state transition completely determined by an op (key, currentWord) -> (currentWord, lastWord) ?
 */
 
