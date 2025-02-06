@@ -2,7 +2,7 @@ import styles from "./css/keyboard.module.css"
 
 const Keyboard = () => {
     return (
-        <>Keyboard</>
+        <><div>Keyboard</div></>
     )
 }
 

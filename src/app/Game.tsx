@@ -1,8 +1,12 @@
+'use client'
+
 import React from "react"
 import styles from "./css/game.module.css"
 import Dict from "./Dict"
 import Keyboard from "./Keyboard"
 import Input from "./Input"
+import * as GS from "./GameState"
+import * as GameData from "./GameData"
 
 const Footer = () => {
     return (
@@ -11,6 +15,8 @@ const Footer = () => {
 }
 
 const Game = () => {
+    const [GS, setGS] = React.useState<GS.GameState>(GameData.initialGameState);
+
     return (
         <>
             <div className={styles.game}>
