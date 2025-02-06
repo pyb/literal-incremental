@@ -4,10 +4,9 @@ Deployed at :
 
 https://extraordinary-gelato-5941ec.netlify.app/
 or at 
-"https://<branch>--extraordinary-gelato-5941ec.netlify.app/"
+"https://(branch name)--extraordinary-gelato-5941ec.netlify.app/"
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 
 
 ## Getting Started
