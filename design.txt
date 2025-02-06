@@ -1,0 +1,57 @@
+*** Types, data
+
+* Game Data:
+
+Dict
+-> Dict Items
+key/word ; Qty ; Output (word/letter) and/or Outcome  : effect, maybe token/wildcard... ; Long Desc, Short Desc ; maybe Visibility score
+[should output and outcome be separate concepts?]
+
+Keyboard
+
+-> Key Info : Visibility wrt glyphs
+
+AutoRepeat speed(s)
+
+----------
+
+* Game State:
+
+Dict displayed/unlocked/activated
+
+Keyboard State
+
+Glyphs score (internal)
+
+Longpress Autorepeat delay
+
+Autorepeat status (later)
+
+----------
+
+UI State:
+
+Highlight duration
+Tick
+Dict dimensions (row, columns)
+Welcome message
+Keyboard dims(maybe)
+
+--------------------------------------------------------------------------------------------------
+
+*** The Game
+
+Same sequence as before with I, IN, INN, E, WIN mcguffin etc:
+
+I word -> open 2 letter words. [ should there be something required to unlock this?]
+(maybe) 50I->reveal N [N appears after 50 glyphs. typing N results in red feedback and maybe log message ("letter N not available")]
+10I letter->N
+IN->unlock 3 letter words
+INN->automation ( purchases I automation (mediated by a repeat function key: ctrl))
+10N letter->unlock E?
+WIN : win the game [display early on]
+(maybe)[sth]->W  [display a bit later]
+(maybe)[sth]->unlock N for good
+
+I type available letters:
+I, maybe N (when unlocked)
