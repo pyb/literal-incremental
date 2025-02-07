@@ -102,3 +102,19 @@ const scanS = (input:string, words:Array<string>) =>{
             result.set(w,k);
     }
 }
+
+const testDict:Set<string> = new Set<string>(["foo", "bar", "ire", "baz", "house", "fun", "squirrel", "in", "inn"]);
+const testInput:string = "fobarfooinnhousesquirebabazin";
+
+// Should this go left to right or right to left? Different outcomes.
+const inputWordSplit = (input:string, dict:Set<string>) =>
+{
+
+}
+/*
+    Arguments to Input component? 3 args at least:
+    Letter array obvs. also delimited-word array? or list of word-starting indices?
+    Yes, bc Input component shouldn't have access to dictionary.
+    Does the current prefix/word being typed have special status? Yes. 
+    3rd arg : index of current Input element being typed.    
+*/
