@@ -74,6 +74,10 @@ Can I take words/letters from different places to make up the total n? ie : I(3)
 
 I can't see the words like this. best IENI with the 5's underneath? or smaller as subscript?
 
+Do we allow word combos with n > 1 input? eg "REP(3) => W"
+Would this mean REPREPREP? or RRREEEPPP? both?
+-> don't have it for now
+
 -Other
 Do some DictItems disappear after use? -> no need to answer that now
 

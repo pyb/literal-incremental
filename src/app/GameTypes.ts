@@ -78,7 +78,6 @@ Test this with a wide range of keyboard keys and words available (not just INN)!
 // A Naive impl
 // Input is now a simple string but will need to include multiplicities in the future
 
-
 const scanS = (input:string, words:Array<string>) =>{
     // Return positions of words in input
     let result:Map<string, number>= new Map<string, number>();
