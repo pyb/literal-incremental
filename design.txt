@@ -70,6 +70,8 @@ Enter also works as word repeat key. (slow at first)
 If I purchase a letter N, does it a) replace the 10I in-place? Or b) is it added to the end of the stream? a) most certainly
 I(15)ENI(5) -> press E :a)  I(5)EENI(5) or  b) I(5)ENI(5)E !
 
+Can I take words/letters from different places to make up the total n? ie : I(3)FOOI(7) -> FOOE? 
+
 I can't see the words like this. best IENI with the 5's underneath? or smaller as subscript?
 
 -Other

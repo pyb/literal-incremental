@@ -1,4 +1,5 @@
 export type DictItem = {
+    id?: number,
     longDesc: string,
     shortDesc: string
 };
@@ -31,37 +32,33 @@ Keypress -> Add 1 letter to the end of input
 Purchase letter : transform 1 input element into 1 or 2 others. i(15) -> i(5)n i(10) ->n
 Purchase word: remove/reduce k consecutive input elements, where k is length of word. Maybe add l elements (the new word) after
 
-
 Processing:
 1) produce combo list. A list of DictItems that are applicable.
-2) (input, combo -> input) : the transform.
-
-Should stream be linked list? It needs fast insert/delete
-
-
-Test this with a wide range of keyboard keys and words available (not just INN)!
+2) (input, combos, action -> input) : the transform. 
+Action is a letter keypress or Enter
 
 The base data structure is a sequence S of "letters(repetition number n)"
-Every"frame", I Need to build up an easy-to-use list of words existing in it.
+Every "frame", I Need to build up an easy-to-use list of words existing in it.
 
 Hash table W : {word -> [location indices in S, from right to left, also noting multiplicity]},
 List of words and isolated letters, in order for rendering/painting purposes
 
-(S, dict)-> Hash table : "x times letter" reward available ie note the locations of the 10I, etc
-Hash table : {Dict Item ID -> [location indices in S, from right to left]}
+(S, dict)-> Hash Table L: "x times letter" reward available, ie note the locations of the 10I, etc
+Hash table W update : {Dict Item ID -> [location indices in S, from right to left]}
 And ID/location of the rightmost Dict Item. Or maybe a list of all the Dict Item IDs present, in order! There is overlap though.
 Separate letter Dict Items and Word Dict Items to avoid overlap
 
-bc What does Enter buy ? rightmost Dict Item
+bc What does Enter buy ? rightmost "Word" Dict Item
 What does N buy? Rightmost 10I
 
-Compute these Hash tables every frame for now
+Compute these Hash tables W, L, every frame for now
 Use S = array for now
 
 Later:
 S should have easy subsequence insertion (word/letter replaced by word/letter, or word/letter added),
  mutability (decrease n by 1 within a range), 
 Partially Recompute Hash tables and lists on modification of S
+Keep a data structure of all the words present in S, update(not recompute) every frame
 
 Operations on S:
 -add 1 letter at the end
@@ -73,18 +70,8 @@ Operations on S:
 
 After each frame, filter out all the n==0 letters
 
-Q : separating into words. There can be ambiguity! Form the largest words? Or most multiple?
-Overlapping words:
-M(5)U(5)L(5)T(5)I(5) + N N 
--> MULT(5)I(4) INN? steal the last I?
-
-first word formed?
-Allow sharing? OK, but how does painting work?
-I can recompute every time, only need to paint < 30 letters anyway?
-Do I need to paint?
-Overlapping words can be displayed by combo of colors, underlining, font, font weight, whatever
-
-
+Should stream be linked list? It needs fast insert/delete
+Test this with a wide range of keyboard keys and words available (not just INN)!
 
 */
 
@@ -111,6 +98,25 @@ const inputWordSplit = (input:string, dict:Set<string>) =>
 {
 
 }
+
+/*
+
+Q : separating into words. There can be ambiguity! Form the largest words? Or most multiple?
+Overlapping words:
+M(5)U(5)L(5)T(5)I(5) + N N 
+-> MULT(5)I(4) INN? steal the last I?
+
+first word formed?
+Allow sharing? OK, but how does painting work?
+I can recompute every time, only need to paint < 30 letters anyway?
+Do I need to paint?
+Overlapping words can be displayed by combo of colors, underlining, font, font weight, whatever
+
+=> Done : see testsplit.ts for an implementation
+no overlapping words for now.
+
+*/
+
 /*
     Arguments to Input component? 3 args at least:
     Letter array obvs. also delimited-word array? or list of word-starting indices?

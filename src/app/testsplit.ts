@@ -50,7 +50,7 @@ const inputWordSplit= (input:string, trie:Trie):Array<number> =>
         result.push(l);
         k = l;
     }
-
+    // result.push(-1); // could be useful, rn it's implicit that the first letter is the last boundary
     return (result);
 }
 
