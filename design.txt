@@ -47,11 +47,34 @@ I word -> open 2 letter words. [ should there be something required to unlock th
 (maybe) 50I->reveal N [N appears after 50 glyphs. typing N results in red feedback and maybe log message ("letter N not available")]
 10I letter->N
 IN->unlock 3 letter words
-INN->automation ( purchases I automation (mediated by a repeat function key: ctrl))
-10N letter->unlock E?
+INN->key automation ( purchases I automation (mediated by a repeat function key: ctrl))
+10N letter->unlock E? (or better price 1000N?)
 WIN : win the game [display early on]
 (maybe)[sth]->W  [display a bit later]
 (maybe)[sth]->unlock N for good
 
-I type available letters:
+Type available letters:
 I, maybe N (when unlocked)
+
+
+
+Qs:
+
+*Base mechanics/word typing:
+buy from anywhere? or only top of "input stack"? -> Can buy from anywhere, but starting from right to left.
+Typing order: add to the right.
+Claiming a letter is simpler : type letter (temp. activated on keyboard), get letter
+"Enter" key to claim (rightmost word). Ambiguous, How do I decide what word to claim? -> Rightmost
+Enter also works as word repeat key. (slow at first)
+"Type word, get effect" for now. No in-stream tokens
+If I purchase a letter N, does it a) replace the 10I in-place? Or b) is it added to the end of the stream? a) most certainly
+I(15)ENI(5) -> press E :a)  I(5)EENI(5) or  b) I(5)ENI(5)E !
+
+I can't see the words like this. best IENI with the 5's underneath? or smaller as subscript?
+
+
+-Other
+Do some DictItems disappear after use? -> no need to answer that now
+
+-------
+

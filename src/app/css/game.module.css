@@ -1,0 +1,8 @@
+.game {
+    text-align: center;
+}
+.gameMiddle {
+    display: flex;
+    flex-direction: row;
+    gap: 10vw;
+}

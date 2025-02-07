@@ -23,7 +23,7 @@ const Game = () => {
                 <div className={styles.gameTop}>
                     <Dict></Dict>
                 </div>
-                <div className={styles.gameCenter}>
+                <div className={styles.gameMiddle}>
                     <Input></Input>
                     <Keyboard></Keyboard>
                 </div>
