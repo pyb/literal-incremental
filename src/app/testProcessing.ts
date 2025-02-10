@@ -43,14 +43,14 @@ const convertTestInput = () => {
 }
 
 // Triggers on n times word or letter. These will be DictItems in the future
-type Combo = {
+type Transform = {
     n: number,
     input: string, // word or letter
     output: string,
 };
 
 // Compute
-const testCombos:Array<Combo> = [
+const testCombos:Array<Transform> = [
     {n: 10, input: "i", output:"n"},
     {n: 10, input: "n", output:"e"},
     {n: 1, input: "win", output:"!"},
@@ -66,9 +66,9 @@ type LetterComboPosition = {
 };
 
 //Hash Table L: "x times letter" reward available, ie note the locations of the 10I, etc
-const scanForLetters = (input: Array<Letter>, combos: Array<Combo>):Array<LetterComboPosition> => {
+const scanForLetters = (input: Array<Letter>, combos: Array<Transform>):Array<LetterComboPosition> => {
     let result:Array<LetterComboPosition> = [];
-    combos.forEach((combo: Combo, index: number) => {
+    combos.forEach((combo: Transform, index: number) => {
         const comboLetter = combo.input;
         if (comboLetter.length == 1) {
             input.forEach((letter: Letter, k: number) => {
@@ -115,7 +115,7 @@ const inputToString = (input: Array<Letter>):string => {
 // 2 strats:
 // 1) Create a trie from all the words in word combos. Iterate over input and for each position,
 //   look for all available words in the trie
-const scanForWords1 = (input: Array<Letter>, combos: Array<Combo>):Array<WordComboPosition> => {
+const scanForWords1 = (input: Array<Letter>, combos: Array<Transform>):Array<WordComboPosition> => {
     const wordCombos = combos.filter((combo) => combo.input.length > 1);
 
     let result:Array<WordComboPosition> = [];
@@ -124,15 +124,15 @@ const scanForWords1 = (input: Array<Letter>, combos: Array<Combo>):Array<WordCom
     return result;
 }
 
-// 2) For each word in the combos, look for its last occurence in the input
-const scanForWords2 = (input: Array<Letter>, combos: Array<Combo>):Array<WordComboPosition> => {
+// 2) Slower - For each word in the combos, look for its last occurence in the input
+const scanForWords2 = (input: Array<Letter>, combos: Array<Transform>):Array<WordComboPosition> => {
     const revInputS:string = inputToString(input.reverse());
     const wordCombos = combos.filter((combo) => combo.input.length > 1);
 
     console.log(revInputS.length)
     let result:Array<WordComboPosition> = [];
 
-    wordCombos.forEach((combo:Combo, index: number) => {
+    wordCombos.forEach((combo:Transform, index: number) => {
         const word = combo.input;
         const revWord = sreverse(word);
         const i = revInputS.indexOf(revWord);

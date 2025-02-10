@@ -37,8 +37,3 @@ export type TransformLocation =
     // n: number, // not required
     location: number,
 }
-
-type LetterComboPosition = {
-    id: number,
-    pos: number
-};

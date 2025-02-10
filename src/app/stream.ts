@@ -1,7 +1,7 @@
 // Input stream operations
 
 import {Transform, TransformLocation, Letter} from "./GameTypes"
-import {sreverse} from "./util"
+import * as Util from "./util"
 
 /* 
 
@@ -96,8 +96,8 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
 
 //Hash Table L: "x times letter" reward available, ie note the locations of the 10I, etc
 // Only return the rightmost letter transform for each letter
-export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform>): Map<string, LetterComboPosition> => {
-    let result = new Map<string, LetterComboPosition>();
+export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform>): Map<string, TransformLocation> => {
+    let result = new Map<string,  TransformLocation>();
     transforms.forEach((transform: Transform, index: number) => {
         const transformLetter = transform.input;
         if (transformLetter.length == 1) {
@@ -110,14 +110,38 @@ export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform
                 {
                     const current = result.get(key);
                     if (!current ||
-                        current.pos < pos)
-                        result.set(key, { id: index, pos: pos });
+                        current.location < pos)
+                        result.set(key, { id: index, word: key, location: pos });
                 }
             });
         }
     });
     return result;
 }
+
+const inputToString = (input: Array<Letter>):string => {
+    return input.map((letter: Letter) => letter.text).join('');
+}
+
+// 2) For each word in the transform, look for its last occurence in the input
+export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>):Array<TransformLocation> => {
+    const revInputS:string = inputToString(input.reverse());
+    let result:Array<TransformLocation> = [];
+
+    const wordTransforms = transforms.filter((transforms) => transforms.input.length > 1);
+    wordTransforms.forEach((transform:Transform, index: number) => {
+        const word = transform.input;
+        const revWord = Util.sreverse(word);
+        const i = revInputS.indexOf(revWord);
+        if (i != -1)
+        {
+            const pos = (input.length - i) - word.length;
+            result.push({id: index, location: pos, word: word})
+        }
+    });
+    return result.sort((a, b) => (b.location - a.location)); // the rightmost words come first
+}
+
 
 /*
 // Kinda do this, but backwards

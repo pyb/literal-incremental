@@ -66,31 +66,32 @@ const testTransforms:Array<Transform> = [
 
 /**************************************************/
 
-const testStream = ():Array<string> => {
-    let result:Array<string> = [];
+const testStream = () => {
     let testInput:Array<Letter> = [];
 
     testInput = convertTestInput(testInputS);
     console.log(testInputS);
-    console.log("------------")
+    console.log("\n------------\n")
 
-    /*
     const outputWith1Letter = Stream.addLetter(testLetter, testInput);
     console.log(reConvertStream(outputWith1Letter));
-    console.log("------------")
+    console.log("\n------------\n")
 
     const outputWithLetterCombo = Stream.applyLetterTransform(testLetterTranform, testInput, testLetterTransformLocation );
     console.log(reConvertStream(outputWithLetterCombo));
-    console.log("------------")
+    console.log("\n------------\n")
 
     const outputWithWordCombo = Stream.applyWordTransform(testWordTranform, testInput, testWordTransformLocation );
     console.log(reConvertStream(outputWithWordCombo));
-    console.log("------------")
-    */
+    console.log("\n------------\n")
+    
     const scanLetters = Stream.scanForLetters(testInput, testTransforms);
     console.log(testTransforms);
     console.log(scanLetters);
-    return result;
+    console.log("\n------------\n")
+
+    const scanWords = Stream.scanForWords(testInput, testTransforms);
+    console.log(scanWords);
 }
 
 testStream();
