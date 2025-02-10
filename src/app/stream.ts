@@ -71,19 +71,22 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     const word = transform.input;
     const output = transform.output;
     let i:number = 0;
+    let k:number = 0;
     while (i < word.length) {
-        const letter = result[location + i];
+        const letter = result[location + k];
+        console.log(letter)
         if(!letter)
             throw new Error('Bug: out of bounds');
         if (letter.text != word[i])
             throw new Error('Bug: bad transformation arguments! Bad word letter');
         if (letter.n == 1) { 
-            result.splice(location + i, 1); // delete the Letter in place
+            result.splice(location + k, 1); // delete the Letter in place
         }
         else {
             letter.n -= 1;
-            i++;
+            k++;
         }
+        i++;
     }
     const letters = [...output].map((l: string):Letter => { return {text:l, n:1} });
     result.splice(location + i, 0, ...letters);
