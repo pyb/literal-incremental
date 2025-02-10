@@ -3,6 +3,7 @@
     Input data structure:
     Array of InputItem
 */
+/*
 export type InputItem = {
     text: string,
     finished: boolean,
@@ -11,6 +12,7 @@ export type InputItem = {
     // isPrefix = !isLetter & !isWord 
     n: number, // >= 1
 }
+*/
 
 export type Letter = {
     text: string,
@@ -32,6 +34,6 @@ export type TransformLocation =
 {
     id: number,
     word: string, // combo word or letter
-    location: number,
     // n: number, // not required
+    location: number,
 }

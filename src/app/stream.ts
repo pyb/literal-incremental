@@ -19,7 +19,7 @@ Transform filter W: What words are available.  {Dict Item ID -> [location indice
 // Mutate or not? not allowed
 */
 
-const addLetter = (letter: string, input:Array<Letter>):Array<Letter> => {
+export const addLetter = (letter: string, input:Array<Letter>):Array<Letter> => {
     let result:Array<Letter> = [...input]; // clone
     if (input.length == 0)
         return [{text: letter, n: 1}];
@@ -34,11 +34,11 @@ const addLetter = (letter: string, input:Array<Letter>):Array<Letter> => {
 }
 
 // might be useful if we sometimes produce empty items
-const cleanupStream = (stream:Array<Letter>) => {
+export const cleanupStream = (stream:Array<Letter>) => {
     return [...stream].filter((l:Letter) => (l.n > 0 && l.text));
 }
 
-const applyLetterTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
+export const applyLetterTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
     if (stream[location].text != transform.input) // sanity check
         throw new Error('Bug: bad transformation arguments! Bad letter');
     
@@ -60,7 +60,7 @@ const applyLetterTransform = (transform: Transform, stream:Array<Letter>, locati
     return result;
 }
 
-const applyWordTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
+export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
     let result:Array<Letter> = [...stream];
 
     const word = transform.input;

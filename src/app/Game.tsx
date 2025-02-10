@@ -7,6 +7,7 @@ import Keyboard from "./Keyboard"
 import Input from "./Input"
 import * as GS from "./GameState"
 import * as GameData from "./GameData"
+import * as Test from "./test";
 
 const Footer = () => {
     return (
@@ -16,6 +17,14 @@ const Footer = () => {
 
 const Game = () => {
     const [GS, setGS] = React.useState<GS.GameState>(GameData.initialGameState);
+
+    React.useEffect(() => {
+        for (const s of Test.testStream())
+        {
+            console.log(s);
+            console.log('\n');
+        }
+      }, []);
 
     return (
         <>
