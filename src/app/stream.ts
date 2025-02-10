@@ -19,16 +19,16 @@ Transform filter W: What words are available.  {Dict Item ID -> [location indice
 // Mutate or not? not allowed
 */
 
-export const addLetter = (letter: string, input:Array<Letter>):Array<Letter> => {
-    let result:Array<Letter> = [...input]; // clone
-    if (input.length == 0)
-        return [{text: letter, n: 1}];
-    
-    const lastLetter:Letter = result[-1];
+export const addLetter = (letter: string, input: Array<Letter>): Array<Letter> => {
+    let result: Array<Letter> = [...input]; // clone
+    const lastLetter = result.at(-1);
+    if (!lastLetter)
+        return [{ text: letter, n: 1 }];
+
     if (lastLetter.text != letter)
-        result.push({text: letter, n: 1});
+        result.push({ text: letter, n: 1 });
     else {
-        result[-1].n++;
+        lastLetter.n++;
     }
     return result;
 }
@@ -39,7 +39,7 @@ export const cleanupStream = (stream:Array<Letter>) => {
 }
 
 export const applyLetterTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
-    if (stream[location].text != transform.input) // sanity check
+    if (!stream[location] || stream[location].text != transform.input) // sanity check
         throw new Error('Bug: bad transformation arguments! Bad letter');
     
     let result:Array<Letter> = [...stream];
@@ -47,16 +47,21 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
 
     const newLetter:Letter = {text: transform.output, n: 1};
 
-    if (result[location].n == N) {
+    const existingLetter = result[location];
+
+    if(!existingLetter)
+        throw new Error('Bug: bad letter');
+    else if (existingLetter.n < N)
+        throw new Error('Bug: bad transformation arguments : n too small!');
+    if (existingLetter.n == N) {
         result.splice(location, 1, newLetter );
     }
-    else if (result[location].n > N)
+    else if (existingLetter.n > N)
     {
-        result[location].n -= N;
+        existingLetter.n -= N;
         result.splice(location+1, 0, newLetter );
     }
-    else
-        throw new Error('Bug: bad transformation arguments : n too small!');
+
     return result;
 }
 
@@ -67,13 +72,16 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     const output = transform.output;
     let i:number = 0;
     while (i < word.length) {
-        if (result[location + i].text != word[i])
+        const letter = result[location + i];
+        if(!letter)
+            throw new Error('Bug: out of bounds');
+        if (letter.text != word[i])
             throw new Error('Bug: bad transformation arguments! Bad word letter');
-        if (result[location + i].n == 1) { 
+        if (letter.n == 1) { 
             result.splice(location + i, 1); // delete the Letter in place
         }
         else {
-            result[location + i].n -= 1;
+            letter.n -= 1;
             i++;
         }
     }

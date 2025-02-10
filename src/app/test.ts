@@ -1,14 +1,18 @@
+// Test with: npx tsx ./test.ts
+
 import * as Stream from "./stream";
 import {Letter} from "./GameTypes";
 
 const testInputS:string = "fobar(5)f(3)o(3)o(3)in(13)nbazhousesqui(10)rebaba(3)zi(5)n";
-let testInput:Array<Letter> = [];
+
 
 const convertTestInput = (input:string):Array<Letter> => {
     const len = input.length;
     let output:Array<Letter> = [];
     for (let i: number = 0; i < len;) {
         const letter = input[i];
+        if (!letter)
+            throw new Error('Bug: array out of bounds');
         if (i > (len - 3) || input[i + 1] != "(") {
             output.push({ text: letter, n: 1 });
             i++;
@@ -28,15 +32,22 @@ const convertTestInput = (input:string):Array<Letter> => {
 }
 
 const reConvertStream = (input:Array<Letter>):string => {
-    return testInput.map((l:Letter) => (l.text + ((l.n == 1) ? "" : "(" + l.n.toString() + ")"))).join("");
+    return input.map((l:Letter) => (l.text + ((l.n == 1) ? "" : "(" + l.n.toString() + ")"))).join("");
 } 
 
 export const testStream = ():Array<string> => {
     let result:Array<string> = [];
+    let testInput:Array<Letter> = [];
 
-    //const testOutput = Stream.addLetter("a", testInput);
     testInput = convertTestInput(testInputS);
+    const testOutput = Stream.addLetter("a", testInput);
+
     result.push(testInputS);
-    result.push(reConvertStream(testInput));
+    result.push(reConvertStream(testOutput));
     return result;
+}
+
+for (const s of testStream()) {
+    console.log(s);
+    console.log('\n');
 }

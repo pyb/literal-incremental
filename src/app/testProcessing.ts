@@ -22,6 +22,10 @@ console.log("len: " + len.toString())
 const convertTestInput = () => {
     for (let i: number = 0; i < len;) {
         const letter = testInputS[i];
+        if (!letter)
+        {
+            throw new Error('Bug: array out of bounds');
+        }
         if (i > (len - 3) || testInputS[i + 1] != "(") {
             testInput.push({ text: letter, n: 1 });
             i++;
