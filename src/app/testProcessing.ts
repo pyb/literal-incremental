@@ -124,7 +124,7 @@ const scanForWords1 = (input: Array<Letter>, combos: Array<Combo>):Array<WordCom
     return result;
 }
 
-// 2) For each word in the combo, look for its last occurence in the input
+// 2) For each word in the combos, look for its last occurence in the input
 const scanForWords2 = (input: Array<Letter>, combos: Array<Combo>):Array<WordComboPosition> => {
     const revInputS:string = inputToString(input.reverse());
     const wordCombos = combos.filter((combo) => combo.input.length > 1);

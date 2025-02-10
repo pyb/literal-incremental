@@ -94,6 +94,46 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     return result;
 }
 
+//Hash Table L: "x times letter" reward available, ie note the locations of the 10I, etc
+// Only return the rightmost letter transform for each letter
+export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform>): Map<string, LetterComboPosition> => {
+    let result = new Map<string, LetterComboPosition>();
+    transforms.forEach((transform: Transform, index: number) => {
+        const transformLetter = transform.input;
+        if (transformLetter.length == 1) {
+            const l = input.length;
+            input.toReversed().forEach((letter: Letter, k: number) => {
+                const pos = l - k;
+                const key: string = letter.text;
+                if ((key == transformLetter) &&
+                    (letter.n >= transform.n))
+                {
+                    const current = result.get(key);
+                    if (!current ||
+                        current.pos < pos)
+                        result.set(key, { id: index, pos: pos });
+                }
+            });
+        }
+    });
+    return result;
+}
+
+/*
+// Kinda do this, but backwards
+const scanForLettersBackwards = (input:string, words:Array<string>) =>{
+    // Return positions of words in input
+    let result:Map<string, number>= new Map<string, number>();
+    for (const w of words)
+    {
+        const k = input.indexOf(w) 
+        if (k !== -1)
+            result.set(w,k);
+    }
+}
+*/
+
+
 // A Naive impl
 // Input is now a simple string but will need to include multiplicities in the future
 
