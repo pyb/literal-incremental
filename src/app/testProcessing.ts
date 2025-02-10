@@ -1,12 +1,9 @@
 // Test with: npx tsx ./testProcessing.ts
 
-import test from "node:test";
-import {Trie} from "/home/pyb/rc/trie/trie";
-import {TrieNode} from "/home/pyb/rc/trie/trieNode";
-
 // test data
 //const testInput1:string = "fobarfooinnhousesquirebabazin";
 //const testWords1:Array<string> = ["foo", "bar", "baz", "house", "fun", "squire", "in", "inn"];
+
 
 function sreverse(s:string):string{
     return s.split("").reverse().join("");
@@ -158,37 +155,3 @@ console.log(testCombos)
 const wordCombos = scanForWords2(testInput, testCombos);
 console.log("word combos:");
 console.log(wordCombos);
-
-/*
-What next? Implement  input stream operations, then  2) in processing. 
-
-* Input Operations:
-Keypress -> Add 1 letter to the end of input
-Purchase letter : transform 1 input element into 1 or 2 others. i(15) -> i(5)n i(10) ->n
-Purchase word: remove/reduce k consecutive input elements, where k is length of word. Maybe add l elements (the new word) after
-
-*/
-// API
-const addLetter = (letter: string, input:Array<Letter>):Array<Letter> => {
-    let result:Array<Letter> = [...input]; // clone
-    if (input.length == 0)
-        return [{text: letter, n: 1}];
-    
-    const lastLetter:Letter = result[-1];
-    if (lastLetter.text != letter)
-        result.push({text: letter, n: 1});
-    else {
-        result[-1].n++;
-    }
-    return result;
-}
-
-const applyLetterCombo = (combo: Combo, input:Array<Letter>):Array<Letter>  => {
-    let result:Array<Letter> = [...input];
-    return result;
-}
-
-const applyWordCombo = (combo: Combo, input:Array<Letter>):Array<Letter>  => {
-    let result:Array<Letter> = [...input];
-    return result;
-}
