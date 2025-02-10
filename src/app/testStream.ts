@@ -56,11 +56,11 @@ export const testStream = ():Array<string> => {
     testInput = convertTestInput(testInputS);
     result.push(testInputS);
 
-    //const outputWith1Letter = Stream.addLetter(testLetter, testInput);
-    //result.push(reConvertStream(outputWith1Letter));
+    const outputWith1Letter = Stream.addLetter(testLetter, testInput);
+    result.push(reConvertStream(outputWith1Letter));
 
-    //const outputWithLetterCombo = Stream.applyLetterTransform(testLetterTranform, testInput, testLetterTransformLocation );
-    //result.push(reConvertStream(outputWithLetterCombo));
+    const outputWithLetterCombo = Stream.applyLetterTransform(testLetterTranform, testInput, testLetterTransformLocation );
+    result.push(reConvertStream(outputWithLetterCombo));
 
     const outputWithWordCombo = Stream.applyWordTransform(testWordTranform, testInput, testWordTransformLocation );
     result.push(reConvertStream(outputWithWordCombo));

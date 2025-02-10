@@ -20,7 +20,8 @@ const bwNextWordOrLetterBoundary = (from: number, input:string, trie: Trie): num
     if (from < 0)
         console.log("Error ! from < 0");
 
-
+    if(!input[from])
+        throw new Error('Bad input');
     let node:TrieNode = trie.prefixSearch(input[from]); // search for first letter
 
     let k = from - 1;
@@ -31,6 +32,8 @@ const bwNextWordOrLetterBoundary = (from: number, input:string, trie: Trie): num
         if (node.isEndOfWord())
             result = k;
         const nextLetter = input[k];
+        if(!nextLetter)
+            throw new Error('Bad input');
         node = node.getChild(nextLetter);
         k -= 1;
     }

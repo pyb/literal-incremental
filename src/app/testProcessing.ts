@@ -4,7 +4,6 @@
 //const testInput1:string = "fobarfooinnhousesquirebabazin";
 //const testWords1:Array<string> = ["foo", "bar", "baz", "house", "fun", "squire", "in", "inn"];
 
-
 function sreverse(s:string):string{
     return s.split("").reverse().join("");
 }
