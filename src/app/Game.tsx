@@ -29,15 +29,14 @@ const Game = () => {
                     <Dict></Dict>
                 </div>
                 <div className={styles.gameMiddle}>
-                    <Input></Input>
-                    <Keyboard></Keyboard>
+                    <Input input={GS.input} />
+                    <Keyboard availableKeys={GS.availableKeys} unlockedKeys={GS.unlockedKeys} />
                 </div>
                 <div className={styles.gameFooter}>
                     <Footer></Footer>
                 </div>
             </div>
-        </>
-    )
+        </>);
 }
 
 export default Game;

@@ -4,20 +4,24 @@ import {Transform, TransformLocation, Letter} from "./GameTypes"
 import * as Util from "./util"
 
 /* 
-
-  Input Stream Ops:
--Actions
+  Input Stream Ops: Actions and Scans.
+-Actions:
 Keypress -> Add 1 letter to the end of input
 Purchase letter : transform 1 input element into 1 or 2 others. i(15) -> i(5)n i(10) ->n
 Purchase word: remove/reduce k consecutive input elements, where k is length of word. Maybe add l elements (the new word) after
--Rendering helper
-Separate into words for UI/rendering (arbitrary)
--Transform filters
-Transform filter L: What letter Transforms are available, and their positions.  Dict Item ID -> first location in S
-Transform filter W: What words are available.  {Dict Item ID -> [location indices in S, from right to left ; or first location?]}
 
-// Mutate or not? not allowed
+-Scans:
+Transform filter "L": What letter Transforms are available, and their positions.  Dict Item ID -> first location in S
+Transform filter "W": What words are available.  {Dict Item ID -> [location indices in S, from right to left ; or first location?]}
+
+-Rendering helper (TODO: copy/test from testSplit.js): Separate into words for UI/rendering (arbitrary)
+
 */
+
+// might be useful if we sometimes produce empty items
+export const cleanupStream = (stream:Array<Letter>) => {
+    return [...stream].filter((l:Letter) => (l.n > 0 && l.text));
+}
 
 export const addLetter = (letter: string, input: Array<Letter>): Array<Letter> => {
     let result: Array<Letter> = [...input]; // clone
@@ -31,11 +35,6 @@ export const addLetter = (letter: string, input: Array<Letter>): Array<Letter> =
         lastLetter.n++;
     }
     return result;
-}
-
-// might be useful if we sometimes produce empty items
-export const cleanupStream = (stream:Array<Letter>) => {
-    return [...stream].filter((l:Letter) => (l.n > 0 && l.text));
 }
 
 export const applyLetterTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {

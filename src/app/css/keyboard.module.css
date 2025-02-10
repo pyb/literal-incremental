@@ -1,0 +1,13 @@
+.keyboardComponent {
+    display: flex;
+    flex-direction: column;
+}
+
+.keyRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.key {
+    margin-left:10px;
+}

@@ -1,4 +1,7 @@
 .game {
+    display: flex;
+    flex-direction: column;
+    gap: 10vh;
     text-align: center;
 }
 .gameMiddle {

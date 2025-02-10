@@ -56,12 +56,12 @@ const testWordTransformLocation:number = 10;
 
 const testTransforms:Array<Transform> = [
     {id:0, n: 10, input: "i", output:"n"},
-    {id:1,n: 10, input: "n", output:"e"},
-    {id:2,n: 1, input: "win", output:"!"},
-    {id:3,n: 1, input: "in", output:""},
-    {id:4,n: 1, input: "foo", output:"bar"},
-    {id:5,n: 1, input: "baz", output:""},
-    {id:6,n: 3, input: "bar", output:"w"},
+    {id:1, n: 10, input: "n", output:"e"},
+    {id:2, n: 1,  input: "win", output:"!"},
+    {id:3, n: 1,  input: "in", output:""},
+    {id:4, n: 1,  input: "foo", output:"bar"},
+    {id:5, n: 1,  input: "baz", output:""},
+    {id:6, n: 3,  input: "bar", output:"w"},
 ];
 
 /**************************************************/

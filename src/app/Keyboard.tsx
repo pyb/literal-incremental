@@ -1,8 +1,20 @@
 import styles from "./css/keyboard.module.css"
 
-const Keyboard = () => {
+interface Props {
+    availableKeys: Array<string>,
+    unlockedKeys: Array<string>,
+};
+
+const Keyboard = ({availableKeys, unlockedKeys}:Props) => {
     return (
-        <><div>Keyboard</div></>
+        <div className={styles.keyboardComponent}>
+            <div>{availableKeys.map((key: string) =>
+                <span className={styles.key} key={key}>{key}</span>
+            )}</div>
+            <div>{unlockedKeys.map((key: string) =>
+                <span className={styles.key} key={key}>{key}</span>
+            )}</div>
+        </div>
     )
 }
 
