@@ -1,10 +1,7 @@
 // Test with: npx tsx ./test.ts
 
 import * as Stream from "./stream";
-import {Letter} from "./GameTypes";
-
-const testInputS:string = "fobar(5)f(3)o(3)o(3)in(13)nbazhousesqui(10)rebaba(3)zi(5)n";
-
+import {Letter, Transform, TransformLocation} from "./GameTypes";
 
 const convertTestInput = (input:string):Array<Letter> => {
     const len = input.length;
@@ -22,7 +19,6 @@ const convertTestInput = (input:string):Array<Letter> => {
             while (input[k] != ")") {
                 k++;
             }
-
             const n = Number(input.slice(i + 2, k));
             output.push({ text: letter, n: n });
             i = k + 1;
@@ -35,15 +31,27 @@ const reConvertStream = (input:Array<Letter>):string => {
     return input.map((l:Letter) => (l.text + ((l.n == 1) ? "" : "(" + l.n.toString() + ")"))).join("");
 } 
 
+const testInputS:string = "fobar(9)f(3)o(3)o(3)in(13)nbazhousesqui(10)rebaba(3)zi(5)n";
+const testLetter:string = "a";
+const testLetterTranform:Transform = {
+    id: 0,
+    n: 5,
+    input: "r",
+    output: "n",
+};
+const testLetterTransformLocation:number = 4;
+
 export const testStream = ():Array<string> => {
     let result:Array<string> = [];
     let testInput:Array<Letter> = [];
 
     testInput = convertTestInput(testInputS);
-    const testOutput = Stream.addLetter("a", testInput);
+    const outputWith1Letter = Stream.addLetter(testLetter, testInput);
+    const outputWithLetterCombo = Stream.applyLetterTransform(testLetterTranform, testInput, testLetterTransformLocation );
 
     result.push(testInputS);
-    result.push(reConvertStream(testOutput));
+    result.push(reConvertStream(outputWith1Letter));
+    result.push(reConvertStream(outputWithLetterCombo));
     return result;
 }
 
