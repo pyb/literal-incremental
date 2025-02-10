@@ -1,4 +1,4 @@
-// Test with: npx tsx ./test.ts
+// Test with: npx tsx ./testStream.ts
 
 import * as Stream from "./stream";
 import {Letter, Transform, TransformLocation} from "./GameTypes";
