@@ -9,7 +9,7 @@ import * as GS from "./GameState"
 import * as GameData from "./GameData"
 import * as UIData from "./UIData"
 import * as Stream from "./stream"
-import {Transform} from "./GameTypes"
+import {Transform, emptyTransform} from "./GameTypes"
 
 const Footer = () => {
     return (
@@ -49,7 +49,7 @@ const Game = () => {
         <>
             <div className={styles.game}>
                 <div className={styles.gameTop}>
-                    <Dict></Dict>
+                    <Dict dict={[]} lastTransform={emptyTransform}></Dict>
                 </div>
                 <div className={styles.gameMiddle}>
                     <Input input={GS.input} />

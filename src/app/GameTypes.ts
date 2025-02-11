@@ -13,6 +13,10 @@ export type Transform = {
     output: string
 };
 
+export const emptyTransform:Transform = {
+    id:0, n:0, input:"", output:""
+}
+
 export type TransformLocation = {
     id: number,
     word: string, // combo word or letter

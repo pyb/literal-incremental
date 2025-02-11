@@ -1,8 +1,14 @@
 import styles from "./css/dict.module.css"
+import * as Types from "./GameTypes"
 
-const Dict = () => {
+interface Props {
+    dict: Array<Types.Transform>,
+    lastTransform: Types.Transform,
+};
+
+const Dict = ({dict, lastTransform}: Props) => {
     return (
-        <>Dict</>
+        <div className={styles.dictComponent}><span>Last: </span><br></br><span>{lastTransform && lastTransform.input}</span></div>
     )
 }
 
