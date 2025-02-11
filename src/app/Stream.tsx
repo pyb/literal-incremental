@@ -4,15 +4,15 @@ import React from "react";
 import styles from "./css/input.module.css";
 
 interface Props {
-    input: Array<Letter>,
+    stream: Array<Letter>,
 };
 
-const Input = ({input}: Props) => {
+const Stream = ({stream}: Props) => {
     return (
         <div className={styles.inputComponent}>
-            {TestUtil.reconvertTestStream(input)}
+            {TestUtil.reconvertTestStream(stream)}
         </div>
     )
 }
 
-export default Input;
+export default Stream;

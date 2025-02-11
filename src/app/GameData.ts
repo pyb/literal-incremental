@@ -12,7 +12,7 @@ export const keyVisibility = {
 export const initialGameState:GameState = {
     glyphs: 0,
     //input: [],
-    input:Test.testInput,
+    stream:Test.testInput,
     unlockedKeys:["i"],
     availableKeys:[],
     dict:Test.testTransforms,
