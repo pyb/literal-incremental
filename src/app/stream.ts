@@ -124,7 +124,7 @@ const inputToString = (input: Array<Letter>):string => {
 
 // 2) For each word in the transform, look for its last occurence in the input
 export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>):Array<TransformLocation> => {
-    const revInputS:string = inputToString(input.reverse());
+    const revInputS:string = inputToString(input.toReversed());
     let result:Array<TransformLocation> = [];
 
     const wordTransforms = transforms.filter((transforms) => transforms.input.length > 1);

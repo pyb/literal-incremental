@@ -62,6 +62,7 @@ const testTransforms:Array<Transform> = [
     {id:4, n: 1,  input: "foo", output:"bar"},
     {id:5, n: 1,  input: "baz", output:""},
     {id:6, n: 3,  input: "bar", output:"w"},
+    {id:7, n: 1,  input: "cat", output:""},
 ];
 
 /**************************************************/
