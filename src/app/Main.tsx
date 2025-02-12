@@ -20,9 +20,9 @@ import { useImmer } from "use-immer";
     -Other UI (footer...)
 */
 
-const Footer = () => {
+const Footer = ({glyphs}:{glyphs:number}) => {
     return (
-        <>Footer</>
+        <div>{"Glyphs : " + glyphs.toString()}</div>
     );
 }
 
@@ -66,7 +66,7 @@ const GameMain = () => {
                 <Keyboard availableKeys={availableKeys} unlockedKeys={unlockedKeys(GS.keyStatus)} />
             </div>
             <div className={styles.gameFooter}>
-                <Footer></Footer>
+                <Footer glyphs={GS.glyphs} />
             </div>
         </div>
     );

@@ -73,6 +73,7 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: 
 
 const directInput = (key: string) => {
   return ((gs:GameState) => {
+    gs.glyphs += 1;
     gs.stream = Stream.addLetter(key, gs.stream);
   });
 }
