@@ -2,7 +2,10 @@ import {Letter, Transform} from "./GameTypes"
 import React from "react";
 import styles from "./css/input.module.css";
 import * as StreamOps from "./streamops";
-import * as TestUtil from "./testUtil";
+
+export const streamToText = (input:Array<Letter>):string => {
+    return input.map((l:Letter) => (l.text + ((l.n == 1) ? "" : "(" + l.n.toString() + ")"))).join("");
+}
 
 interface Props {
     stream: Array<Letter>,
@@ -21,7 +24,7 @@ const Stream = ({stream, dict}: Props) => {
     }
     return (
         <div className={styles.inputComponent}>
-            {separatedStream.map(TestUtil.reconvertTestStream).join(" ")}
+            {separatedStream.map(streamToText).join(" ")}
         </div>
     )
 }

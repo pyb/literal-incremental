@@ -5,6 +5,7 @@ import * as Util from "./util"
 
 import {Trie} from "./trie/trie";
 import {TrieNode} from "./trie/trieNode";
+import { tr } from "motion/react-client";
 /* 
   Input Stream Ops: Actions and Scans.
 -Actions:
@@ -107,27 +108,43 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
 
 /****************************************************************/
 // Scanning
+// Bug: I had forgotten that some transform convert words into letters! Are they Letter Transforms?
 
-//Hash Table L: "x times letter" reward available, ie note the locations of the 10I, etc
+// Hash Table L: "x times letter" reward available, ie note the locations of the 10I, etc
 // Only return the rightmost letter transform for each letter
 export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform>): Map<string, TransformLocation> => {
-    let result = new Map<string,  TransformLocation>();
+    let result = new Map<string, TransformLocation>();
     transforms.forEach((transform: Transform, index: number) => {
         const transformLetter = transform.output;
         if (transformLetter.length == 1) {
-            const l = input.length;
-            input.toReversed().forEach((letter: Letter, k: number) => {
-                const pos = l - 1 - k;
-                const key: string = letter.text;
-                if ((key == transform.input) &&
-                    (letter.n >= transform.n))
+            const inputWord:string = transform.input;
+            if(inputWord.length == 1)
+            {
+                const l = input.length;
+                input.toReversed().forEach((letter: Letter, k: number) => {
+                    const pos = l - 1 - k;
+                    const key: string = letter.text;
+                    if ((key == inputWord) &&
+                        (letter.n >= transform.n))
+                    {
+                        const current = result.get(transformLetter);
+                        if (!current ||
+                            current.location < pos)
+                            result.set(transformLetter, { id: index, word: key, location: pos });
+                    }
+                });
+            }
+            else { // "word to letter" transform. Convention : n is always 1. no "b(2)l(2)a(2) -> x" transforms
+                const revWord = Util.sreverse(inputWord);
+                const revInputS:string = inputToString(input.toReversed());
+                const i = revInputS.indexOf(revWord);
+                if (i != -1)
                 {
-                    const current = result.get(key);
-                    if (!current ||
-                        current.location < pos)
-                        result.set(transformLetter, { id: index, word: key, location: pos });
+                    const pos = (input.length - i) - inputWord.length;
+                    result.set(transformLetter, {id: transform.id, location: pos, word: inputWord})
                 }
-            });
+            }
+ 
         }
     });
     return result;
