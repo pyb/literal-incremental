@@ -42,6 +42,7 @@ export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wo
   -...?
 */
 
+// TODO : replace this with just null
 const dummyGS = (gs:GameState) => {
 
 }
@@ -57,7 +58,9 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: 
   const modes:Set<KeyMode> = status.modes;
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
-    return transform(key, stream, dict);
+    return letterTransform(key, stream, dict);
+  else if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available))
+    return wordTransform(stream, dict);
   else if (modes.has(KeyMode.Unlocked) && modes.has(KeyMode.Letter))
     return directInput(key);
   else if ( modes.has(KeyMode.Modifier) &&
@@ -74,9 +77,9 @@ const directInput = (key: string) => {
   });
 }
 
-const transform = (key: string, stream:Array<Letter>, dict:Array<Types.Transform>) => {
-  const result:Map<string, Types.TransformLocation> = Stream.scanForLetters(stream, dict);
-  const transformLocation = result.get(key);
+const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Types.Transform>) => {
+  const transforms:Map<string, Types.TransformLocation> = Stream.scanForLetters(stream, dict);
+  const transformLocation = transforms.get(key);
   if (!transformLocation)
     throw new Error('Bug: transform not found');
   const id:number = transformLocation.id;
@@ -88,6 +91,22 @@ const transform = (key: string, stream:Array<Letter>, dict:Array<Types.Transform
     //gs.stream = Stream.addLetter(key, gs.stream);
 
     gs.stream = Stream.applyLetterTransform(transform, stream, transformLocation.location)
+  });
+}
+
+const wordTransform = (stream:Array<Letter>, dict:Array<Types.Transform>) => {
+  const transforms:Array<Types.TransformLocation> = Stream.scanForWords(stream, dict);
+  const transformLocation = transforms[0];
+  
+  if (!transformLocation)
+    throw new Error('Bug: transform not found');
+
+  const transform = dict.find((item:Transform) => item.id == transformLocation.id);
+  if (!transform)
+    throw new Error('Bug: transform id not found');
+
+  return ((gs:GameState) => {
+    gs.stream = Stream.applyWordTransform(transform, stream, transformLocation.location)
   });
 }
 

@@ -42,11 +42,10 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
         throw new Error('Bug: bad transformation arguments! Bad letter');
     
     let result:Array<Letter> = [...stream];
-    const N = transform.n;
-
+    
     const newLetter:Letter = {text: transform.output, n: 1};
-
-    const existingLetter = result[location];
+    let existingLetter = result[location];
+    const N = transform.n;
 
     if(!existingLetter)
         throw new Error('Bug: bad letter');
@@ -57,8 +56,11 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
     }
     else if (existingLetter.n > N)
     {
-        existingLetter.n -= N;
-        result.splice(location+1, 0, newLetter );
+        const letter:Letter = {
+            text: existingLetter.text,
+            n: existingLetter.n - N
+        };
+        result.splice(location, 1, letter, newLetter );
     }
 
     return result;
@@ -72,7 +74,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     let i:number = 0;
     let k:number = 0;
     while (i < word.length) {
-        const letter = result[location + k];
+        let letter = result[location + k];
         console.log(letter)
         if(!letter)
             throw new Error('Bug: out of bounds');
@@ -82,7 +84,12 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
             result.splice(location + k, 1); // delete the Letter in place
         }
         else {
-            letter.n -= 1;
+            const updatedLetter:Letter = {
+                text: letter.text,
+                n: letter.n - 1
+            };
+            result.splice(location + k, 1, updatedLetter);
+            //letter.n -= 1;
             k++;
         }
         i++;

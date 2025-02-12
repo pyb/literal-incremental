@@ -19,8 +19,14 @@ const nStatus:Types.KeyStatus = {
     modes: new Set<Types.KeyMode>([Types.KeyMode.LetterTranform, Types.KeyMode.Available]),
 }
 
+const enterStatus:Types.KeyStatus = {
+    key: "Enter",
+    modes: new Set<Types.KeyMode>([Types.KeyMode.WordTransformKey, Types.KeyMode.Available]),
+}
+
 const initialKeyStatus = new Map<string, Types.KeyStatus>([["i", iStatus],
-                                                           ["n", nStatus]
+                                                           ["n", nStatus],
+                                                           ["Enter", enterStatus],
 ]);
 
 const initialGameState:GameState = {

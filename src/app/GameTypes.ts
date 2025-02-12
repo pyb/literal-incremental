@@ -38,6 +38,7 @@ export enum KeyMode {
     LetterTranform,
     Tranform,
     Timeout,
+    WordTransformKey,
 }
 
 export enum Modifier {
