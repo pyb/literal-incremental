@@ -13,7 +13,15 @@ const iStatus:Types.KeyStatus = {
     key: "i",
     modes: new Set<Types.KeyMode>([Types.KeyMode.Unlocked, Types.KeyMode.Letter]),
 }
-const initialKeyStatus = new Map<string, Types.KeyStatus>([["i", iStatus]]);
+
+const nStatus:Types.KeyStatus = {
+    key: "n",
+    modes: new Set<Types.KeyMode>([Types.KeyMode.LetterTranform, Types.KeyMode.Available]),
+}
+
+const initialKeyStatus = new Map<string, Types.KeyStatus>([["i", iStatus],
+                                                           ["n", nStatus]
+]);
 
 const initialGameState:GameState = {
     glyphs: 0,

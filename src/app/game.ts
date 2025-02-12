@@ -2,7 +2,7 @@ import {KeyStatus, KeyMode} from "./GameTypes"
 import * as Stream from "./streamops"
 import {GameState, UIState} from "./GameState"
 import GameData from "./GameData"
-import * as GT from "./GameTypes"
+import * as Types from "./GameTypes"
 import {Transform} from "./GameTypes"
 
 // Todo: this should prob. get all the modifier key names as input? Or make this file dependent on UIData (bof)
@@ -46,15 +46,18 @@ const dummyGS = (gs:GameState) => {
 
 }
 
-export const execute = (key: string, keyStatus: Map<string, KeyStatus>):((gs:GameState) => void) => {
+export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: Array<Letter>, dict:Array<Types.Transform>):((gs:GameState) => void) => {
   const status = keyStatus.get(key);
   if (!status)
-    throw new Error('Error: unknown key');
-
+    //throw new Error('Error: unknown key : ' + key);
+  {
+    console.log('Error: unknown key : ' + key);
+    return dummyGS;
+  }
   const modes:Set<KeyMode> = status.modes;
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
-    return transform(key);
+    return transform(key, stream, dict);
   else if (modes.has(KeyMode.Unlocked) && modes.has(KeyMode.Letter))
     return directInput(key);
   else if ( modes.has(KeyMode.Modifier) &&
@@ -71,8 +74,21 @@ const directInput = (key: string) => {
   });
 }
 
-const transform = (key: string) => {
-  return dummyGS;
+const transform = (key: string, stream:Array<Letter>, dict:Array<Types.Transform>) => {
+  const result:Map<string, Types.TransformLocation> = Stream.scanForLetters(stream, dict);
+  const transformLocation = result.get(key);
+  if (!transformLocation)
+    throw new Error('Bug: transform not found');
+  const id:number = transformLocation.id;
+  const transform = dict.find((item:Transform) => item.id == id);
+  if (!transform)
+    throw new Error('Bug: transform id not found');
+
+  return ((gs:GameState) => {
+    //gs.stream = Stream.addLetter(key, gs.stream);
+
+    gs.stream = Stream.applyLetterTransform(transform, stream, transformLocation.location)
+  });
 }
 
 const toggleModifier = (key:string) => {

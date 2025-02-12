@@ -98,19 +98,19 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
 export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform>): Map<string, TransformLocation> => {
     let result = new Map<string,  TransformLocation>();
     transforms.forEach((transform: Transform, index: number) => {
-        const transformLetter = transform.input;
+        const transformLetter = transform.output;
         if (transformLetter.length == 1) {
             const l = input.length;
             input.toReversed().forEach((letter: Letter, k: number) => {
-                const pos = l - k;
+                const pos = l - 1 - k;
                 const key: string = letter.text;
-                if ((key == transformLetter) &&
+                if ((key == transform.input) &&
                     (letter.n >= transform.n))
                 {
                     const current = result.get(key);
                     if (!current ||
                         current.location < pos)
-                        result.set(key, { id: index, word: key, location: pos });
+                        result.set(transformLetter, { id: index, word: key, location: pos });
                 }
             });
         }
