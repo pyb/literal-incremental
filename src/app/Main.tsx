@@ -41,8 +41,7 @@ const GameMain = () => {
     // rename this...? calls Game.execute
     const lookupAndExecute = (key:string):void => {
         const unlocked = unlockedKeys(GS.keyStatus);
-        const unlockedS = new Set<string>(unlocked);
-        if (unlockedS.has(key))
+        if (unlocked.includes(key))
             setGS(Game.execute(key, GS.keyStatus));
     }
 
@@ -50,7 +49,7 @@ const GameMain = () => {
     React.useEffect(() => {
         KH.setup(lookupAndExecute);
         return KH.teardown;
-      });
+      }, [GS.keyStatus]);
     
     const availableKeys:Array<string> = Game.getAvailableKeys(GS.stream, GS.dict, UIData.wordTransformKey);
 
