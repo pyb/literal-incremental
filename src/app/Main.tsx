@@ -20,9 +20,12 @@ import { useImmer } from "use-immer";
     -Other UI (footer...)
 */
 
-const Footer = ({glyphs}:{glyphs:number}) => {
+const Footer = ({ glyphs, last }: { glyphs: number, last: string }) => {
     return (
-        <div>{"Glyphs : " + glyphs.toString()}</div>
+        <>
+            <div>{"Glyphs : " + glyphs.toString()}</div>
+            <div>{"Last : " + last}</div>
+        </>
     );
 }
 
@@ -66,7 +69,9 @@ const GameMain = () => {
                 <Keyboard availableKeys={availableKeys} unlockedKeys={unlockedKeys(GS.keyStatus)} />
             </div>
             <div className={styles.gameFooter}>
-                <Footer glyphs={GS.glyphs} />
+                <Footer glyphs={GS.glyphs} last={GS.lastTransform ?
+                     (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
+                      ""} />
             </div>
         </div>
     );

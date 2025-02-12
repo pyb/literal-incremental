@@ -1,10 +1,46 @@
 import {Letter, Transform} from "./GameTypes"
 import React from "react";
-import styles from "./css/input.module.css";
+import styles from "./css/stream.module.css";
 import * as StreamOps from "./streamops";
 
-export const streamToText = (input:Array<Letter>):string => {
-    return input.map((l:Letter) => (l.text + ((l.n == 1) ? "" : "(" + l.n.toString() + ")"))).join("");
+const stylesArr = [
+    styles.prio1,
+    styles.prio2,
+    styles.prio3,
+    styles.prio4,
+    styles.prio5,
+    styles.prio6,
+];
+
+const prioStyle = (prio: number) => {
+    if (prio < stylesArr.length)
+        return stylesArr[prio];
+    else
+        return styles.prioDefault;
+}
+
+const prioOpacity = (prio: number) => {
+    if (prio < 10)
+        return {}
+    else return {
+        //opacity: 3/Math.sqrt(prio)
+        opacity: 10/(prio)
+    }
+}
+
+const streamToText = (input:Array<Letter>, index:number) => {
+    return (<span className={prioStyle(index)} style={prioOpacity(index)} key={index}>
+        <span key={0}>{" "}</span>
+        {input.map((l:Letter, index:number) =>
+        <span key={index+1}>
+            <span>
+                { l.text }
+            </span>
+            {(l.n > 1) && 
+            <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span> }
+        </span>
+            )}
+        </span>);
 }
 
 interface Props {
@@ -22,9 +58,11 @@ const Stream = ({stream, dict}: Props) => {
         separatedStream.push(stream.slice(i, k));
         i = k;
     }
+    const l:number = separatedStream.length;
+
     return (
-        <div className={styles.inputComponent}>
-            {separatedStream.map(streamToText).join(" ")}
+        <div className={styles.streamComponent}>
+            {separatedStream.reverse().map(streamToText).reverse()}   
         </div>
     )
 }

@@ -1,0 +1,48 @@
+.streamComponent {
+    color: rgb(171, 136, 150);
+    font-family: monospace;
+    word-spacing: -.4ch;
+    font-size: 1.3em;
+    padding-right: 10vh;
+    text-align: end;
+    margin: auto;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.superscript {
+    font-size: 70%;
+    vertical-align: super;
+    margin-left: -3px;
+    margin-right: -3px;
+}
+
+.prio1 {
+    color: red;
+    font-size:120%;
+}
+
+.prio2 {
+    color: green;
+}
+
+.prio3 {
+    color: blue;
+}
+
+.prio4 {
+    color: lightgray;
+}
+
+.prio5 {
+    color: gray;
+}
+
+.prio6 {
+    color: #606060;
+}
+
+.prioDefault {
+    color: #505050;
+}

@@ -90,7 +90,7 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Types.Tra
 
   return ((gs:GameState) => {
     //gs.stream = Stream.addLetter(key, gs.stream);
-
+    gs.lastTransform = transform;
     gs.stream = Stream.applyLetterTransform(transform, stream, transformLocation.location)
   });
 }
@@ -107,6 +107,7 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Types.Transform>) => {
     throw new Error('Bug: transform id not found');
 
   return ((gs:GameState) => {
+    gs.lastTransform = transform;
     gs.stream = Stream.applyWordTransform(transform, stream, transformLocation.location)
   });
 }

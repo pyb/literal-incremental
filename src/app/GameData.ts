@@ -37,6 +37,7 @@ const initialGameState:GameState = {
  //   unlockedKeys:["i"],
  //   availableKeys:[],
     dict:Test.testTransforms,
+    lastTransform: undefined,
 };
 
 const GameData = {

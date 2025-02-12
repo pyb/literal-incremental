@@ -5,6 +5,7 @@ export type GameState = {
     stream: Array<Types.Letter>,
     dict: Array<Types.Transform>,
     keyStatus: Map<string, Types.KeyStatus>,
+    lastTransform: Types.Transform|undefined,
 }
 
 export type UIState = {
