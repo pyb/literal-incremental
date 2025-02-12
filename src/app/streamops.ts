@@ -3,6 +3,8 @@
 import {Transform, TransformLocation, Letter} from "./GameTypes"
 import * as Util from "./util"
 
+import {Trie} from "./trie/trie";
+import {TrieNode} from "./trie/trieNode";
 /* 
   Input Stream Ops: Actions and Scans.
 -Actions:
@@ -17,6 +19,9 @@ Transform filter "W": What words are available.  {Dict Item ID -> [location indi
 -Rendering helper (TODO: copy/test from testSplit.js): Separate into words for UI/rendering (arbitrary)
 
 */
+
+/****************************************************************/
+// Actions
 
 // might be useful if we sometimes produce empty items
 export const cleanupStream = (stream:Array<Letter>) => {
@@ -100,6 +105,9 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     return result;
 }
 
+/****************************************************************/
+// Scanning
+
 //Hash Table L: "x times letter" reward available, ie note the locations of the 10I, etc
 // Only return the rightmost letter transform for each letter
 export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform>): Map<string, TransformLocation> => {
@@ -148,35 +156,59 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>)
     return result.sort((a, b) => (b.location - a.location)); // the rightmost words come first
 }
 
+/****************************************************************/
+// Rendering
 
-/*
-// Kinda do this, but backwards
-const scanForLettersBackwards = (input:string, words:Array<string>) =>{
-    // Return positions of words in input
-    let result:Map<string, number>= new Map<string, number>();
-    for (const w of words)
+// As the name implies, this scans backwards
+// 
+// can return -1 (beginning )
+// Return (inclusive) index of where the next word starts
+const bwNextWordOrLetterBoundary = (from: number, input:string, trie: Trie): number =>
+{   
+    if (from < 0)
+        console.log("Error ! from < 0");
+
+    if(!input[from])
+        throw new Error('Bad input');
+    let node:TrieNode = trie.prefixSearch(input[from]); // search for first letter
+
+    let k = from - 1;
+    let result = k;
+
+    while (node && k >= 0)
     {
-        const k = input.indexOf(w) 
-        if (k !== -1)
-            result.set(w,k);
+        if (node.isEndOfWord())
+            result = k;
+        const nextLetter = input[k];
+        if(!nextLetter)
+            throw new Error('Bad input');
+        node = node.getChild(nextLetter);
+        k -= 1;
     }
+
+    return result;
 }
-*/
 
+// Should this go left to right or right to left? Different outcomes. For now, backwards
+// return indices where the Letter Array should be split
+export const inputWordSplit = (input:string, dict:Array<Transform>):Array<number> =>
+{
+    const backwardsWords = dict.map((transform:Transform) => transform.input)
+        .filter((word:string) => word.length > 1)
+        .map((word:string) => Util.sreverse(word));
+    const backwardsTrie = new Trie();
+    for (const word of backwardsWords)
+        backwardsTrie.insert(word);
 
-// A Naive impl
-// Input is now a simple string but will need to include multiplicities in the future
+    let k = input.length - 1;
+    let result:Array<number>= [k+1];
 
-/*
-const scanS = (input:string, words:Array<string>) =>{
-    // Return positions of words in input
-    let result:Map<string, number>= new Map<string, number>();
-    for (const w of words)
+    while (k > 0)
     {
-        const k = input.indexOf(w) 
-        if (k !== -1)
-            result.set(w,k);
+        const l:number = bwNextWordOrLetterBoundary(k, input, backwardsTrie);
+        result.push(l+1);
+        k = l;
     }
+    // result.push(0); // could be useful, rn it's implicit that the first letter is the first boundary
+    return (result.reverse());
 }
-*/
-

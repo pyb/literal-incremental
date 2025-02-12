@@ -62,7 +62,7 @@ const GameMain = () => {
                 <Dict dict={[]} lastTransform={Types.emptyTransform}></Dict>
             </div>
             <div className={styles.gameMiddle}>
-                <StreamComponent stream={GS.stream} />
+                <StreamComponent stream={GS.stream} dict={GS.dict} />
                 <Keyboard availableKeys={availableKeys} unlockedKeys={unlockedKeys(GS.keyStatus)} />
             </div>
             <div className={styles.gameFooter}>

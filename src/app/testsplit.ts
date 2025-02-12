@@ -3,10 +3,10 @@
 import {Trie} from "/home/pyb/rc/trie/trie";
 import {TrieNode} from "/home/pyb/rc/trie/trieNode";
 
-
 function sreverse(s:string):string{
     return s.split("").reverse().join("");
 }
+
 
 //const testDict:Set<string> = new Set<string>(testWords);
 //const inputWordSplit= (input:string, dict:Set<string>):Array<number> =>
