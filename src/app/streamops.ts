@@ -128,14 +128,14 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>)
     let result:Array<TransformLocation> = [];
 
     const wordTransforms = transforms.filter((transforms) => transforms.input.length > 1);
-    wordTransforms.forEach((transform:Transform, index: number) => {
+    wordTransforms.forEach((transform:Transform) => {
         const word = transform.input;
         const revWord = Util.sreverse(word);
         const i = revInputS.indexOf(revWord);
         if (i != -1)
         {
             const pos = (input.length - i) - word.length;
-            result.push({id: index, location: pos, word: word})
+            result.push({id: transform.id, location: pos, word: word})
         }
     });
     return result.sort((a, b) => (b.location - a.location)); // the rightmost words come first
