@@ -4,8 +4,7 @@ export type GameState = {
     glyphs: number,
     stream: Array<Types.Letter>,
     dict: Array<Types.Transform>,
-    unlockedKeys:Array<string>, // permanently
-    availableKeys:Array<string>, // temporarily
+    keyStatus: Map<string, Types.KeyStatus>,
 }
 
 export type UIState = {

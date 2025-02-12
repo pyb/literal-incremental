@@ -2,18 +2,32 @@ import { GameState } from "./GameState";
 import * as Types from "./GameTypes"
 import * as Test from "./testData"
 
-export const keyVisibility = {
+const keyVisibility = {
     'i': 0,
     'n': 10,
     'e': 100,
     'w': 1000,
 };
 
-export const initialGameState:GameState = {
+const iStatus:Types.KeyStatus = {
+    key: "i",
+    modes: new Set<Types.KeyMode>([Types.KeyMode.Unlocked, Types.KeyMode.Letter]),
+}
+const initialKeyStatus = new Map<string, Types.KeyStatus>([["i", iStatus]]);
+
+const initialGameState:GameState = {
     glyphs: 0,
     //input: [],
     stream:Test.testInput,
-    unlockedKeys:["i"],
-    availableKeys:[],
+    keyStatus: initialKeyStatus,
+ //   unlockedKeys:["i"],
+ //   availableKeys:[],
     dict:Test.testTransforms,
 };
+
+const GameData = {
+    keyVisibility: keyVisibility,
+    initialGameState: initialGameState,
+};
+
+export default GameData;

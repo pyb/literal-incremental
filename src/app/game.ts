@@ -1,7 +1,7 @@
 import {KeyStatus, KeyMode} from "./GameTypes"
 import * as Stream from "./streamops"
-import * as GS from "./GameState"
-import * as GD from "./GameData"
+import {GameState, UIState} from "./GameState"
+import GameData from "./GameData"
 import * as GT from "./GameTypes"
 import {Transform} from "./GameTypes"
 
@@ -42,7 +42,11 @@ export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wo
   -...?
 */
 
-const execute = (key: string, keyStatus: Map<string, KeyStatus>) => {
+const dummyGS = (gs:GameState) => {
+
+}
+
+export const execute = (key: string, keyStatus: Map<string, KeyStatus>):((gs:GameState) => void) => {
   const status = keyStatus.get(key);
   if (!status)
     throw new Error('Error: unknown key');
@@ -58,18 +62,19 @@ const execute = (key: string, keyStatus: Map<string, KeyStatus>) => {
     return toggleModifier(key);
   else 
     console.log("Error: key not available"); // should this case be intercepted higher up in the stack
+  return dummyGS;
 }
 
 const directInput = (key: string) => {
-  return ((gs:GS.GameState) => {
+  return ((gs:GameState) => {
     gs.stream = Stream.addLetter(key, gs.stream);
   });
 }
 
 const transform = (key: string) => {
-
+  return dummyGS;
 }
 
 const toggleModifier = (key:string) => {
-
+  return dummyGS;
 }

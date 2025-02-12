@@ -1,1 +1,6 @@
-export const WordTransformKey = "Enter";
+export const UIData = {
+    wordTransformKey: "Enter",
+    tick: 50,
+}
+
+export default UIData;
