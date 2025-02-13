@@ -22,11 +22,26 @@ import * as Test from "./testData"
     -Other UI (footer...)
 */
 
-const Footer = ({ glyphs, last }: { glyphs: number, last: string }) => {
+const Reset = ({resetCallback}: {resetCallback: () => void}) => {
+    return (
+        <div className={styles.reset} onClick={resetCallback}>
+            Reset
+        </div>
+    );
+}
+
+interface FooterProps {
+    glyphs: number,
+    last: string,
+    resetCallback: () => void, 
+}
+
+const Footer = ({ glyphs, last, resetCallback }: FooterProps) => {
     return (
         <>
             <div>{"Glyphs : " + glyphs.toString()}</div>
             <div>{"Last : " + last}</div>
+            <Reset resetCallback={resetCallback}/>
         </>
     );
 }
@@ -58,6 +73,9 @@ const GameMain = () => {
     });
     
     //const availableKeys:Array<string> = Game.getAvailableKeys(GS.stream, GS.dict, UIData.wordTransformKey);
+    const resetCallback = () => {
+        setGS(GameData.initialGameState);
+    }
 
     return (
         <div className={styles.game}>
@@ -69,9 +87,11 @@ const GameMain = () => {
                 <Keyboard keyStatus={keyStatus} />
             </div>
             <div className={styles.gameFooter}>
-                <Footer glyphs={GS.glyphs} last={GS.lastTransform ?
-                     (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
-                      ""} />
+                <Footer glyphs={GS.glyphs}
+                        last={GS.lastTransform ?
+                             (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
+                             ""}
+                        resetCallback={resetCallback} />
             </div>
         </div>
     );

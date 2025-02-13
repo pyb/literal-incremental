@@ -46,6 +46,10 @@ export const computeKeyStatus = (visibleKeys: Array<string>, unlockedKeys: Array
   return result;
 }
 
+export const reset = () => {
+
+}
+
 /*
   All keyboard driven?
   3 types of command. All keys are:

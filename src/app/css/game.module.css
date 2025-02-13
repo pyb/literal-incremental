@@ -9,3 +9,12 @@
     flex-direction: row;
     gap: 10vw;
 }
+
+.reset {
+    border-style:ridge;
+    border-radius:3px;
+    color: rgb(236, 122, 122);
+    border-width: 1px;
+    border-color: grey;
+    max-width: 6vw;
+}
