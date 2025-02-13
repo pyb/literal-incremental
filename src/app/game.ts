@@ -5,6 +5,7 @@ import GameData from "./GameData"
 import * as Types from "./GameTypes"
 import {Transform} from "./GameTypes"
 import * as Test from "./testData"
+import UIData from "./UIData"
 
 // Todo: this should prob. get all the modifier key names as input? Or make this file dependent on UIData (bof)
 export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wordTransformKey:string):Array<string> => {
@@ -34,6 +35,8 @@ export const computeKeyStatus = (visibleKeys: Array<string>, unlockedKeys: Array
   // temp
   allKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Visible);
+    if (!UIData.specialKeys.has(key))
+      result.get(key)?.modes.add(KeyMode.Letter);
   });
 
   unlockedKeys.forEach((key:string) => {
@@ -47,7 +50,9 @@ export const computeKeyStatus = (visibleKeys: Array<string>, unlockedKeys: Array
 }
 
 export const reset = () => {
+  return (gs:GameState) => {
 
+  }
 }
 
 /*
@@ -87,6 +92,7 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: 
     return dummyGS;
   }
   const modes:Set<KeyMode> = status.modes;
+  console.log(modes)
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
     return letterTransform(key, stream, dict);
