@@ -13,3 +13,5 @@ export const testTransforms:Array<Types.Transform> = [
     {id:6, n: 3,  input: "bar", output:"w"},
     {id:7, n:1,   input: "cat", output:""},
 ];
+
+export const testAvailableKeys = ["n", "Enter"];

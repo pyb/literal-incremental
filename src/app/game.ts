@@ -4,6 +4,7 @@ import {GameState, UIState} from "./GameState"
 import GameData from "./GameData"
 import * as Types from "./GameTypes"
 import {Transform} from "./GameTypes"
+import * as Test from "./testData"
 
 // Todo: this should prob. get all the modifier key names as input? Or make this file dependent on UIData (bof)
 export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wordTransformKey:string):Array<string> => {
@@ -17,6 +18,35 @@ export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wo
         result.push(wordTransformKey);
 
     return result;
+}
+
+const createEmptyKeyStatus = (key:string):KeyStatus => ({
+  key:key, modes: new Set<KeyMode>
+});
+
+// Compute key status?
+export const computeKeyStatus = (visibleKeys: Array<string>, unlockedKeys: Array<string>, availableKeys: Array<string>):Map<string, KeyStatus> => {
+  const result = new Map<string, KeyStatus>([]);
+  const allKeys = new Set<string>( visibleKeys.concat(availableKeys, unlockedKeys));
+  allKeys.forEach((key:string) =>
+    result.set(key, createEmptyKeyStatus(key)));
+
+  // temp
+  allKeys.forEach((key:string) => {
+    result.get(key)?.modes.add(KeyMode.Visible);
+  });
+
+  unlockedKeys.forEach((key:string) => {
+    result.get(key)?.modes.add(KeyMode.Unlocked);
+  });
+
+  availableKeys.forEach((key:string) => {
+    result.get(key)?.modes.add(KeyMode.Available);
+  });
+
+  console.log("compute ks")
+  console.log(result)
+  return result;
 }
 
 /*

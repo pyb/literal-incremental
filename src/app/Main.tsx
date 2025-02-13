@@ -9,9 +9,11 @@ import * as GS from "./GameState"
 import GameData from "./GameData"
 import UIData from "./UIData"
 import * as Types from "./GameTypes"
+import {KeyStatus, KeyMode} from "./GameTypes"
 import * as Game from "./game"
 import * as KH from "./keyboardHandling"
 import { useImmer } from "use-immer";
+import * as Test from "./testData"
 
 /*
     Functionality in this file:
@@ -29,17 +31,10 @@ const Footer = ({ glyphs, last }: { glyphs: number, last: string }) => {
     );
 }
 
-const unlockedKeys = (keyStatus: Map<string, Types.KeyStatus>):Array<string> => {
-    let result = new Array<string>();
-    for (const [key, status] of keyStatus) {
-        if (status.modes.has(Types.KeyMode.Unlocked))
-            result.push(key);
-    }
-    return result;
-}
-
 const GameMain = () => {
     const [GS, setGS] = useImmer<GS.GameState>(GameData.initialGameState);
+
+    const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.visibleKeys, GS.unlockedKeys, Test.testAvailableKeys);
 
     // rename this...? calls Game.execute
     const lookupAndExecute = (key:string):void => {
@@ -48,16 +43,21 @@ const GameMain = () => {
         if (unlocked.includes(key))
             setGS(Game.execute(key, GS.keyStatus));
         */
-        setGS(Game.execute(key, GS.keyStatus, GS.stream, GS.dict));
+        const status = keyStatus.get(key);
+        if (status &&
+            (status.modes.has(KeyMode.Available) ||
+             status.modes.has(KeyMode.Unlocked))) {
+            setGS(Game.execute(key, keyStatus, GS.stream, GS.dict));
+        }
     }
 
-    // Run only once
     React.useEffect(() => {
         KH.setup(lookupAndExecute);
         return KH.teardown;
-      }, [GS.keyStatus, GS.stream, GS.dict]);
+      //}, [GS.stream, GS.dict]);
+    });
     
-    const availableKeys:Array<string> = Game.getAvailableKeys(GS.stream, GS.dict, UIData.wordTransformKey);
+    //const availableKeys:Array<string> = Game.getAvailableKeys(GS.stream, GS.dict, UIData.wordTransformKey);
 
     return (
         <div className={styles.game}>
@@ -66,7 +66,7 @@ const GameMain = () => {
             </div>
             <div className={styles.gameMiddle}>
                 <StreamComponent stream={GS.stream} dict={GS.dict} />
-                <Keyboard availableKeys={availableKeys} unlockedKeys={unlockedKeys(GS.keyStatus)} />
+                <Keyboard keyStatus={keyStatus} />
             </div>
             <div className={styles.gameFooter}>
                 <Footer glyphs={GS.glyphs} last={GS.lastTransform ?

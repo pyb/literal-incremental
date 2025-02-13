@@ -9,33 +9,14 @@ const keyVisibility = {
     'w': 1000,
 };
 
-const iStatus:Types.KeyStatus = {
-    key: "i",
-    modes: new Set<Types.KeyMode>([Types.KeyMode.Unlocked, Types.KeyMode.Letter]),
-}
-
-const nStatus:Types.KeyStatus = {
-    key: "n",
-    modes: new Set<Types.KeyMode>([Types.KeyMode.LetterTranform, Types.KeyMode.Available]),
-}
-
-const enterStatus:Types.KeyStatus = {
-    key: "Enter",
-    modes: new Set<Types.KeyMode>([Types.KeyMode.WordTransformKey, Types.KeyMode.Available]),
-}
-
-const initialKeyStatus = new Map<string, Types.KeyStatus>([["i", iStatus],
-                                                           ["n", nStatus],
-                                                           ["Enter", enterStatus],
-]);
+const startingVisibleKeys = ["i", "n", "Enter"];
+const startingUnlockedKeys = ["i"];
 
 const initialGameState:GameState = {
     glyphs: 0,
-    //input: [],
     stream:Test.testInput,
-    keyStatus: initialKeyStatus,
- //   unlockedKeys:["i"],
- //   availableKeys:[],
+    visibleKeys: startingVisibleKeys,
+    unlockedKeys: startingUnlockedKeys,
     dict:Test.testTransforms,
     lastTransform: undefined,
 };

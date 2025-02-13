@@ -36,9 +36,9 @@ export enum KeyMode {
     Unlocked,
     Modifier,
     LetterTranform,
-    Tranform,
+    Transform,
     Timeout,
-    WordTransformKey,
+    WordTransformKey, // ie Enter
 }
 
 export enum Modifier {
@@ -47,6 +47,7 @@ export enum Modifier {
     // ...
 }
 
+/*
 export enum ActionType {
     None, // need this?
     Transform,
@@ -63,6 +64,7 @@ export type Action = {
     modifier?: string,
     glyphs?: number,
 }
+*/
 
 export type KeyStatus = {
     key: string,
