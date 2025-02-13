@@ -11,7 +11,6 @@ export default {
     ignoreDuringBuilds: true,
   },
   experimental: {
-    optimizePackageImports: ['@chakra-ui/react'],
   },
   devIndicators: {
     appIsrStatus: false,

@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
     "immer": "^10.1.1",
     "motion": "^11.18.1",
     "next": "15.1.4",
