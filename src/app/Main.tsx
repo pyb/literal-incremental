@@ -14,6 +14,7 @@ import * as Game from "./game"
 import * as KH from "./keyboardHandling"
 import { useImmer } from "use-immer";
 import * as Test from "./testData"
+import RCScout from "./RCScout";
 
 /*
     Functionality in this file:
@@ -22,28 +23,44 @@ import * as Test from "./testData"
     -Other UI (footer...)
 */
 
-const Reset = ({resetCallback}: {resetCallback: () => void}) => {
+const Reset = ({ resetCallback }: { resetCallback: () => void }) => {
     return (
-        <div className={styles.reset} onClick={resetCallback}>
-            Reset
+        <div className={styles.button}>
+            <button className={styles.reset} onClick={resetCallback}>
+                Reset
+            </button>
         </div>
     );
 }
 
-interface FooterProps {
+interface DebugProps {
     glyphs: number,
     last: string,
-    resetCallback: () => void, 
 }
 
-const Footer = ({ glyphs, last, resetCallback }: FooterProps) => {
+const Debug = ({ glyphs, last }: DebugProps) => {
     return (
         <>
             <div>{"Glyphs : " + glyphs.toString()}</div>
             <div>{"Last : " + last}</div>
-            <Reset resetCallback={resetCallback}/>
         </>
     );
+}
+
+const Footer = ({items}: {items: Array<React.ReactNode>}) => {
+    const [idx, setIdx] = React.useState<number>(0);
+
+    const n = items.length;
+
+    const rotate = () => {  
+      setIdx(((idx + 1) % n));
+    };
+  
+    return (
+      <div className={styles.footer}>
+        <div className={styles.footerContent}>{items[idx]}</div>
+        <button className={styles.footerButton} onClick={rotate}> More... </button>
+      </div>);
 }
 
 const GameMain = () => {
@@ -87,14 +104,26 @@ const GameMain = () => {
                 <Keyboard keyStatus={keyStatus} />
             </div>
             <div className={styles.gameFooter}>
-                <Footer glyphs={GS.glyphs}
-                        last={GS.lastTransform ?
-                             (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
-                             ""}
-                        resetCallback={resetCallback} />
+                <Footer items={[
+                    <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
+                    <RCScout key={2} />,
+                    <Debug key={3}
+                           glyphs={GS.glyphs}
+                           last={GS.lastTransform ?
+                            (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
+                            ""} />
+                ]} />
+      
             </div>
         </div>
     );
 }
+
+/*
+<MultiFooter items={[
+    <Log key={0} log={GS.log}></Log>,
+
+  ]} />
+*/
 
 export default GameMain;

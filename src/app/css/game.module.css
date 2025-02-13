@@ -4,6 +4,14 @@
     gap: 10vh;
     text-align: center;
 }
+
+button.reset {
+    background-color: black;
+}
+button.footerButton {
+    background-color: black;
+}
+
 .gameMiddle {
     display: flex;
     flex-direction: row;
@@ -17,4 +25,23 @@
     border-width: 1px;
     border-color: grey;
     max-width: 6vw;
+    font-size: 130%;
+    padding: 2px 2px 2px 2px;
+}
+
+.footer {
+    display: flex;
+    flex-direction: row;
+    gap: 10vw;
+    height: 20vh;
+}
+
+.footerContent {
+    flex-basis: 75%;
+}
+
+.footerButton {
+    flex-basis: 25%;
+    max-width: 10vw;
+    height: 20%;
 }

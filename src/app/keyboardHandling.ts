@@ -1,7 +1,6 @@
 'use client'
 
 // Low level keyboard handling
-
 import UIData from "./UIData";
 
 // Highlighting how?
