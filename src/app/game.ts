@@ -43,9 +43,6 @@ export const computeKeyStatus = (visibleKeys: Array<string>, unlockedKeys: Array
   availableKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Available);
   });
-
-  console.log("compute ks")
-  console.log(result)
   return result;
 }
 

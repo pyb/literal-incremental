@@ -9,11 +9,34 @@
 }
 
 .key {
-    min-width: 40 px;
+/*    composes: key;*/
+/*
+    display: inline-flex;
+    flex-shrink: 0;
+*/
+    align-items: center;
+    text-align: center;
+    font-weight: 500;
+    font-family: 'Courier New', Courier, monospace;
+
+    white-space: nowrap;
+/*    word-spacing: -0.5em;*/
+    user-select: none;
+    border:solid;
+    border-radius: 0.25rem;
+    border-width: 1px;
+/*    border-bottom-width: 2px;*/
+    border-bottom-width: .1em;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    font-size:16px;
+    color: rgb(253, 186, 116);
+    color-scheme: light;
+    background-color: #3b1106; /* orange subtle */
+    border-color: #6c2710; /* orange muted */
+/*    min-width: 22px;*/
+    padding-left: 5px;
+    padding-right: 5px;
     margin-left: 5px;
     margin-right: 5px;
-}
-
-.keyOld {
-    margin-left:10px;
 }

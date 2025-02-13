@@ -1,15 +1,25 @@
 import styles from "./css/keyboard.module.css"
 import {KeyStatus, KeyMode} from "./GameTypes"
-import { HStack, StackSeparator, Kbd, Theme, VStack } from "@chakra-ui/react";
+//import { HStack, StackSeparator, Kbd, Theme, VStack } from "@chakra-ui/react";
 
 interface KeyProps {
     text: string,
     modes: Set<KeyMode>
 };
 
+const keyStyle = (modes: Set<KeyMode>) => {
+    return styles.foo;
+}
+
 const Key = ({text, modes}:KeyProps) => {
     return (
-    <div className={styles.key}><Kbd size='lg' colorPalette="orange"> {text} </Kbd></div>
+        <>
+        
+    {/*<div className={styles.key}><Kbd size='lg' colorPalette="orange"> {text} </Kbd></div>*/}
+    <div className={keyStyle(modes)}>
+        <div className={styles.key}> {text}</div>
+    </div>
+    </>
 );}
 
 interface KeyboardProps {

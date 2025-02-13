@@ -12,7 +12,7 @@ const keyVisibility = {
 const startingVisibleKeys = ["i", "n", "Enter"];
 const startingUnlockedKeys = ["i"];
 
-const initialGameState:GameState = {
+export const initialGameState:GameState = {
     glyphs: 0,
     stream:Test.testInput,
     visibleKeys: startingVisibleKeys,
