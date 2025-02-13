@@ -9,5 +9,11 @@
 }
 
 .key {
+    min-width: 40 px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.keyOld {
     margin-left:10px;
 }
