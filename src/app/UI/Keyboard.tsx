@@ -21,16 +21,25 @@ interface KeyProps {
 
 const Key = ({text, modes}:KeyProps) => {
     const [highlight, setHighlight] = React.useState<boolean>(false);
+    const [timeoutId, setTimeoutId] = React.useState<number>(0);
+
     const [doProcessHighlight, setDoProcessHighlight] = React.useState<boolean>(false);
 
     const processHighlight = () => {
         setHighlight(false);
+        setTimeoutId(0);
     }
 
-    if (modes.has(KeyMode.Active) && !highlight)
+    if (!modes.has(KeyMode.Active) && highlight) {
+        setHighlight(false);
+    }
+    else if (modes.has(KeyMode.Active) && !highlight)
     {
         setHighlight(true);
-        const id = setTimeout(processHighlight, UIData.highlightDuration);
+        if (timeoutId != 0)
+            window.clearTimeout(timeoutId);
+        const id = window.setTimeout(processHighlight, UIData.highlightDuration);
+        setTimeoutId(id);
     }
 
     if (doProcessHighlight) {
