@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     gap: 10vh;
-    text-align: center;
 }
 
 button.reset {
@@ -16,6 +15,7 @@ button.footerButton {
     display: flex;
     flex-direction: row;
     gap: 10vw;
+    text-align: center;
 }
 
 .reset {
