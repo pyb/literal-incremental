@@ -1,3 +1,7 @@
 .dictComponent {
     font-weight: 500;
 }
+
+.dictItem {
+    color:blue;
+}

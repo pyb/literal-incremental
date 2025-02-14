@@ -97,7 +97,7 @@ const GameMain = () => {
     return (
         <div className={styles.game}>
             <div className={styles.gameTop}>
-                <Dict dict={[]} lastTransform={Types.emptyTransform}></Dict>
+                <Dict dict={GS.dict} lastTransform={Types.emptyTransform}></Dict>
             </div>
             <div className={styles.gameMiddle}>
                 <StreamComponent stream={GS.stream} dict={GS.dict} />
@@ -105,6 +105,7 @@ const GameMain = () => {
             </div>
             <div className={styles.gameFooter}>
                 <Footer items={[
+                    ///<Log key={0} log={GS.log}></Log>,
                     <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
                     <RCScout key={2} />,
                     <Debug key={3}
@@ -112,18 +113,12 @@ const GameMain = () => {
                            last={GS.lastTransform ?
                             (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
                             ""} />
+                            
                 ]} />
       
             </div>
         </div>
     );
 }
-
-/*
-<MultiFooter items={[
-    <Log key={0} log={GS.log}></Log>,
-
-  ]} />
-*/
 
 export default GameMain;
