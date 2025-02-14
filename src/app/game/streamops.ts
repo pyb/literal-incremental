@@ -44,6 +44,7 @@ export const addLetter = (letter: string, input: Array<Letter>): Array<Letter> =
 }
 
 export const applyLetterTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
+    console.log("alt : " + transform.output)
     if (!stream[location] || stream[location].text != transform.input) // sanity check
         throw new Error('Bug: bad transformation arguments! Bad letter');
     

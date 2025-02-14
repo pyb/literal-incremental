@@ -40,10 +40,10 @@ interface DebugProps {
 
 const Debug = ({ glyphs, last }: DebugProps) => {
     return (
-        <>
+        <div className={styles.debug}>
             <div>{"Glyphs : " + glyphs.toString()}</div>
             <div>{"Last : " + last}</div>
-        </>
+        </div>
     );
 }
 

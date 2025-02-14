@@ -38,10 +38,15 @@ button.footerButton {
 
 .footerContent {
     flex-basis: 75%;
+    text-align: center;
 }
 
 .footerButton {
     flex-basis: 25%;
     max-width: 10vw;
     height: 20%;
+}
+
+.debug {
+    font-size: 80%;
 }
