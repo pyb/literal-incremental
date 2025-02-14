@@ -1,6 +1,6 @@
 // Input stream operations
 
-import {Transform, TransformLocation, Letter} from "./GameTypes"
+import {Transform, TransformLocation, Letter} from "./gameTypes"
 import * as Util from "./util"
 
 import {Trie} from "./trie/trie";

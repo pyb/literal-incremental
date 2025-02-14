@@ -1,4 +1,4 @@
-import * as Types from "./GameTypes"
+import * as Types from "./gameTypes"
 
 export type GameState = {
     glyphs: number,

@@ -1,5 +1,5 @@
 import styles from "./css/keyboard.module.css"
-import {KeyStatus, KeyMode} from "./GameTypes"
+import {KeyStatus, KeyMode} from "./gameTypes"
 //import { HStack, StackSeparator, Kbd, Theme, VStack } from "@chakra-ui/react";
 
 interface KeyProps {

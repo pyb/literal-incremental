@@ -1,4 +1,4 @@
-import {Letter, Transform} from "./GameTypes"
+import {Letter, Transform} from "./gameTypes"
 import React from "react";
 import styles from "./css/stream.module.css";
 import * as StreamOps from "./streamops";

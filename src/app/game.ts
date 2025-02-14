@@ -1,11 +1,11 @@
-import {KeyStatus, KeyMode} from "./GameTypes"
+import {KeyStatus, KeyMode} from "./gameTypes"
 import * as Stream from "./streamops"
-import {GameState, UIState} from "./GameState"
-import GameData from "./GameData"
-import * as Types from "./GameTypes"
-import {Transform} from "./GameTypes"
+import {GameState, UIState} from "./gameState"
+import GameData from "./gameData"
+import * as Types from "./gameTypes"
+import {Transform} from "./gameTypes"
 import * as Test from "./testData"
-import UIData from "./UIData"
+import uiData from "./uiData"
 
 // Todo: this should prob. get all the modifier key names as input? Or make this file dependent on UIData (bof)
 export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wordTransformKey:string):Array<string> => {
@@ -35,7 +35,7 @@ export const computeKeyStatus = (visibleKeys: Array<string>, unlockedKeys: Array
   // temp
   allKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Visible);
-    if (!UIData.specialKeys.has(key))
+    if (!uiData.specialKeys.has(key))
       result.get(key)?.modes.add(KeyMode.Letter);
   });
 

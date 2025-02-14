@@ -1,7 +1,7 @@
 'use client'
 
 // Low level keyboard handling
-import UIData from "./UIData";
+import uiData from "./uiData";
 
 // Highlighting how?
 let pressedKeys = new Set<string>();
@@ -9,7 +9,7 @@ let pressedKeys = new Set<string>();
 let processKey: (key:string) => void;
 
 export const setup = (processKeyFn: (key:string) => void) => {
-    const tick = UIData.tick;
+    const tick = uiData.tick;
     processKey = processKeyFn;
 
     window.addEventListener('keydown', handleKeyDown);

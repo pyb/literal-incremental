@@ -1,5 +1,5 @@
-import { GameState } from "./GameState";
-import * as Types from "./GameTypes"
+import { GameState } from "./gameState";
+import * as Types from "./gameTypes"
 import * as Test from "./testData"
 
 const keyVisibility = {

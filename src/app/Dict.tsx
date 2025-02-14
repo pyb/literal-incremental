@@ -1,5 +1,5 @@
 import styles from "./css/dict.module.css"
-import * as Types from "./GameTypes"
+import * as Types from "./gameTypes"
 
 interface Props {
     dict: Array<Types.Transform>,
