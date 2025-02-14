@@ -44,7 +44,6 @@ export const addLetter = (letter: string, input: Array<Letter>): Array<Letter> =
 }
 
 export const applyLetterTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
-    console.log("alt : " + transform.output)
     if (!stream[location] || stream[location].text != transform.input) // sanity check
         throw new Error('Bug: bad transformation arguments! Bad letter');
     
@@ -82,7 +81,6 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     let k:number = 0;
     while (i < word.length) {
         let letter = result[location + k];
-        console.log(letter)
         if(!letter)
             throw new Error('Bug: out of bounds');
         if (letter.text != word[i])

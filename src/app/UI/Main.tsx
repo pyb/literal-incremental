@@ -66,7 +66,9 @@ const Footer = ({items}: {items: Array<React.ReactNode>}) => {
 const GameMain = () => {
     const [GS, setGS] = useImmer<GS.GameState>(GameData.initialGameState);
 
-    const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.visibleKeys, GS.unlockedKeys, Test.testAvailableKeys);
+    const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.unlockedKeys,
+                                                                   GS.stream,
+                                                                   GS.dict);
 
     // rename this...? calls Game.execute
     const lookupAndExecute = (key:string):void => {

@@ -2,12 +2,12 @@ import {KeyStatus, KeyMode} from "game/gameTypes"
 import * as Stream from "game/streamops"
 import {GameState, UIState} from "game/gameState"
 import GameData from "game/gameData"
-import * as Types from "game/gameTypes"
-import {Transform} from "game/gameTypes"
+import {Transform, TransformLocation, Letter} from "game/gameTypes"
 import * as Test from "test/testData"
-import uiData from "UI/uiData"
+import UIData from "UI/uiData"
 
 // Todo: this should prob. get all the modifier key names as input? Or make this file dependent on UIData (bof)
+/*
 export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wordTransformKey:string):Array<string> => {
     const result:Array<string> = [];
     
@@ -20,22 +20,38 @@ export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wo
 
     return result;
 }
+*/
+    //const availableKeys:Array<string> = Game.getAvailableKeys(GS.stream, GS.dict, UIData.wordTransformKey);
+
 
 const createEmptyKeyStatus = (key:string):KeyStatus => ({
   key:key, modes: new Set<KeyMode>
 });
 
 // Compute key status?
-export const computeKeyStatus = (visibleKeys: Array<string>, unlockedKeys: Array<string>, availableKeys: Array<string>):Map<string, KeyStatus> => {
+export const computeKeyStatus = (unlockedKeys: Array<string>,
+                                 stream: Array<Letter>, dict: Array<Transform>):
+    Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
-  const allKeys = new Set<string>( visibleKeys.concat(availableKeys, unlockedKeys));
+
+  const letterTransforms:Map<string, TransformLocation> = Stream.scanForLetters(stream, dict);
+  const wordTransforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
+  
+  const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
+  const availableKeys = new Set<string>(letterTransformKeys);
+  if (wordTransforms.length != 0)
+    availableKeys.add(UIData.wordTransformKey);
+      
+  const allKeys:Set<string> = availableKeys.union(new Set<string>(unlockedKeys));
+
+
   allKeys.forEach((key:string) =>
     result.set(key, createEmptyKeyStatus(key)));
 
   // temp
   allKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Visible);
-    if (!uiData.specialKeys.has(key))
+    if (!UIData.specialKeys.has(key))
       result.get(key)?.modes.add(KeyMode.Letter);
   });
 
@@ -43,9 +59,17 @@ export const computeKeyStatus = (visibleKeys: Array<string>, unlockedKeys: Array
     result.get(key)?.modes.add(KeyMode.Unlocked);
   });
 
+  letterTransformKeys.forEach((key:string) => {
+    result.get(key)?.modes.add(KeyMode.LetterTranform);
+  });
+
   availableKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Available);
   });
+
+  if (wordTransforms.length != 0)
+    result.get(UIData.wordTransformKey)?.modes.add(KeyMode.WordTransformKey);
+  
   return result;
 }
 
@@ -80,7 +104,7 @@ export const reset = () => {
   -...?
 */
 
-export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: Array<Letter>, dict:Array<Types.Transform>):
+export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: Array<Letter>, dict:Array<Transform>):
     ((gs:GameState) => void) | null => {
   const status = keyStatus.get(key);
   if (!status)
@@ -113,8 +137,8 @@ const directInput = (key: string) => {
   });
 }
 
-const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Types.Transform>) => {
-  const transforms:Map<string, Types.TransformLocation> = Stream.scanForLetters(stream, dict);
+const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform>) => {
+  const transforms:Map<string, TransformLocation> = Stream.scanForLetters(stream, dict);
   const transformLocation = transforms.get(key);
   if (!transformLocation)
     throw new Error('Bug: transform not found');
@@ -130,8 +154,8 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Types.Tra
   });
 }
 
-const wordTransform = (stream:Array<Letter>, dict:Array<Types.Transform>) => {
-  const transforms:Array<Types.TransformLocation> = Stream.scanForWords(stream, dict);
+const wordTransform = (stream:Array<Letter>, dict:Array<Transform>) => {
+  const transforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
   const transformLocation = transforms[0];
   
   if (!transformLocation)
