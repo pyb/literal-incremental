@@ -32,6 +32,7 @@ export type TransformLocation = {
 export enum KeyMode {
     Absent,
     Available,
+    Active,
     Letter,
     Visible,
     Unlocked,
@@ -72,4 +73,19 @@ export type KeyStatus = {
     modes: Set<KeyMode>,
     transformId?: number,
     modifier?: Modifier,
+}
+
+export type GameState = {
+    glyphs: number,
+    stream: Array<Letter>,
+    dict: Array<Transform>,
+    lastTransform: Transform|undefined,
+    visibleKeys: Array<string>,
+    unlockedKeys: Array<string>,
+    pressedKeys: Set<string>,
+}
+
+export type UIState = {
+    highlightDuration: number,
+    tick: number,
 }

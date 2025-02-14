@@ -1,7 +1,7 @@
 // Saving, Loading
 
 import superjson from 'superjson';
-import { GameState } from "game/gameState";
+import { GameState } from "game/gameTypes";
 import { initialGameState } from "game/gameData";
 
 const LIKey = "LISAVE";

@@ -40,3 +40,11 @@
     margin-left: 5px;
     margin-right: 5px;
 }
+
+.normal .key {
+    background-color: #3b1106;
+}
+
+.highlight .key {
+    background-color: white;
+}

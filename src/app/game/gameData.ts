@@ -1,4 +1,4 @@
-import { GameState } from "game/gameState";
+import { GameState } from "game/gameTypes";
 import * as Types from "game/gameTypes"
 import * as Test from "test/testData"
 
@@ -66,6 +66,7 @@ export const initialGameState:GameState = {
     stream:Test.testInput,
     visibleKeys: startingVisibleKeys,
     unlockedKeys: startingUnlockedKeys,
+    pressedKeys: new Set<string>([]),
     dict:dict,
     lastTransform: undefined,
 };

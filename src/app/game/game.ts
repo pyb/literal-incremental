@@ -1,6 +1,5 @@
-import {KeyStatus, KeyMode} from "game/gameTypes"
+import {KeyStatus, KeyMode, GameState} from "game/gameTypes"
 import * as Stream from "game/streamops"
-import {GameState, UIState} from "game/gameState"
 import GameData from "game/gameData"
 import {Transform, TransformLocation, Letter} from "game/gameTypes"
 import * as Test from "test/testData"
@@ -25,11 +24,12 @@ export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wo
 
 
 const createEmptyKeyStatus = (key:string):KeyStatus => ({
-  key:key, modes: new Set<KeyMode>
+  key:key,
+  modes: new Set<KeyMode>
 });
 
 // Compute key status?
-export const computeKeyStatus = (unlockedKeys: Array<string>,
+export const computeKeyStatus = (unlockedKeys: Array<string>, pressedKeys: Set<string>,
                                  stream: Array<Letter>, dict: Array<Transform>):
     Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
@@ -43,7 +43,6 @@ export const computeKeyStatus = (unlockedKeys: Array<string>,
     availableKeys.add(UIData.wordTransformKey);
       
   const allKeys:Set<string> = availableKeys.union(new Set<string>(unlockedKeys));
-
 
   allKeys.forEach((key:string) =>
     result.set(key, createEmptyKeyStatus(key)));
@@ -67,16 +66,14 @@ export const computeKeyStatus = (unlockedKeys: Array<string>,
     result.get(key)?.modes.add(KeyMode.Available);
   });
 
+  pressedKeys.forEach((key:string) => {
+    result.get(key)?.modes.add(KeyMode.Active);
+  });
+
   if (wordTransforms.length != 0)
     result.get(UIData.wordTransformKey)?.modes.add(KeyMode.WordTransformKey);
-  
+
   return result;
-}
-
-export const reset = () => {
-  return (gs:GameState) => {
-
-  }
 }
 
 /******************************** */

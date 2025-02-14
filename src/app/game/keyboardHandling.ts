@@ -6,9 +6,9 @@ import uiData from "UI/uiData";
 // Highlighting how?
 let pressedKeys = new Set<string>();
 
-let processKey: (key:string) => void;
+let processKey: (key:string, release:boolean) => void;
 
-export const setup = (processKeyFn: (key:string) => void) => {
+export const setup = (processKeyFn: (key:string, release:boolean) => void) => {
     const tick = uiData.tick;
     processKey = processKeyFn;
 
@@ -27,7 +27,7 @@ const handleKeyDown = (event:KeyboardEvent) => {
     if (!event.repeat) // todo : handle repeat ourselves
     {
         if(!pressedKeys.has(key)) {
-            processKey(key);
+            processKey(key, false);
             pressedKeys.add(key);
         }
     } 
@@ -36,4 +36,5 @@ const handleKeyDown = (event:KeyboardEvent) => {
 const handleKeyUp = (event:KeyboardEvent) => {
     const key:string = event.key;
     pressedKeys.delete(key);
+    processKey(key, true);
 }

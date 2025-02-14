@@ -2,18 +2,18 @@
 
 import React from "react"
 import { useImmer } from "use-immer";
+import { enableMapSet } from "immer";
+enableMapSet(); // immer setup call, to make Maps and Sets work
+
 import styles from "css/game.module.css"
 import Dict from "UI/Dict"
 import Keyboard from "UI/Keyboard"
 import StreamComponent from "UI/Stream"
-import * as GS from "game/gameState"
 import GameData from "game/gameData"
-import uiData from "UI/uiData"
 import * as Types from "game/gameTypes"
-import {KeyStatus, KeyMode} from "game/gameTypes"
+import {KeyStatus, KeyMode, GameState} from "game/gameTypes"
 import * as Game from "game/game"
 import * as KH from "game/keyboardHandling"
-import * as Test from "test/testData"
 import RCScout from "UI/RCScout";
 
 /*
@@ -64,26 +64,31 @@ const Footer = ({items}: {items: Array<React.ReactNode>}) => {
 }
 
 const GameMain = () => {
-    const [GS, setGS] = useImmer<GS.GameState>(GameData.initialGameState);
+    const [GS, setGS] = useImmer<GameState>(GameData.initialGameState);
 
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.unlockedKeys,
+                                                                   GS.pressedKeys,
                                                                    GS.stream,
                                                                    GS.dict);
 
-    // rename this...? calls Game.execute
-    const lookupAndExecute = (key:string):void => {
-        /*
-        const unlocked = unlockedKeys(GS.keyStatus);
-        if (unlocked.includes(key))
-            setGS(Game.execute(key, GS.keyStatus));
-        */
+    // TODO rename this...? calls Game.execute
+    const lookupAndExecute = (key:string, release:boolean):void => {
         const status = keyStatus.get(key);
-        if (status &&
-            (status.modes.has(KeyMode.Available) ||
-             status.modes.has(KeyMode.Unlocked))) {
-            const update = Game.execute(key, keyStatus, GS.stream, GS.dict);
-            if (update)
-                setGS(update);
+        if (release)
+            setGS((gs:GameState) => {
+                gs.pressedKeys.delete(key);
+            });
+        else {
+            if (status &&
+                (status.modes.has(KeyMode.Available) ||
+                 status.modes.has(KeyMode.Unlocked))) {
+                setGS((gs:GameState) => {
+                    gs.pressedKeys.add(key);
+                 });
+                const update = Game.execute(key, keyStatus, GS.stream, GS.dict);
+                if (update)
+                    setGS(update);
+            }
         }
     }
 
