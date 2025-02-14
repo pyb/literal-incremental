@@ -1,4 +1,4 @@
-import {Letter} from "./gameTypes"
+import {Letter} from "game/gameTypes"
 
 export const convertTestInput = (input:string):Array<Letter> => {
     const len = input.length;

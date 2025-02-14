@@ -1,11 +1,11 @@
-import {KeyStatus, KeyMode} from "./gameTypes"
-import * as Stream from "./streamops"
-import {GameState, UIState} from "./gameState"
-import GameData from "./gameData"
-import * as Types from "./gameTypes"
-import {Transform} from "./gameTypes"
-import * as Test from "./testData"
-import uiData from "./uiData"
+import {KeyStatus, KeyMode} from "game/gameTypes"
+import * as Stream from "game/streamops"
+import {GameState, UIState} from "game/gameState"
+import GameData from "game/gameData"
+import * as Types from "game/gameTypes"
+import {Transform} from "game/gameTypes"
+import * as Test from "test/testData"
+import uiData from "UI/uiData"
 
 // Todo: this should prob. get all the modifier key names as input? Or make this file dependent on UIData (bof)
 export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wordTransformKey:string):Array<string> => {

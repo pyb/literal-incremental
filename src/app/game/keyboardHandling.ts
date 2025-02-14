@@ -1,7 +1,7 @@
 'use client'
 
 // Low level keyboard handling
-import uiData from "./uiData";
+import uiData from "UI/uiData";
 
 // Highlighting how?
 let pressedKeys = new Set<string>();

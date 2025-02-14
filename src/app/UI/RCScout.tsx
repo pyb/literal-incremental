@@ -1,4 +1,4 @@
-import styles from "./css/rcscout.module.css";
+import styles from "css/rcscout.module.css";
 
 const RCScout = () => {
     return (

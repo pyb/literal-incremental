@@ -1,6 +1,6 @@
-import { GameState } from "./gameState";
-import * as Types from "./gameTypes"
-import * as Test from "./testData"
+import { GameState } from "game/gameState";
+import * as Types from "game/gameTypes"
+import * as Test from "test/testData"
 
 const keyVisibility = {
     'i': 0,

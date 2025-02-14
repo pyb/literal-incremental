@@ -1,7 +1,7 @@
 // Test with: npx tsx ./testStream.ts
 
-import * as Stream from "./streamops";
-import {Letter, Transform, TransformLocation} from "./gameTypes";
+import * as Stream from "game/streamops";
+import {Letter, Transform, TransformLocation} from "game/gameTypes";
 
 /**************************************************/
 // local utility functions

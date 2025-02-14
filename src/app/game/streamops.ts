@@ -1,11 +1,11 @@
 // Input stream operations
 
-import {Transform, TransformLocation, Letter} from "./gameTypes"
-import * as Util from "./util"
+import {Transform, TransformLocation, Letter} from "game/gameTypes"
+import * as Util from "game/util"
 
-import {Trie} from "./trie/trie";
-import {TrieNode} from "./trie/trieNode";
-import { tr } from "motion/react-client";
+import {Trie} from "game/trie/trie";
+import {TrieNode} from "game/trie/trieNode";
+
 /* 
   Input Stream Ops: Actions and Scans.
 -Actions:

@@ -1,7 +1,7 @@
 // Test with: npx tsx ./testsplit.ts
 
-import {Trie} from "/home/pyb/rc/trie/trie";
-import {TrieNode} from "/home/pyb/rc/trie/trieNode";
+import {Trie} from "game/trie/trie";
+import {TrieNode} from "game/trie/trieNode";
 
 function sreverse(s:string):string{
     return s.split("").reverse().join("");

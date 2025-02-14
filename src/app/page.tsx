@@ -1,5 +1,5 @@
 import styles from "./page.module.css";
-import GameMain from "./Main";
+import GameMain from "UI/Main";
 
 export default function Home() {
   return (

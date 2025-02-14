@@ -1,7 +1,7 @@
-import {Letter, Transform} from "./gameTypes"
 import React from "react";
-import styles from "./css/stream.module.css";
-import * as StreamOps from "./streamops";
+import {Letter, Transform} from "game/gameTypes"
+import styles from "css/stream.module.css";
+import * as StreamOps from "game/streamops";
 
 const stylesArr = [
     styles.prio1,

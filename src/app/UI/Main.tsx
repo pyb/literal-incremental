@@ -1,20 +1,20 @@
 'use client'
 
 import React from "react"
-import styles from "./css/game.module.css"
-import Dict from "./Dict"
-import Keyboard from "./Keyboard"
-import StreamComponent from "./Stream"
-import * as GS from "./gameState"
-import GameData from "./gameData"
-import uiData from "./uiData"
-import * as Types from "./gameTypes"
-import {KeyStatus, KeyMode} from "./gameTypes"
-import * as Game from "./game"
-import * as KH from "./keyboardHandling"
 import { useImmer } from "use-immer";
-import * as Test from "./testData"
-import RCScout from "./RCScout";
+import styles from "css/game.module.css"
+import Dict from "UI/Dict"
+import Keyboard from "UI/Keyboard"
+import StreamComponent from "UI/Stream"
+import * as GS from "game/gameState"
+import GameData from "game/gameData"
+import uiData from "UI/uiData"
+import * as Types from "game/gameTypes"
+import {KeyStatus, KeyMode} from "game/gameTypes"
+import * as Game from "game/game"
+import * as KH from "game/keyboardHandling"
+import * as Test from "test/testData"
+import RCScout from "UI/RCScout";
 
 /*
     Functionality in this file:
