@@ -54,10 +54,10 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock two-letter words"
     },
     
-    { n: 1, input: "foo", output: "bar" },
-    { n: 1, input: "baz", output: "" },
+    { input: "foo", output: "bar" },
+    { input: "baz", output: "" },
     { n: 3, input: "bar", output: "w" },
-    { n: 1, input: "cat", output: "" },
+    { input: "cat", output: "" },
 
 ].map((item, id) => ({ ...item, id: id }));
 

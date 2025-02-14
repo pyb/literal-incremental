@@ -31,7 +31,13 @@ const Key = ({text, modes}:KeyProps) => {
     }
 
     if (!modes.has(KeyMode.Active) && highlight) {
-        setHighlight(false);
+        /*
+        // needed?
+        if (timeoutId != 0)
+            window.clearTimeout(timeoutId);
+        */
+       console.log("off!")
+       setHighlight(false);
     }
     else if (modes.has(KeyMode.Active) && !highlight)
     {
@@ -46,16 +52,6 @@ const Key = ({text, modes}:KeyProps) => {
         setDoProcessHighlight(false);
         processHighlight();
       }
-
-      /*
-    React.useEffect(() => {
-        intervalId.current = window.setInterval(() => setDoProcessHighlight(true),
-            UIData.tick);
-        return () => {
-            window.clearInterval(intervalId.current);
-        };
-    },[]);
-      */
 
     return (
     <div className={keyStyle(modes, highlight)}>

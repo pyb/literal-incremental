@@ -65,6 +65,7 @@ const Footer = ({items}: {items: Array<React.ReactNode>}) => {
 
 const GameMain = () => {
     const [GS, setGS] = useImmer<GameState>(GameData.initialGameState);
+    const [timeoutIds, setTimeoutIds] = useImmer<Map<string, number>>(new Map<string, number>);
 
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.unlockedKeys,
                                                                    GS.pressedKeys,
@@ -72,12 +73,37 @@ const GameMain = () => {
                                                                    GS.dict);
 
     // TODO rename this...? calls Game.execute
+
+    // Have 1 per-key jstimeoutid in state
+    // Create a timeout event according to key's repeat delay
+    // Delete the timeout event if key released
+    const processTimeout = (key: string) => {
+        if (timeoutIds.has(key)) {
+            window.clearTimeout(timeoutIds.get(key));
+            setTimeoutIds((timeoutIds) => {
+                timeoutIds.delete(key);
+            });
+        }
+        console.log("deleting key")
+        setGS((gs:GameState) => {
+            gs.pressedKeys.delete(key);
+        });
+        lookupAndExecute(key, false);
+    }
+
     const lookupAndExecute = (key:string, release:boolean):void => {
         const status = keyStatus.get(key);
-        if (release)
+        if (release) {
+            if (timeoutIds.has(key)) {
+                window.clearTimeout(timeoutIds.get(key));
+                setTimeoutIds((timeoutIds) => {
+                    timeoutIds.delete(key);
+                });
+            }
             setGS((gs:GameState) => {
                 gs.pressedKeys.delete(key);
             });
+        }
         else {
             if (status &&
                 (status.modes.has(KeyMode.Available) ||
@@ -88,6 +114,10 @@ const GameMain = () => {
                 const update = Game.execute(key, keyStatus, GS.stream, GS.dict);
                 if (update)
                     setGS(update);
+                const id:number = window.setTimeout(()=>processTimeout(key), 500);
+                setTimeoutIds((timeoutIds) => {
+                    timeoutIds.set(key, id);
+                });
             }
         }
     }

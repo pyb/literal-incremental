@@ -2,7 +2,7 @@ export const uiData = {
     specialKeys: new Set<string>(["Enter"]),
     wordTransformKey: "Enter",
     tick: 50,
-    highlightDuration: 30,
+    highlightDuration: 3,
     logSize: 5,
     maxKeyboardRowSize: 6,
     dictLongForm: 3,
