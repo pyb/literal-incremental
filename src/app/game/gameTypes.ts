@@ -8,9 +8,10 @@ export type Transform = {
     id: number,
     longDesc?: string,
     shortDesc?: string,
-    n: number,
+    n?: number,
     input: string, // word or letter
     output: string,
+    visibility?: number,
 }
 
 export const emptyTransform:Transform = {

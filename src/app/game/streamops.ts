@@ -51,7 +51,7 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
     
     const newLetter:Letter = {text: transform.output, n: 1};
     let existingLetter = result[location];
-    const N = transform.n;
+    const N = transform.n || 1;
 
     if(!existingLetter)
         throw new Error('Bug: bad letter');
@@ -125,7 +125,7 @@ export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform
                     const pos = l - 1 - k;
                     const key: string = letter.text;
                     if ((key == inputWord) &&
-                        (letter.n >= transform.n))
+                        (letter.n >= (transform.n || 1)))
                     {
                         const current = result.get(transformLetter);
                         if (!current ||
