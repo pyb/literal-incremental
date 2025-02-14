@@ -79,7 +79,9 @@ const GameMain = () => {
         if (status &&
             (status.modes.has(KeyMode.Available) ||
              status.modes.has(KeyMode.Unlocked))) {
-            setGS(Game.execute(key, keyStatus, GS.stream, GS.dict));
+            const update = Game.execute(key, keyStatus, GS.stream, GS.dict);
+            if (update)
+                setGS(update);
         }
     }
 

@@ -55,8 +55,10 @@ export const reset = () => {
   }
 }
 
+/******************************** */
+// commands
+
 /*
-  All keyboard driven?
   3 types of command. All keys are:
    * modifiers (none for now), 
    * direct input (unlocked Keys), or
@@ -78,21 +80,17 @@ export const reset = () => {
   -...?
 */
 
-// TODO : replace this with just null
-const dummyGS = (gs:GameState) => {
-
-}
-
-export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: Array<Letter>, dict:Array<Types.Transform>):((gs:GameState) => void) => {
+export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: Array<Letter>, dict:Array<Types.Transform>):
+    ((gs:GameState) => void) | null => {
   const status = keyStatus.get(key);
   if (!status)
     //throw new Error('Error: unknown key : ' + key);
   {
     console.log('Error: unknown key : ' + key);
-    return dummyGS;
+    return null;
   }
   const modes:Set<KeyMode> = status.modes;
-  console.log(modes)
+//  console.log(modes)
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
     return letterTransform(key, stream, dict);
@@ -105,7 +103,7 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: 
     return toggleModifier(key);
   else 
     console.log("Error: key not available"); // should this case be intercepted higher up in the stack
-  return dummyGS;
+  return null;
 }
 
 const directInput = (key: string) => {
@@ -150,5 +148,5 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Types.Transform>) => {
 }
 
 const toggleModifier = (key:string) => {
-  return dummyGS;
+  return null;
 }
