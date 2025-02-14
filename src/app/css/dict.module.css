@@ -1,7 +1,145 @@
 .dictComponent {
     font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    border-width: 0px;
+    flex-basis: 75%;
+    justify-content: space-around;
 }
 
 .dictItem {
     color:blue;
+}
+
+.scoreBoard {
+    gap: 10px;
+    font-size: large;
+    flex-basis: 25%;
+    text-align: center;
+    margin: auto;
+}
+
+.longArea {
+    flex-basis: 25%;
+    margin-left: 6%;
+    margin-right: 6%;
+    margin-top: 0;
+    padding-bottom: 2%;
+    border-bottom: 1px dashed;
+    border-bottom-color: #888888;
+}
+
+.number {
+    font-size: 120%;
+}
+
+.score {
+    composes: number;
+    color: red;
+}
+
+.qty {
+    composes: number;
+    color: lightyellow;
+    font-size: 100%;
+    margin-right: 2px;
+}
+
+.glyphs {
+    composes: number;
+    color: yellow;
+}
+
+.mws {
+    composes: number;
+    color: green;
+}
+
+.letter {
+/*    color: #888899;*/
+    color: rgb(221, 127, 26);
+    margin-left: 2px;
+}
+.word {
+    color: #cccccc;
+}
+
+.LIword {
+    composes: word;
+    margin-right: 10px;
+    font-family: monospace;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.LIdesc {
+    font-size: 85%;
+    color: rgb(163, 207, 255);
+/*    color: #aaaaff;*/
+}
+
+.SIword {
+    composes: word;
+    margin-right: 10px;
+    font-family: monospace;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+.SIdesc {
+    font-size: 85%;
+/*    color:#1a3478;*/
+    color: rgb(163, 207, 255);
+/*    color: #aaaaff; */
+}
+
+/*
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+*/
+
+.tooltiptext {
+    composes: LIdesc;
+}
+
+/* Tooltip text */
+.shortItem .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #222222;
+    opacity: 60%;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+.shortItem:hover .tooltiptext {
+    visibility: visible;
+}
+
+.itemScore {
+    font-size: 85%;
+    color: rgb(253, 186, 116);
+/*
+    color: #1a3478;
+    color: #aa44ee;*/
+}
+
+.shortArea {
+    flex-basis: 75%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-column-gap: 5%;
+    grid-row-gap: 5%;
+    margin-left: 6%;
+    margin-right: 6%;
+    margin-top: 5%;
+    margin-bottom: 5%;
 }
