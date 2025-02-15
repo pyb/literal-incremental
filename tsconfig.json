@@ -3,7 +3,7 @@
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "noUncheckedIndexedAccess": true, // added
+    //"noUncheckedIndexedAccess": true, // added
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,

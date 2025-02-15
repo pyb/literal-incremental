@@ -60,9 +60,9 @@ const Footer = ({items}: {items: Array<React.ReactNode>}) => {
     };
   
     return (
-      <div className={styles.footer}>
+      <div className={styles.footer} onClick={rotate}>
         <div className={styles.footerContent}>{items[idx]}</div>
-        <button className={styles.footerButton} onClick={rotate}> More... </button>
+        {/*<button className={styles.footerButton} onClick={rotate}> More... </button>*/}
       </div>);
 }
 
