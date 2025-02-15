@@ -83,23 +83,23 @@ interface KeyboardProps {
 };
 
 const Keyboard = ({keyStatus}:KeyboardProps) => {
-    let unlockedKeys = new Array<string>();
-    let availableKeys = new Array<string>();
+    let letterKeys = new Array<string>();
+    let specialKeys = new Array<string>();
 
     for (const [key, status] of keyStatus) {
-        if (status.modes.has(KeyMode.Unlocked))
-            unlockedKeys.push(key);
-        else if (status.modes.has(KeyMode.Available))
-            availableKeys.push(key);
+        if (status.modes.has(KeyMode.Modifier) || status.modes.has(KeyMode.WordTransformKey))
+            specialKeys.push(key);
+        else
+            letterKeys.push(key); 
     }
 
     const rowSizes:Array<number> = computeRows(keyStatus.size, UIData.maxKeyboardRowSize);
     //console.log(rowSizes)
     const layeredKeys = new Array<Array<React.ReactNode>>();
 
-    const allKeys = unlockedKeys.concat(availableKeys)
-                                .map((key: string) =>
-                                    <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />);
+    const allKeys = letterKeys
+                            .map((key: string) =>
+                                <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />);
     console.log(allKeys)
     for (const size of rowSizes)
     {
@@ -118,7 +118,7 @@ const Keyboard = ({keyStatus}:KeyboardProps) => {
             </div>
             <div className={styles.keyboardBottom}>
                 <div className={styles.hstack}>
-                    {availableKeys.map((key: string) =>
+                    {specialKeys.map((key: string) =>
                         <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
                 </div>
             </div>
