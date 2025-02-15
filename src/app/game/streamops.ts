@@ -24,7 +24,7 @@ Transform filter "W": What words are available.  {Dict Item ID -> [location indi
 /****************************************************************/
 // Actions
 
-// might be useful if we sometimes produce empty items
+// due to bugs/oversights in streamops we sometimes produce empty items or duplicated letters. Fix this: 
 export const cleanupStream = (stream:Array<Letter>):Array<Letter> => {
     const filtered:Array<Letter> = [...stream].filter((l:Letter) => (l.n > 0 && l.text));
     let i = 0;
@@ -55,7 +55,7 @@ export const addLetter = (letter: string, input: Array<Letter>): Array<Letter> =
     else {
         lastLetter.n++;
     }
-    return result;
+    return cleanupStream(result);
 }
 
 export const applyLetterTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {

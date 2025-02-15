@@ -3,8 +3,21 @@ import styles from "css/keyboard.module.css"
 import {KeyStatus, KeyMode} from "game/gameTypes"
 import UIData from "./uiData"
 
-const keyStyle = (modes: Set<KeyMode>, highlight: boolean=false) => {
-    return highlight ? styles.highlight : styles.normal ;
+const keyStyle = (modes: Set<KeyMode>) => {
+    let result;
+    if (modes.has(KeyMode.WordTransformKey)) {
+        result = styles.wordBuy;
+    }
+    else if (modes.has(KeyMode.Modifier)) {
+        result = styles.modifier;
+    }
+    else if (modes.has(KeyMode.Unlocked)) {
+        result = styles.unlocked;
+    }
+    else if (modes.has(KeyMode.Visible)) {
+        result = styles.visible;
+    }
+    return result;
 }
 
 /* Highlighting design 
@@ -56,9 +69,12 @@ const Key = ({text, modes}:KeyProps) => {
       }
 
     return (
-    <div className={keyStyle(modes, highlight)}>
-        <div className={styles.key}> {text}</div>
-    </div>);
+        
+            <div className={keyStyle(modes)}>
+                <div className={highlight ? styles.highlight : styles.normal}>
+                <div className={styles.key}> {text}</div>
+            </div>
+        </div>);
 }
 
 const computeRows = (len:number, mx:number):Array<number> => {
