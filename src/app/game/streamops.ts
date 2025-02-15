@@ -6,9 +6,8 @@ import * as Util from "game/util"
 import {Trie} from "game/trie/trie";
 import {TrieNode} from "game/trie/trieNode";
 
-
 /* 
-  Input Stream Ops: Actions and Scans.
+  Input Stream Ops: Actions (Substitutions aka Replace) and Scans. (aka Search)
 -Actions:
 Keypress -> Add 1 letter to the end of input
 Purchase letter : transform 1 input element into 1 or 2 others. i(15) -> i(5)n i(10) ->n
@@ -19,7 +18,6 @@ Transform filter "L": What letter Transforms are available, and their positions.
 Transform filter "W": What words are available.  {Dict Item ID -> [location indices in S, from right to left ; or first location?]}
 
 -Rendering helper (TODO: copy/test from testSplit.js): Separate into words for UI/rendering (arbitrary)
-
 */
 
 // Utility. WINNER converts to WIN(2)ER
@@ -42,7 +40,7 @@ const convertStringToWord = (s:string):Array<Letter> => {
 }
 
 /****************************************************************/
-// Actions
+// Replace
 
 // due to bugs/oversights in streamops we sometimes produce empty items or duplicated letters. Fix this: 
 export const cleanupStream = (stream:Array<Letter>):Array<Letter> => {
@@ -150,7 +148,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
 }
 
 /****************************************************************/
-// Scanning
+// Search
 // Bug: I had forgotten that some transform convert words into letters! Are they Letter Transforms?
 
 // Hash Table L: "x times letter" reward available, ie note the locations of the 10I, etc
@@ -197,7 +195,7 @@ const inputToString = (input: Array<Letter>):string => {
     return input.map((letter: Letter) => letter.text).join('');
 }
 
-// 2) For each word in the transform, look for its last occurence in the input
+// 2) For each word in the transforms, look for its last occurence in the input
 export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>):Array<TransformLocation> => {
     const revInput:Array<Letter> = input.toReversed();
     const revInputS:string = inputToString(revInput);
@@ -236,56 +234,33 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>)
 /****************************************************************/
 // Rendering
 
-// As the name implies, this scans backwards
-// 
-// can return -1 (beginning )
-// Return (inclusive) index of where the next word starts
-const bwNextWordOrLetterBoundary = (from: number, input:string, trie: Trie): number =>
-{   
-    if (from < 0)
-        console.log("Error ! from < 0");
-
-    if(!input[from])
-        throw new Error('Bad input');
-    let node:TrieNode = trie.prefixSearch(input[from]); // search for first letter
-
-    let k = from - 1;
-    let result = k;
-
-    while (node && k >= 0)
-    {
-        if (node.isEndOfWord())
-            result = k;
-        const nextLetter = input[k];
-        if(!nextLetter)
-            throw new Error('Bad input');
-        node = node.getChild(nextLetter);
-        k -= 1;
-    }
-
-    return result;
-}
-
-// Should this go left to right or right to left? Different outcomes. For now, backwards
+// Backwards scan
 // return indices where the Letter Array should be split
-export const inputWordSplit = (input:string, dict:Array<Transform>):Array<number> =>
-{
-    const backwardsWords = dict.map((transform:Transform) => transform.input)
-        .filter((word:string) => word.length > 1)
-        .map((word:string) => Util.sreverse(word));
-    const backwardsTrie = new Trie();
-    for (const word of backwardsWords)
-        backwardsTrie.insert(word);
+export const inputWordSplit2 = (input: Array<Letter>, dict: Array<Transform>): Array<number> => {
+    const result:Array<number> = [];
+    const len:number = input.length;
 
-    let k = input.length - 1;
-    let result:Array<number>= [k+1];
-
+    let k = len;
     while (k > 0)
     {
-        const l:number = bwNextWordOrLetterBoundary(k, input, backwardsTrie);
-        result.push(l+1);
-        k = l;
+        const restInput:Array<Letter> = input.slice(0, k);
+        const bwSortedWordPositions:Array<TransformLocation> = scanForWords(restInput, dict);
+        
+        const lastWord = bwSortedWordPositions[0];
+        if (!lastWord)
+        {
+            for (let i = k - 1; i >= 0 ; i--) {
+                result.push(i); // single letters
+            }
+            k = 0;
+        }
+        else {
+            for (let i = k ; i > (lastWord.location + lastWord.word.length); i--) {
+                result.push(i); // single letters
+            }
+            result.push(lastWord.location);
+            k = lastWord.location;
+        }
     }
-    // result.push(0); // could be useful, rn it's implicit that the first letter is the first boundary
-    return (result.reverse());
+    return result.toReversed();
 }

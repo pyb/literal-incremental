@@ -123,7 +123,6 @@ const GameMain = () => {
                 const update = Game.execute(key, keyStatus, GS.stream, GS.dict);
                 if (update)
                     setGS(update);
-                console.log("adding timeout");
                 const id:number = window.setTimeout(()=>processTimeout(key), 500); // TODO : per-key repeat rate
                 setTimeoutIds((timeoutIds) => {
                     timeoutIds.set(key, id);

@@ -45,16 +45,7 @@ const Key = ({text, modes}:KeyProps) => {
         setHighlight(false);
         setTimeoutId(0);
     }
-    //console.log("key")
-    //console.log(modes.has(KeyMode.Active))
-
     if (!modes.has(KeyMode.Active) && highlight) {
-        /*
-        // needed?
-        if (timeoutId != 0)
-            window.clearTimeout(timeoutId);
-        */
-       console.log("off!")
        setHighlight(false);
     }
     else if (modes.has(KeyMode.Active) && !highlight)
@@ -141,5 +132,4 @@ const Keyboard = ({keyStatus}:KeyboardProps) => {
     );
 }
 
-// <span className={styles.key} key={key}>{key}</span>
 export default Keyboard;

@@ -33,6 +33,7 @@ export const dict: Array<Types.Transform> = [
         input: "n",
         output: "e"
     },
+    /*
     {
         visibility: 500,
         input: "in",
@@ -40,6 +41,7 @@ export const dict: Array<Types.Transform> = [
         shortDesc: "3LW",
         longDesc: "Unlock three-letter words."
     },
+    */
     {
         visibility: 3000,
         input: "inn",
