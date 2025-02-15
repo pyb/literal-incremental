@@ -62,7 +62,6 @@ const Stream = ({stream, dict}: Props) => {
 
     return (
         <div className={styles.streamComponent}>
-            
                 {separatedStream.reverse().map(streamToText).reverse()}
         </div>
     )

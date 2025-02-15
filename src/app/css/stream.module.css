@@ -6,14 +6,12 @@
     word-spacing: -.4ch;
     font-size: 1.3em;
     padding-right: 2vh;
-    text-align: end;
+    text-align:right;
     margin: auto;
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+    direction: rtl;
 }
 
 .streamContent {
