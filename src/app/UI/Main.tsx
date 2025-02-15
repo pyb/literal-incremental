@@ -16,6 +16,7 @@ import * as Game from "game/game"
 import * as KH from "game/keyboardHandling"
 import RCScout from "UI/RCScout";
 import UIData from "./uiData";
+import { load, save } from "game/persist";
 
 /*
     Functionality in this file:
@@ -139,6 +140,7 @@ const GameMain = () => {
     // executed every tick
     const processInterval = () => {
         setGS((gs:GameState) => gs.pressedKeys.clear());
+        save(GS);
     }
 
     if (doProcessInterval) {
@@ -148,6 +150,7 @@ const GameMain = () => {
 
 
     React.useEffect(() => {
+        setGS(load());
         intervalId.current = window.setInterval(() => setDoProcessInterval(true),
         UIData.tick);
       return () => {
