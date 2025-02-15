@@ -58,7 +58,14 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
     else if (existingLetter.n < N)
         throw new Error('Bug: bad transformation arguments : n too small!');
     if (existingLetter.n == N) {
-        result.splice(location, 1, newLetter );
+        const prevLetter = result[location-1];
+        if (prevLetter && prevLetter.text == newLetter.text) {
+            const k = prevLetter.n;
+            newLetter.n = k+1;
+            result.splice(location - 1, 2, newLetter);
+        }
+        else
+            result.splice(location, 1, newLetter );
     }
     else if (existingLetter.n > N)
     {
