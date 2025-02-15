@@ -28,7 +28,7 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
 });
 
 // Compute key status?
-export const computeKeyStatus = (unlockedKeys: Array<string>, pressedKeys: Set<string>,
+export const computeKeyStatus = (visibleKeys:Array<string>, unlockedKeys: Array<string>, pressedKeys: Set<string>,
                                  stream: Array<Letter>, dict: Array<Transform>):
     Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
@@ -41,7 +41,7 @@ export const computeKeyStatus = (unlockedKeys: Array<string>, pressedKeys: Set<s
   if (wordTransforms.length != 0)
     availableKeys.add(UIData.wordTransformKey);
       
-  const allKeys:Set<string> = availableKeys.union(new Set<string>(unlockedKeys));
+  const allKeys:Set<string> = availableKeys.union(new Set<string>(unlockedKeys)).union(new Set<string>(visibleKeys));
 
   allKeys.forEach((key:string) =>
     result.set(key, createEmptyKeyStatus(key)));

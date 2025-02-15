@@ -8,6 +8,9 @@ const keyStyle = (modes: Set<KeyMode>) => {
     if (modes.has(KeyMode.WordTransformKey)) {
         result = styles.wordBuy;
     }
+    else if (modes.has(KeyMode.LetterTranform)) {
+        result = styles.wordBuy;
+    }
     else if (modes.has(KeyMode.Modifier)) {
         result = styles.modifier;
     }
@@ -101,7 +104,7 @@ interface KeyboardProps {
 const Keyboard = ({keyStatus}:KeyboardProps) => {
     let letterKeys = new Array<string>();
     let specialKeys = new Array<string>();
-
+    
     for (const [key, status] of keyStatus) {
         if (status.modes.has(KeyMode.Modifier) || status.modes.has(KeyMode.WordTransformKey))
             specialKeys.push(key);
@@ -110,18 +113,14 @@ const Keyboard = ({keyStatus}:KeyboardProps) => {
     }
 
     const rowSizes:Array<number> = computeRows(keyStatus.size, UIData.maxKeyboardRowSize);
-    //console.log(rowSizes)
     const layeredKeys = new Array<Array<React.ReactNode>>();
 
-    const allKeys = letterKeys
-                            .map((key: string) =>
+    const allKeys = letterKeys.map((key: string) =>
                                 <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />);
-    console.log(allKeys)
     for (const size of rowSizes)
     {
         layeredKeys.push(allKeys.splice(0, size));
     }
-    //console.log(layeredKeys)
     return (
         <div className={styles.keyboardComponent}>
             <div className={styles.keyboardTop}>
