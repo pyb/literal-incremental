@@ -17,9 +17,11 @@ const LongItem = ({ item }: { item: Transform }) => {
     const contentStyle = item.longDesc ? styles.LIdesc : styles.itemScore;
 
     return (
-        <div className={styles.longItem}>
-            {item.n && <span className={styles.qty}>{item.n}</span>}
-            <span className={styles.LIword}>{wordOrLetter(item)}</span>
+        <div>
+            <span> {/* todo : use divs instead to control the vertical alignment */}
+                {item.n && <span className={styles.qty}>{item.n}</span>}
+                <span className={styles.LIword}>{wordOrLetter(item)}</span>
+            </span>
             <span>{"-> "}</span>
             <span className={contentStyle}>{content}</span>
         </div>

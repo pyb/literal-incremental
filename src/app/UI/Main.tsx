@@ -15,6 +15,7 @@ import {KeyStatus, KeyMode, GameState} from "game/gameTypes"
 import * as Game from "game/game"
 import * as KH from "game/keyboardHandling"
 import RCScout from "UI/RCScout";
+import UIData from "./uiData";
 
 /*
     Functionality in this file:
@@ -66,6 +67,9 @@ const Footer = ({items}: {items: Array<React.ReactNode>}) => {
 const GameMain = () => {
     const [GS, setGS] = useImmer<GameState>(GameData.initialGameState);
     const [timeoutIds, setTimeoutIds] = useImmer<Map<string, number>>(new Map<string, number>);
+    const [doProcessInterval, setDoProcessInterval] = React.useState<boolean>(false);
+
+    const intervalId = React.useRef<number>(0);
 
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.unlockedKeys,
                                                                    GS.pressedKeys,
@@ -84,7 +88,6 @@ const GameMain = () => {
                 timeoutIds.delete(key);
             });
         }
-        console.log("deleting key")
         setGS((gs:GameState) => {
             gs.pressedKeys.delete(key);
         });
@@ -114,7 +117,8 @@ const GameMain = () => {
                 const update = Game.execute(key, keyStatus, GS.stream, GS.dict);
                 if (update)
                     setGS(update);
-                const id:number = window.setTimeout(()=>processTimeout(key), 500);
+                console.log("adding timeout");
+                const id:number = window.setTimeout(()=>processTimeout(key), 500); // TODO : per-key repeat rate
                 setTimeoutIds((timeoutIds) => {
                     timeoutIds.set(key, id);
                 });
@@ -127,6 +131,25 @@ const GameMain = () => {
         return KH.teardown;
       //}, [GS.stream, GS.dict]);
     });
+
+    // executed every tick
+    const processInterval = () => {
+        setGS((gs:GameState) => gs.pressedKeys.clear());
+    }
+
+    if (doProcessInterval) {
+        setDoProcessInterval(false);
+        processInterval();
+    }
+
+
+    React.useEffect(() => {
+        intervalId.current = window.setInterval(() => setDoProcessInterval(true),
+        UIData.tick);
+      return () => {
+        window.clearInterval(intervalId.current);
+      };
+    }, []);
     
     //const availableKeys:Array<string> = Game.getAvailableKeys(GS.stream, GS.dict, UIData.wordTransformKey);
     const resetCallback = () => {

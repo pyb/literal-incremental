@@ -29,6 +29,8 @@ const Key = ({text, modes}:KeyProps) => {
         setHighlight(false);
         setTimeoutId(0);
     }
+    //console.log("key")
+    //console.log(modes.has(KeyMode.Active))
 
     if (!modes.has(KeyMode.Active) && highlight) {
         /*
