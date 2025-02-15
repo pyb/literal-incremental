@@ -25,8 +25,23 @@ Transform filter "W": What words are available.  {Dict Item ID -> [location indi
 // Actions
 
 // might be useful if we sometimes produce empty items
-export const cleanupStream = (stream:Array<Letter>) => {
-    return [...stream].filter((l:Letter) => (l.n > 0 && l.text));
+export const cleanupStream = (stream:Array<Letter>):Array<Letter> => {
+    const filtered:Array<Letter> = [...stream].filter((l:Letter) => (l.n > 0 && l.text));
+    let i = 0;
+    while (true) {
+        const cur = filtered[i];
+        const next = filtered[i+1];
+        if (!cur || !next )
+            break; 
+        if (cur.text != next.text)
+            i++;
+        else {
+            cur.n += next.n;
+            filtered.splice(i+1, 1);
+            i+= 2;
+        }
+    }
+    return filtered;
 }
 
 export const addLetter = (letter: string, input: Array<Letter>): Array<Letter> => {
@@ -76,14 +91,15 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
         result.splice(location, 1, letter, newLetter );
     }
 
-    return result;
+    return cleanupStream(result);
 }
 
 export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
     let result:Array<Letter> = [...stream];
 
-    const word = transform.input;
-    const output = transform.output;
+    // TODO: this, but with letter multiplicities in word input.
+    const word:string = transform.input;
+    const output:string = transform.output;
     let i:number = 0;
     let k:number = 0;
     while (i < word.length) {
@@ -109,7 +125,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     const letters = [...output].map((l: string):Letter => { return {text:l, n:1} });
     result.splice(location + i, 0, ...letters);
 
-    return result;
+    return cleanupStream(result);
 }
 
 /****************************************************************/
