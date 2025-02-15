@@ -44,8 +44,6 @@ const ShortItem = ({ item }: { item: Transform }) => {
 };
 
 const Dict = ({ dict, lastTransform }: Props) => {
-    console.log("dict")
-    console.log(lastTransform)
     const longItems: Array<Transform> = dict.slice(0, UIData.dictLongForm);
     const shortItems: Array<Transform> = dict.slice(UIData.dictLongForm);
 

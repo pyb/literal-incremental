@@ -71,6 +71,9 @@ const GameMain = () => {
 
     const intervalId = React.useRef<number>(0);
 
+    // Could I create a GS.keyStatus variable and put this calculation behind useEffect to avoid creating 
+    // a new keyStatus every frame, and re-rendering Keyboard every frame? Useful, possible?
+
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.unlockedKeys,
                                                                    GS.pressedKeys,
                                                                    GS.stream,

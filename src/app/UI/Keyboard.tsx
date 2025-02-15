@@ -61,6 +61,23 @@ const Key = ({text, modes}:KeyProps) => {
     </div>);
 }
 
+const computeRows = (len:number, mx:number):Array<number> => {
+    // Divide in rows.
+    const rows = Math.ceil(len / mx);
+    const basecols = Math.floor(len / rows);
+    const rem = len % rows;
+  
+    const rowSizes = new Array(rows);
+    for (let i = 0 ; i < rows ; i++)
+    {
+      if (i < rem) 
+        rowSizes[i] = basecols + 1;
+      else
+        rowSizes[i] = basecols;
+    }
+    return rowSizes;
+  }
+
 interface KeyboardProps {
     keyStatus: Map<string, KeyStatus>,
 };
@@ -76,15 +93,34 @@ const Keyboard = ({keyStatus}:KeyboardProps) => {
             availableKeys.push(key);
     }
 
+    const rowSizes:Array<number> = computeRows(keyStatus.size, UIData.maxKeyboardRowSize);
+    //console.log(rowSizes)
+    const layeredKeys = new Array<Array<React.ReactNode>>();
+
+    const allKeys = unlockedKeys.concat(availableKeys)
+                                .map((key: string) =>
+                                    <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />);
+    console.log(allKeys)
+    for (const size of rowSizes)
+    {
+        layeredKeys.push(allKeys.splice(0, size));
+    }
+    //console.log(layeredKeys)
     return (
         <div className={styles.keyboardComponent}>
-            <div className={styles.keyRow}>
-                {unlockedKeys.map((key: string) =>
-                    <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
+            <div className={styles.keyboardTop}>
+                <div className={styles.vstack}>
+                    {layeredKeys.map((keyRow: Array<React.ReactNode>, index: number) =>
+                        <div className={styles.hstack} key={index}>
+                            {keyRow}
+                        </div>)}
+                </div>
             </div>
-            <div className={styles.keyRow}>
-                {availableKeys.map((key: string) =>
-                    <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
+            <div className={styles.keyboardBottom}>
+                <div className={styles.hstack}>
+                    {availableKeys.map((key: string) =>
+                        <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
+                </div>
             </div>
         </div>
     );
