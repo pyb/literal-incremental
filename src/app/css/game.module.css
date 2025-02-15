@@ -8,9 +8,6 @@
 button.reset {
     background-color: black;
 }
-button.footerButton {
-    background-color: black;
-}
 
 .gameMiddle {
     display: flex;

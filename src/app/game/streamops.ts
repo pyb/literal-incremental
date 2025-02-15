@@ -6,6 +6,7 @@ import * as Util from "game/util"
 import {Trie} from "game/trie/trie";
 import {TrieNode} from "game/trie/trieNode";
 
+
 /* 
   Input Stream Ops: Actions and Scans.
 -Actions:
@@ -20,6 +21,25 @@ Transform filter "W": What words are available.  {Dict Item ID -> [location indi
 -Rendering helper (TODO: copy/test from testSplit.js): Separate into words for UI/rendering (arbitrary)
 
 */
+
+// Utility. WINNER converts to WIN(2)ER
+const convertStringToWord = (s:string):Array<Letter> => {
+    const result:Array<Letter> = [];
+    let k = 0;
+    for (let i = 0; i < s.length ; i++)
+    {
+        if (i > 1 && s[i-1] == s[i])
+        {
+            result[k-1].n+= 1;
+        }
+        else {
+            const l:Letter = {text: s[i] as string, n : 1}
+            result.push(l);
+            k+=1;
+        }
+    }
+    return result;
+}
 
 /****************************************************************/
 // Actions
@@ -36,8 +56,9 @@ export const cleanupStream = (stream:Array<Letter>):Array<Letter> => {
         if (cur.text != next.text)
             i++;
         else {
-            cur.n += next.n;
-            filtered.splice(i+1, 1);
+            //cur.n += next.n;
+            const newElement:Letter = {text: cur.text, n:cur.n + next.n};
+            filtered.splice(i, 2, newElement);
             i+= 2;
         }
     }
@@ -98,7 +119,8 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     let result:Array<Letter> = [...stream];
 
     // TODO: this, but with letter multiplicities in word input.
-    const word:string = transform.input;
+    const word:Array<Letter> = convertStringToWord(transform.input);
+
     const output:string = transform.output;
     let i:number = 0;
     let k:number = 0;
@@ -106,18 +128,17 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
         let letter = result[location + k];
         if(!letter)
             throw new Error('Bug: out of bounds');
-        if (letter.text != word[i])
+        if (letter.text != word[i].text)
             throw new Error('Bug: bad transformation arguments! Bad word letter');
-        if (letter.n == 1) { 
+        if (letter.n == word[i].n) { 
             result.splice(location + k, 1); // delete the Letter in place
         }
         else {
             const updatedLetter:Letter = {
                 text: letter.text,
-                n: letter.n - 1
+                n: letter.n - word[i].n
             };
             result.splice(location + k, 1, updatedLetter);
-            //letter.n -= 1;
             k++;
         }
         i++;
@@ -178,18 +199,35 @@ const inputToString = (input: Array<Letter>):string => {
 
 // 2) For each word in the transform, look for its last occurence in the input
 export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>):Array<TransformLocation> => {
-    const revInputS:string = inputToString(input.toReversed());
+    const revInput:Array<Letter> = input.toReversed();
+    const revInputS:string = inputToString(revInput);
     let result:Array<TransformLocation> = [];
 
-    const wordTransforms = transforms.filter((transforms) => transforms.input.length > 1);
+    // Note : this wd be a bug if a word transform existed that had only one repeated letter (eg AA -> ...)
+    const wordTransforms:Array<Transform> = transforms.filter((transforms) => transforms.input.length > 1);
     wordTransforms.forEach((transform:Transform) => {
-        const word = transform.input;
-        const revWord = Util.sreverse(word);
-        const i = revInputS.indexOf(revWord);
+        const wordS:string = transform.input;
+        const revWordS:string = Util.sreverse(wordS);
+        const wordA:Array<Letter> = convertStringToWord(wordS);
+        const revWordA:Array<Letter> = wordA.toReversed();
+        const i = revInputS.indexOf(revWordS);
         if (i != -1)
         {
-            const pos = (input.length - i) - word.length;
-            result.push({id: transform.id, location: pos, word: word})
+            let flag = true;
+            // Check multiplicities
+            for (let k = 0 ; k < wordS.length ; k++)
+            {
+                if (revInput[i+k].n < revWordA[k].n)
+                {
+                    flag = false;
+                    break;
+                }  
+            }
+            if (flag)
+            {
+                const pos = (input.length - i) - wordS.length;
+                result.push({id: transform.id, location: pos, word: wordS})
+            } 
         }
     });
     return result.sort((a, b) => (b.location - a.location)); // the rightmost words come first
