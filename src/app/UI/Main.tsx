@@ -160,7 +160,7 @@ const GameMain = () => {
     return (
         <div className={styles.game}>
             <div className={styles.gameTop}>
-                <Dict dict={GS.dict} lastTransform={Types.emptyTransform}></Dict>
+                <Dict dict={GS.dict} lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
             </div>
             <div className={styles.gameMiddle}>
                 <StreamComponent stream={GS.stream} dict={GS.dict} />

@@ -44,6 +44,8 @@ const ShortItem = ({ item }: { item: Transform }) => {
 };
 
 const Dict = ({ dict, lastTransform }: Props) => {
+    console.log("dict")
+    console.log(lastTransform)
     const longItems: Array<Transform> = dict.slice(0, UIData.dictLongForm);
     const shortItems: Array<Transform> = dict.slice(UIData.dictLongForm);
 
@@ -52,7 +54,12 @@ const Dict = ({ dict, lastTransform }: Props) => {
     return (
         <div className={styles.dictComponent}>
             <div className={styles.longArea}>
-                {longItems.map((item: Transform, index: number) => <LongItem key={index} item={item} />)}
+                <div className={styles.longAreaMain}>
+                    {longItems.map((item: Transform, index: number) => <LongItem key={index} item={item} />)}
+                </div>
+                <div className={styles.lastTransform}>
+                    {lastTransform.input && <ShortItem item={lastTransform} />}
+                </div>
             </div>
             <div className={styles.shortArea}>
                 {shortItems.slice(0, maxShortItems).map((item: Transform) => <ShortItem key={item.input} item={item} />)}
