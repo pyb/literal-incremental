@@ -77,6 +77,7 @@ const GameMain = () => {
                                                                    GS.dict);
 
     // TODO rename this...? calls Game.execute
+    // and find a better place for all the code below
 
     // Have 1 per-key jstimeoutid in state
     // Create a timeout event according to key's repeat delay

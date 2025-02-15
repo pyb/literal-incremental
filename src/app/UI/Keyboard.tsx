@@ -77,16 +77,14 @@ const Keyboard = ({keyStatus}:KeyboardProps) => {
     }
 
     return (
-        <div className="dark">
-            <div className={styles.keyboardComponent}>
-                <div className={styles.keyRow}>
-                    {unlockedKeys.map((key: string) =>
-                        <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
-                </div>
-                <div className={styles.keyRow}>
-                    {availableKeys.map((key: string) =>
-                        <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
-                </div>
+        <div className={styles.keyboardComponent}>
+            <div className={styles.keyRow}>
+                {unlockedKeys.map((key: string) =>
+                    <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
+            </div>
+            <div className={styles.keyRow}>
+                {availableKeys.map((key: string) =>
+                    <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
             </div>
         </div>
     );

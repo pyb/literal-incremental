@@ -1,14 +1,24 @@
 .streamComponent {
+    flex-basis: 50%;
     color: rgb(171, 136, 150);
     font-family: monospace;
+    white-space: nowrap;
     word-spacing: -.4ch;
     font-size: 1.3em;
-    padding-right: 10vh;
+    padding-right: 2vh;
     text-align: end;
     margin: auto;
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.streamContent {
+    text-align: end;
+
 }
 
 .superscript {

@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 10vh;
+    width: 60vw;
 }
 
 button.reset {
@@ -14,8 +15,8 @@ button.footerButton {
 .gameMiddle {
     display: flex;
     flex-direction: row;
-    gap: 10vw;
     text-align: center;
+    justify-content: space-around;
 }
 
 .reset {
