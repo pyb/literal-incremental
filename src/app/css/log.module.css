@@ -1,0 +1,15 @@
+.log {
+    min-width: 25vw;
+    font-size: x-small;
+    font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+    background-color: black;
+    color: grey;
+    text-align: left;
+    list-style-type:none;
+    margin-left: 8%;
+    /* background-color: #0a0a0a; */
+}
+
+.lastLog {
+    color: white;
+}

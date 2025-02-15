@@ -1,6 +1,7 @@
 import { GameState } from "game/gameTypes";
 import * as Types from "game/gameTypes"
 import * as Test from "test/testData"
+import UIData from "UI/uiData";
 
 const keyVisibility = {
     'i': 0,
@@ -61,6 +62,15 @@ export const dict: Array<Types.Transform> = [
 
 ].map((item, id) => ({ ...item, id: id }));
 
+const welcomeMessage = "Welcome to Literal Incremental.";
+
+const log = Array<Types.LogItem>();
+for (let i = 0 ; i < UIData.logSize - 1 ; i++)
+{
+  log.push({text: "", key: i});
+}
+log.push({text: welcomeMessage, key: UIData.logSize - 1});
+
 export const initialGameState:GameState = {
     glyphs: 0,
     stream:Test.testInput,
@@ -69,11 +79,6 @@ export const initialGameState:GameState = {
     pressedKeys: new Set<string>([]),
     dict:dict,
     lastTransform: undefined,
+    log: log,
+    logKey: UIData.logSize,
 };
-
-const GameData = {
-    keyVisibility: keyVisibility,
-    initialGameState: initialGameState,
-};
-
-export default GameData;

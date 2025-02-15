@@ -9,12 +9,13 @@ import styles from "css/game.module.css"
 import Dict from "UI/Dict"
 import Keyboard from "UI/Keyboard"
 import StreamComponent from "UI/Stream"
-import GameData from "game/gameData"
+import * as GameData from "game/gameData"
 import * as Types from "game/gameTypes"
 import {KeyStatus, KeyMode, GameState} from "game/gameTypes"
 import * as Game from "game/game"
 import * as KH from "game/keyboardHandling"
 import RCScout from "UI/RCScout";
+import Log from "./Log"
 import UIData from "./uiData";
 import { load, save } from "game/persist";
 
@@ -174,7 +175,7 @@ const GameMain = () => {
             </div>
             <div className={styles.gameFooter}>
                 <Footer items={[
-                    ///<Log key={0} log={GS.log}></Log>,
+                    <Log key={0} log={GS.log} />,
                     <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
                     <RCScout key={2} />,
                     <Debug key={3}

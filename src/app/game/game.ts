@@ -1,6 +1,5 @@
 import {KeyStatus, KeyMode, GameState} from "game/gameTypes"
 import * as Stream from "game/streamops"
-import GameData from "game/gameData"
 import {Transform, TransformLocation, Letter} from "game/gameTypes"
 import * as Test from "test/testData"
 import UIData from "UI/uiData"

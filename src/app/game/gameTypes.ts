@@ -75,6 +75,11 @@ export type KeyStatus = {
     modifier?: Modifier,
 }
 
+export type LogItem = {
+    key: number,
+    text: string
+}
+
 export type GameState = {
     glyphs: number,
     stream: Array<Letter>,
@@ -83,6 +88,9 @@ export type GameState = {
     visibleKeys: Array<string>,
     unlockedKeys: Array<string>,
     pressedKeys: Set<string>,
+
+    log: Array<LogItem>,
+    logKey: number,
 }
 
 export type UIState = {
