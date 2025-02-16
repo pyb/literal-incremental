@@ -1,6 +1,9 @@
+const wordTransformKey = "Enter";
+const repeatModeKey = "Control";
+
 export const uiData = {
-    specialKeys: new Set<string>(["Enter"]),
-    wordTransformKey: "Enter",
+    wordTransformKey: wordTransformKey,
+    repeatModeKey: repeatModeKey,
     tick: 50,
     highlightDuration: 60,
     logSize: 5,

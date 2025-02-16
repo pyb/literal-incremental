@@ -3,15 +3,15 @@ import * as Types from "game/gameTypes"
 import * as Test from "test/testData"
 import UIData from "UI/uiData";
 
-const keyVisibility = {
-    'i': 0,
-    'n': 10,
-    'Enter': 50,
-    'e': 100,
-    'w': 1000,
-};
+const keyVisibility = new Map<string, number>([
+    ['i', 0],
+    ['n', 10],
+    [UIData.wordTransformKey, 50],
+    ['e', 100],
+    ['w', 1000]]);
 
-const startingVisibleKeys = ["i", "n", "w", "e", "Enter"];
+
+const startingVisibleKeys = ["i", "n", "w", "e", UIData.wordTransformKey];
 const startingUnlockedKeys = ["i"];
 
 export const dict: Array<Types.Transform> = [
@@ -56,9 +56,10 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock two-letter words"
     },
     
-    { input: "foo", output: "bar", shortDesc: "Test", longDesc: "Test"},
-    { input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2"},
+    { input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
+    { input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
  //   { n: 3, input: "bar", output: "w" },
+    { input: "bar", output: "w" },
     { input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
 
 ].map((item, id) => ({ ...item, id: id }));
@@ -74,6 +75,8 @@ log.push({text: welcomeMessage, key: UIData.logSize - 1});
 
 export const slowRepeat = 500;
 export const fastRepeat = 50;
+
+export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
 export const initialGameState:GameState = {
     glyphs: 0,

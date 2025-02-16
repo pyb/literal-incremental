@@ -1,27 +1,7 @@
-import {KeyStatus, KeyMode, GameState} from "game/gameTypes"
+import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Effect, EffectType} from "game/gameTypes"
 import * as Stream from "game/streamops"
-import {Transform, TransformLocation, Letter} from "game/gameTypes"
-import * as Test from "test/testData"
+import {specialKeys} from "game/gameData"
 import UIData from "UI/uiData"
-import { tr } from "motion/react-client"
-
-// Todo: this should prob. get all the modifier key names as input? Or make this file dependent on UIData (bof)
-/*
-export const getAvailableKeys = (input:Array<Letter>, dict: Array<Transform>, wordTransformKey:string):Array<string> => {
-    const result:Array<string> = [];
-    
-    const letters = Stream.scanForLetters(input, dict);
-    const words = Stream.scanForWords(input, dict);
-
-    Array.from(letters.keys()).forEach((key) => result.push(key));
-    if (words.length > 0)
-        result.push(wordTransformKey);
-
-    return result;
-}
-*/
-    //const availableKeys:Array<string> = Game.getAvailableKeys(GS.stream, GS.dict, UIData.wordTransformKey);
-
 
 const createEmptyKeyStatus = (key:string):KeyStatus => ({
   key:key,
@@ -56,7 +36,7 @@ export const computeKeyStatus = (visibleKeys:Array<string>, unlockedKeys: Array<
 
   visibleKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Visible);
-    if (!UIData.specialKeys.has(key))
+    if (!specialKeys.has(key))
       result.get(key)?.modes.add(KeyMode.Letter);
   });
 
@@ -107,15 +87,15 @@ export const computeKeyStatus = (visibleKeys:Array<string>, unlockedKeys: Array<
   -...?
 */
 
-export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: Array<Letter>, dict:Array<Transform>):
-    ((gs:GameState) => void) | null => {
-  const status = keyStatus.get(key);
-  if (!status)
-    //throw new Error('Error: unknown key : ' + key);
-  {
-    console.log('Error: unknown key : ' + key);
-    return null;
-  }
+export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Transform>):
+((gs:GameState) => void) | null => {
+
+  return null;
+}
+
+export const executeTransform = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>):
+[effect: Effect | undefined, ((gs:GameState) => void) | undefined] => {
+    
   const modes:Set<KeyMode> = status.modes;
 //  console.log(modes)
   // TODO : what to do if TRANSFORM and UNLOCKED?
@@ -132,17 +112,36 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: 
     return toggleModifier(key);
   else 
     console.log("Error: key not available"); // should this case be intercepted higher up in the stack
+  return [undefined, undefined];
+}
+
+export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: Array<Letter>, dict:Array<Transform>):
+    ((gs:GameState) => void) | null => {
+  const status = keyStatus.get(key);
+  if (!status)
+  {
+    //throw new Error('Error: unknown key : ' + key);
+    console.log('Error: unknown key : ' + key);
+    return null;
+  }
+  const [effect, transformResult] = executeTransform (key, status, stream, dict);
+  if (transformResult)
+  {
+    const effectResult = effect ? executeEffect(effect, stream, dict) : null;
+    return transformResult;
+  }
   return null;
 }
 
-const directInput = (key: string) => {
-  return ((gs:GameState) => {
-    gs.glyphs += 1;
-    gs.stream = Stream.addLetter(key, gs.stream);
-  });
+const directInput = (key: string):[effect: Effect | undefined, ((gs:GameState) => void) | undefined]  => {
+  return [undefined,
+    ((gs:GameState) => {
+      gs.glyphs += 1;
+      gs.stream = Stream.addLetter(key, gs.stream);
+    })];
 }
 
-const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform>) => {
+const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform>): [effect: Effect | undefined, ((gs:GameState) => void) | undefined] => {
   const transforms:Map<string, TransformLocation> = Stream.scanForLetters(stream, dict);
   const transformLocation = transforms.get(key);
   if (!transformLocation)
@@ -152,14 +151,15 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
   if (!transform)
     throw new Error('Bug: transform id not found');
 
-  return ((gs:GameState) => {
-    //gs.stream = Stream.addLetter(key, gs.stream);
-    gs.lastTransform = transform;
-    gs.stream = Stream.applyLetterTransform(transform, stream, transformLocation.location)
-  });
+  return [transform.effect, 
+    ((gs:GameState) => {
+      //gs.stream = Stream.addLetter(key, gs.stream);
+      gs.lastTransform = transform;
+      gs.stream = Stream.applyLetterTransform(transform, stream, transformLocation.location)
+    })];
 }
 
-const wordTransform = (stream:Array<Letter>, dict:Array<Transform>) => {
+const wordTransform = (stream:Array<Letter>, dict:Array<Transform>): [effect: Effect | undefined, ((gs:GameState) => void) | undefined] => {
   const transforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
   const transformLocation = transforms[0];
   
@@ -170,12 +170,13 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>) => {
   if (!transform)
     throw new Error('Bug: transform id not found');
 
-  return ((gs:GameState) => {
+  return [transform.effect,
+    ((gs:GameState) => {
     gs.lastTransform = transform;
     gs.stream = Stream.applyWordTransform(transform, stream, transformLocation.location)
-  });
+  })];
 }
 
-const toggleModifier = (key:string) => {
-  return null;
+const toggleModifier = (key:string):any => {
+  return [undefined, undefined];
 }

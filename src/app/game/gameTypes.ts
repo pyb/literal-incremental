@@ -12,6 +12,22 @@ export type Transform = {
     input: string, // word or letter
     output: string,
     visibility?: number,
+    effect?: Effect,
+}
+
+export enum EffectType {
+    WordLengthUnlock,
+    LetterUnlock,
+    LetterRepeaterUnlock,
+    // ...
+}
+
+export type Effect = {
+    type: EffectType,
+    id?: number,
+    shortDesc?: string,
+    level?: number,
+    letter?: string,
 }
 
 export const emptyTransform:Transform = {
