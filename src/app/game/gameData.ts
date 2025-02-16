@@ -6,6 +6,7 @@ import UIData from "UI/uiData";
 const keyVisibility = {
     'i': 0,
     'n': 10,
+    'Enter': 50,
     'e': 100,
     'w': 1000,
 };
@@ -55,10 +56,10 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock two-letter words"
     },
     
-    { input: "foo", output: "bar" },
-    { input: "baz", output: "" },
-    { input: "bar", output: "w" },
-    { input: "cat", output: "" },
+    { input: "foo", output: "bar", shortDesc: "Test", longDesc: "Test"},
+    { input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2"},
+ //   { n: 3, input: "bar", output: "w" },
+    { input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
 
 ].map((item, id) => ({ ...item, id: id }));
 
@@ -71,9 +72,13 @@ for (let i = 0 ; i < UIData.logSize - 1 ; i++)
 }
 log.push({text: welcomeMessage, key: UIData.logSize - 1});
 
+export const slowRepeat = 500;
+export const fastRepeat = 50;
+
 export const initialGameState:GameState = {
     glyphs: 0,
-    stream:Test.testInput,
+    //stream:Test.testInput,
+    stream: [],
     visibleKeys: startingVisibleKeys,
     unlockedKeys: startingUnlockedKeys,
     pressedKeys: new Set<string>([]),
@@ -81,4 +86,5 @@ export const initialGameState:GameState = {
     lastTransform: undefined,
     log: log,
     logKey: UIData.logSize,
+    repeatDelay: slowRepeat,
 };

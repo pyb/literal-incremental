@@ -92,6 +92,8 @@ export type GameState = {
 
     log: Array<LogItem>,
     logKey: number,
+
+    repeatDelay: number, // later: per-key repeat delay
 }
 
 export type UIState = {

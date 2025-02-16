@@ -26,16 +26,6 @@ import { load, save } from "game/persist";
     -Other UI (footer...)
 */
 
-const Reset = ({ resetCallback }: { resetCallback: () => void }) => {
-    return (
-        <div className={styles.button}>
-            <button className={styles.reset} onClick={resetCallback}>
-                Reset
-            </button>
-        </div>
-    );
-}
-
 interface DebugProps {
     glyphs: number,
     last: string,
@@ -123,7 +113,7 @@ const GameMain = () => {
                 const update = Game.execute(key, keyStatus, GS.stream, GS.dict);
                 if (update)
                     setGS(update);
-                const id:number = window.setTimeout(()=>processTimeout(key), 500); // TODO : per-key repeat rate
+                const id:number = window.setTimeout(()=>processTimeout(key), GS.repeatDelay);
                 setTimeoutIds((timeoutIds) => {
                     timeoutIds.set(key, id);
                 });
@@ -158,9 +148,12 @@ const GameMain = () => {
       };
     }, []);
     
-    //const availableKeys:Array<string> = Game.getAvailableKeys(GS.stream, GS.dict, UIData.wordTransformKey);
     const resetCallback = () => {
         setGS(GameData.initialGameState);
+    }
+
+    const speedupCallback = () => {
+        setGS((gs:GameState) => {gs.repeatDelay = (gs.repeatDelay == GameData.fastRepeat) ? GameData.slowRepeat : GameData.fastRepeat;})
     }
 
     return (
@@ -176,8 +169,9 @@ const GameMain = () => {
                 <Footer items={[
                     <Log key={0} log={GS.log} />,
                     <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
-                    <RCScout key={2} />,
-                    <Debug key={3}
+                    <button key={2} className={styles.reset} onClick={speedupCallback}>{(GS.repeatDelay == GameData.fastRepeat)? " Slower" : "Faster"}</button>,
+                    <RCScout key={3} />,
+                    <Debug key={4}
                            glyphs={GS.glyphs}
                            last={GS.lastTransform ?
                             (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
