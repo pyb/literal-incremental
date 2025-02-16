@@ -57,7 +57,7 @@ export const dict: Array<Types.Transform> = [
     
     { input: "foo", output: "bar" },
     { input: "baz", output: "" },
-    { n: 3, input: "bar", output: "w" },
+    { input: "bar", output: "w" },
     { input: "cat", output: "" },
 
 ].map((item, id) => ({ ...item, id: id }));
