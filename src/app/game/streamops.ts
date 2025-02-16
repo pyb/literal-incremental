@@ -236,11 +236,12 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>)
 
 // Backwards scan
 // return indices where the Letter Array should be split
-export const inputWordSplit2 = (input: Array<Letter>, dict: Array<Transform>): Array<number> => {
+export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): Array<number> => {
     const result:Array<number> = [];
     const len:number = input.length;
 
     let k = len;
+    result.push(len);
     while (k > 0)
     {
         const restInput:Array<Letter> = input.slice(0, k);

@@ -24,7 +24,7 @@ const keyStyle = (modes: Set<KeyMode>) => {
         result = styles.visible;
     }
     else 
-        console.log("invisible letter...")
+        console.log("Bug/error : invisible letter...")
     return result;
 }
 
@@ -65,9 +65,7 @@ const Key = ({text, modes}:KeyProps) => {
     if (doProcessHighlight) {
         setDoProcessHighlight(false);
         processHighlight();
-      }
-
-    console.log(text)
+    }
     return (
             <div className={keyStyle(modes)}>
                 <div className={highlight ? styles.highlight : styles.normal}>

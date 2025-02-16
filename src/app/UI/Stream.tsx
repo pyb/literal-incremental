@@ -50,9 +50,7 @@ interface Props {
 };
 
 const Stream = ({stream, dict}: Props) => {
-    //const streamText:string = stream.map((l:Letter) => l.text).join("");
-    //const streamSplit:Array<number> = StreamOps.inputWordSplit(streamText, dict);
-    const streamSplit:Array<number> = StreamOps.inputWordSplit2(stream, dict);
+    const streamSplit:Array<number> = StreamOps.inputWordSplit(stream, dict);
 
     let i = 0;
     const separatedStream:Array<Array<Letter>> = [];
