@@ -32,13 +32,14 @@ const streamToText = (input:Array<Letter>, index:number) => {
     return (<span className={prioStyle(index)} style={prioOpacity(index)} key={index}>
         <span key={0}>{" "}</span>
         {input.map((l:Letter, index:number) =>
-        <span key={index+1}>
-            <span>
-                { l.text }
-            </span>
-            {(l.n > 1) && 
-            <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span> }
-        </span>
+            (l.n > 5) ?
+                <span key={index + 1}>
+                    <span> {l.text} </span>
+                    <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span>
+                </span> :
+                <span key={index + 1}>
+                    <span> {l.text.repeat(l.n)} </span>
+                </span>
             )}
         </span>);
 }
