@@ -29,13 +29,16 @@ import { load, save } from "game/persist";
 interface DebugProps {
     glyphs: number,
     last: string,
+    speedupCallback: () => void,
+    repeatDelay: number,
 }
 
-const Debug = ({ glyphs, last }: DebugProps) => {
+const Debug = ({ glyphs, last, speedupCallback, repeatDelay }: DebugProps) => {
     return (
         <div className={styles.debug}>
             <div>{"Glyphs : " + glyphs.toString()}</div>
             <div>{"Last : " + last}</div>
+            <button key={2} className={styles.reset} onClick={speedupCallback}>{(repeatDelay == GameData.fastRepeat)? " Slower" : "Faster"}</button>
         </div>
     );
 }
@@ -169,10 +172,11 @@ const GameMain = () => {
                 <Footer items={[
                     <Log key={0} log={GS.log} />,
                     <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
-                    <button key={2} className={styles.reset} onClick={speedupCallback}>{(GS.repeatDelay == GameData.fastRepeat)? " Slower" : "Faster"}</button>,
                     <RCScout key={3} />,
                     <Debug key={4}
+                           speedupCallback={speedupCallback}
                            glyphs={GS.glyphs}
+                           repeatDelay={GS.repeatDelay}
                            last={GS.lastTransform ?
                             (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
                             ""} />
