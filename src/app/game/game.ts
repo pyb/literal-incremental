@@ -1,7 +1,8 @@
-import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Effect, EffectType} from "game/gameTypes"
+import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Effect, EffectType, StateUpdate} from "game/gameTypes"
 import * as Stream from "game/streamops"
 import {specialKeys} from "game/gameData"
 import UIData from "UI/uiData"
+import { tr } from "motion/react-client";
 
 const createEmptyKeyStatus = (key:string):KeyStatus => ({
   key:key,
@@ -89,7 +90,10 @@ export const computeKeyStatus = (visibleKeys:Array<string>, unlockedKeys: Array<
 
 export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Transform>):
 ((gs:GameState) => void) | null => {
-
+  if (effect.type == EffectType.LetterUnlock) {
+    const letter:string = effect.letter as string;
+    return ((gs:GameState) => { gs.unlockedKeys.push(letter)});
+  }
   return null;
 }
 
@@ -116,21 +120,24 @@ export const executeTransform = (key: string, status: KeyStatus, stream: Array<L
 }
 
 export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: Array<Letter>, dict:Array<Transform>):
-    ((gs:GameState) => void) | null => {
+    Array<StateUpdate> => {
   const status = keyStatus.get(key);
   if (!status)
   {
     //throw new Error('Error: unknown key : ' + key);
     console.log('Error: unknown key : ' + key);
-    return null;
+    return [];
   }
   const [effect, transformResult] = executeTransform (key, status, stream, dict);
   if (transformResult)
   {
     const effectResult = effect ? executeEffect(effect, stream, dict) : null;
-    return transformResult;
+    if (effectResult)
+      return [effectResult, transformResult];
+    else
+      return [transformResult];
   }
-  return null;
+  return [];
 }
 
 const directInput = (key: string):[effect: Effect | undefined, ((gs:GameState) => void) | undefined]  => {

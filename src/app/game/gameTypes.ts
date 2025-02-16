@@ -15,6 +15,8 @@ export type Transform = {
     effect?: Effect,
 }
 
+export type StateUpdate = ((gs:GameState) => void);
+
 export enum EffectType {
     WordLengthUnlock,
     LetterUnlock,
@@ -110,6 +112,7 @@ export type GameState = {
     logKey: number,
 
     repeatDelay: number, // later: per-key repeat delay
+    maxWordSize: number,
 }
 
 export type UIState = {

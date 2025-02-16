@@ -113,9 +113,9 @@ const GameMain = () => {
                 setGS((gs:GameState) => {
                     gs.pressedKeys.add(key);
                  });
-                const update = Game.execute(key, keyStatus, GS.stream, GS.dict);
-                if (update)
-                    setGS(update);
+                const updates:Array<Types.StateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict);
+                updates.forEach((update) => setGS(update));
+                
                 const id:number = window.setTimeout(()=>processTimeout(key), GS.repeatDelay);
                 setTimeoutIds((timeoutIds) => {
                     timeoutIds.set(key, id);

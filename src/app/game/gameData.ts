@@ -1,5 +1,6 @@
 import { GameState } from "game/gameTypes";
-import * as Types from "game/gameTypes"
+import * as Types from "game/gameTypes";
+import { EffectType , Effect } from "game/gameTypes";
 import * as Test from "test/testData"
 import UIData from "UI/uiData";
 
@@ -10,9 +11,30 @@ const keyVisibility = new Map<string, number>([
     ['e', 100],
     ['w', 1000]]);
 
-
 const startingVisibleKeys = ["i", "n", "w", "e", UIData.wordTransformKey];
 const startingUnlockedKeys = ["i"];
+
+/*
+export enum EffectType {
+    WordLengthUnlock,
+    LetterUnlock,
+    LetterRepeaterUnlock,
+    // ...
+}
+
+export type Effect = {
+    type: EffectType,
+    id?: number,
+    shortDesc?: string,
+    level?: number,
+    letter?: string,
+}
+*/
+
+const unlockEffect1:Effect = {
+    type: EffectType.LetterUnlock,
+    letter: "e",
+}
 
 export const dict: Array<Types.Transform> = [
     {
@@ -38,8 +60,9 @@ export const dict: Array<Types.Transform> = [
         visibility: 500,
         input: "in",
         output: "",
-        shortDesc: "3LW",
-        longDesc: "Unlock three-letter words."
+        shortDesc: "ULK_E",
+        longDesc: "Unlock letter e",
+        effect: unlockEffect1,
     },
     {
         visibility: 3000,
@@ -53,7 +76,7 @@ export const dict: Array<Types.Transform> = [
         input: "i",
         output: "",
         shortDesc: "2LW",
-        longDesc: "Unlock two-letter words"
+        longDesc: "Unlock two-letter words",
     },
     
     { input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
@@ -90,4 +113,5 @@ export const initialGameState:GameState = {
     log: log,
     logKey: UIData.logSize,
     repeatDelay: slowRepeat,
+    maxWordSize: 3,
 };
