@@ -5,7 +5,7 @@ import UIData from "./uiData"
 
 const keyStyle = (modes: Set<KeyMode>) => {
     let result;
-    if (modes.has(KeyMode.WordTransformKey)) {
+    if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available)) {
         result = styles.wordBuy;
     }
     else if (modes.has(KeyMode.LetterTranform)) {
