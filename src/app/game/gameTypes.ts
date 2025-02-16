@@ -38,6 +38,7 @@ export enum KeyMode {
     Unlocked,
     Modifier,
     LetterTranform,
+    WordTransform, // ie bar->w type of transform
     Transform,
     Timeout,
     WordTransformKey, // ie Enter

@@ -8,7 +8,10 @@ const keyStyle = (modes: Set<KeyMode>) => {
     if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available)) {
         result = styles.wordBuy;
     }
-    else if (modes.has(KeyMode.LetterTranform)) {
+    else if (modes.has(KeyMode.WordTransform) && modes.has(KeyMode.Available)) {
+        result = styles.wordBuy;
+    }
+    else if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available)) {
         result = styles.wordBuy;
     }
     else if (modes.has(KeyMode.Modifier)) {
@@ -20,6 +23,8 @@ const keyStyle = (modes: Set<KeyMode>) => {
     else if (modes.has(KeyMode.Visible)) {
         result = styles.visible;
     }
+    else 
+        console.log("invisible letter...")
     return result;
 }
 
@@ -62,8 +67,8 @@ const Key = ({text, modes}:KeyProps) => {
         processHighlight();
       }
 
+    console.log(text)
     return (
-        
             <div className={keyStyle(modes)}>
                 <div className={highlight ? styles.highlight : styles.normal}>
                 <div className={styles.key}> {text}</div>

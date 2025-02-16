@@ -3,6 +3,7 @@ import * as Stream from "game/streamops"
 import {Transform, TransformLocation, Letter} from "game/gameTypes"
 import * as Test from "test/testData"
 import UIData from "UI/uiData"
+import { tr } from "motion/react-client"
 
 // Todo: this should prob. get all the modifier key names as input? Or make this file dependent on UIData (bof)
 /*
@@ -37,17 +38,23 @@ export const computeKeyStatus = (visibleKeys:Array<string>, unlockedKeys: Array<
   const wordTransforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
   
   const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
-  const availableKeys = new Set<string>(letterTransformKeys);
-  if (wordTransforms.length != 0)
-    availableKeys.add(UIData.wordTransformKey);
       
-  const allKeys:Set<string> = availableKeys.union(new Set<string>(unlockedKeys)).union(new Set<string>(visibleKeys));
-
-  allKeys.forEach((key:string) =>
+  visibleKeys.forEach((key:string) =>
+    result.set(key, createEmptyKeyStatus(key)));
+  unlockedKeys.forEach((key:string) =>
     result.set(key, createEmptyKeyStatus(key)));
 
-  // temp
-  allKeys.forEach((key:string) => {
+  wordTransforms.forEach((transformLocation: TransformLocation) => {
+    const transform:Transform|undefined =  dict.find((t)=> t.id == transformLocation.id);
+    const key = transform?.output;
+    if (key && key.length == 1)
+    {
+      result.get(key)?.modes.add(KeyMode.WordTransform);
+      result.get(key)?.modes.add(KeyMode.Available);
+    }
+  });
+
+  visibleKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Visible);
     if (!UIData.specialKeys.has(key))
       result.get(key)?.modes.add(KeyMode.Letter);
@@ -55,13 +62,11 @@ export const computeKeyStatus = (visibleKeys:Array<string>, unlockedKeys: Array<
 
   unlockedKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Unlocked);
+    result.get(key)?.modes.add(KeyMode.Available);
   });
 
   letterTransformKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.LetterTranform);
-  });
-
-  availableKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Available);
   });
 
@@ -114,7 +119,9 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: 
   const modes:Set<KeyMode> = status.modes;
 //  console.log(modes)
   // TODO : what to do if TRANSFORM and UNLOCKED?
-  if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
+  if (modes.has(KeyMode.WordTransform) && modes.has(KeyMode.Available))
+    return wordTransform(stream, dict);
+  else if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
     return letterTransform(key, stream, dict);
   else if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available))
     return wordTransform(stream, dict);

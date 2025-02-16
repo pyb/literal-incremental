@@ -10,7 +10,7 @@ const keyVisibility = {
     'w': 1000,
 };
 
-const startingVisibleKeys = ["i", "n", "Enter"];
+const startingVisibleKeys = ["i", "n", "w", "e", "Enter"];
 const startingUnlockedKeys = ["i"];
 
 export const dict: Array<Types.Transform> = [
@@ -33,7 +33,6 @@ export const dict: Array<Types.Transform> = [
         input: "n",
         output: "e"
     },
-    /*
     {
         visibility: 500,
         input: "in",
@@ -41,7 +40,6 @@ export const dict: Array<Types.Transform> = [
         shortDesc: "3LW",
         longDesc: "Unlock three-letter words."
     },
-    */
     {
         visibility: 3000,
         input: "inn",
