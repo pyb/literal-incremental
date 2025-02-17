@@ -3,7 +3,8 @@ import * as Types from "game/gameTypes";
 import { EffectType , Effect } from "game/gameTypes";
 import * as Test from "test/testData"
 import UIData from "UI/uiData";
-
+/*
+// Disabled for early testing
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
@@ -12,6 +13,15 @@ export const keyVisibility = new Map<string, number>([
     //['control', 3],
     ['e', 100],
     ['w', 1000]]);
+*/
+export const keyVisibility = new Map<string, number>([
+    ['i', 0],
+    ['n', 0],
+    [UIData.wordTransformKey, 0],
+    [UIData.repeatModeKey, 0],
+    //['control', 3],
+    ['e', 0],
+    ['w', 0]]);
 
 export const gameKeys = new Set<string> ( [...keyVisibility.keys()]);
 
@@ -93,8 +103,8 @@ export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repe
 
 export const initialGameState:GameState = {
     glyphs: 0,
-    stream:Test.testInput,
-    //stream: [],
+    //stream:Test.testInput,
+    stream: [],
     visibleKeys: startingVisibleKeys,
     unlockedKeys: startingUnlockedKeys,
     pressedKeys: new Set<string>(),

@@ -61,6 +61,8 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<st
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Visible);
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.RepeatModeKey);
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Modifier);
+  if (repeatToggleMode)
+    result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Active);
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Available); // tmp
   if (wordTransforms.length != 0)
     result.get(UIData.wordTransformKey)?.modes.add(KeyMode.Available);

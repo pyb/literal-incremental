@@ -5,6 +5,28 @@ import UIData from "UI/uiData";
 import { GameState, GameStateUpdate } from "./gameTypes";
 import { gameKeys } from "game/gameData";
 
+/*
+Key repeating, longpress/toggled.
+Difficulty : for highlighting purporses, Keyboard component need time-separated keypress and non-keypress (by at least 1 tick)
+
+Should be *no difference* between physically pressed, and autorepeat ! Same codepaths.
+Why did I struggle? The "trigger" maybe, after switching on autorepeat
+
+In Keyboard, it's clear. keys highlight from time to time if they are Active. That's it!
+Onus on the game code to make key active only intermittently.
+
+* New design :
+Every tick
+- Deactivate keys
+- Removed all unpressed / not repeating keys from tracker Map (currentPressedKeysTracker)
+- for all keys in tracker, increase elapsed by delta T. If elapsed > rep delay, execute + activate
+- For all currently pressed/autorepeated keys not in tracked, execute, activate, and add them to the tracker (with 0 elapsed time)
+
+changeKeypressStatus: when a key is pressed/released, add/remove it to pressedKeys Set.
+*/
+
+
+
 // Highlighting how?
 let pressedKeys = new Set<string>();
 
@@ -60,7 +82,7 @@ export const handleTick = ():GameStateUpdate => {
 
     return (gs:GameState) => {
         gs.activeKeys.clear();
-        
+
         const pressedOrRepeatingKeys = new Set<string> ([...gs.pressedKeys, ...gs.repeatingKeys]);
         const otherKeys = new Set<string>([...gs.currentPressedKeysTracker.keys()]).difference(pressedOrRepeatingKeys);
         otherKeys.forEach((key:string) => gs.currentPressedKeysTracker.delete(key));
