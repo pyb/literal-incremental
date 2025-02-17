@@ -110,7 +110,7 @@ export const initialGameState:GameState = {
     pressedKeys: new Set<string>(),
     repeatingKeys: new Set<string>(),
     activeKeys: new Set<string>(),
-    repeatableKeys: new Set<string>(["i"]),
+    repeatableKeys: new Set<string>(),
     keysToTrigger: new Set<string>(),
     currentPressedKeysTracker: new Map<string, number>(),
     dict:dict,

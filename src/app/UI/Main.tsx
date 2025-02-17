@@ -61,7 +61,6 @@ const GameMain = () => {
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.visibleKeys,
                                                                    GS.unlockedKeys,
                                                                    GS.activeKeys,
-                                                                   GS.pressedKeys,
                                                                    GS.repeatableKeys,
                                                                    GS.toggleRepeatMode,
                                                                    GS.stream,

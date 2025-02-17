@@ -17,7 +17,7 @@ const keyStyle = (modes: Set<KeyMode>) => {
     else if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available)) {
         result = styles.wordBuy;
     }
-    else if (modes.has(KeyMode.Modifier)) {
+    else if (modes.has(KeyMode.Modifier) && modes.has(KeyMode.Available)) {
         result = styles.modifier;
     }
     else if (modes.has(KeyMode.Unlocked)) {

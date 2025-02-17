@@ -10,7 +10,7 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
 });
 
 // Compute key status?
-export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<string>, activeKeys:Set<string>, pressedKeys: Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
+export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<string>, activeKeys:Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
                                  stream: Array<Letter>, dict: Array<Transform>):
     Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
@@ -63,7 +63,8 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<st
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Modifier);
   if (repeatToggleMode)
     result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Active);
-  result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Available); // tmp
+  if (repeatableKeys.size > 0)
+    result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Available);
   if (wordTransforms.length != 0)
     result.get(UIData.wordTransformKey)?.modes.add(KeyMode.Available);
 
