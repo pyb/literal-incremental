@@ -7,7 +7,9 @@ import UIData from "UI/uiData";
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
-    [UIData.wordTransformKey, 50],
+    [UIData.wordTransformKey, 5],
+    [UIData.repeatModeKey, 3],
+    //['control', 3],
     ['e', 100],
     ['w', 1000]]);
 
@@ -94,10 +96,14 @@ export const initialGameState:GameState = {
     visibleKeys: startingVisibleKeys,
     unlockedKeys: startingUnlockedKeys,
     pressedKeys: new Set<string>([]),
+    longPressedKeys: new Set<string>([]),
+    repeatingKeys: new Set<string>([]),
+    repeatableKeys: new Set<string>(["i"]),
     dict:dict,
     lastTransform: undefined,
     log: log,
     logKey: UIData.logSize,
     repeatDelay: slowRepeat,
     maxWordSize: 3,
+    toggleRepeatMode: false,
 };

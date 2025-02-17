@@ -23,7 +23,6 @@ export const teardown = () => {
 
 const handleKeyDown = (event:KeyboardEvent) => {
     const key:string = event.key;
-
     if (!event.repeat) // todo : handle repeat ourselves
     {
         if(!pressedKeys.has(key)) {

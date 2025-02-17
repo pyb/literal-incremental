@@ -8,6 +8,9 @@ const keyStyle = (modes: Set<KeyMode>) => {
     if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available)) {
         result = styles.wordBuy;
     }
+    else if (modes.has(KeyMode.RepeatToggleAvailable)) {
+        result = styles.repeatToggleAvailable;
+    }
     else if (modes.has(KeyMode.WordTransform) && modes.has(KeyMode.Available)) {
         result = styles.wordBuy;
     }

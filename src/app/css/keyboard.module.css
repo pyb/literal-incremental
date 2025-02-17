@@ -74,6 +74,11 @@ raised: {
     color: rgb(253, 186, 116);
 }
 
+.repeatToggleAvailable .key {
+    background-color: red;
+    color: rgb(253, 186, 116);
+}
+
 .highlight  .key {
     background-color: #FDE047;
     /*color: #FDE047;*/
@@ -91,7 +96,7 @@ raised: {
 }
 
 .modifier .key {
-    background-color: orange;
+    background-color: green;
 }
 
 /* dark theme */

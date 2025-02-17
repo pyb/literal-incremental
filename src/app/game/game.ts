@@ -10,14 +10,13 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
 });
 
 // Compute key status?
-export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<string>, pressedKeys: Set<string>,
+export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<string>, pressedKeys: Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
                                  stream: Array<Letter>, dict: Array<Transform>):
     Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
 
   const letterTransforms:Map<string, TransformLocation> = Stream.scanForLetters(stream, dict);
   const wordTransforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
-  
   const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
       
   visibleKeys.forEach((key:string) =>
@@ -44,6 +43,8 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<st
   unlockedKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Unlocked);
     result.get(key)?.modes.add(KeyMode.Available);
+    if (repeatToggleMode && repeatableKeys.has(key))
+      result.get(key)?.modes.add(KeyMode.RepeatToggleAvailable);
   });
 
   letterTransformKeys.forEach((key:string) => {
@@ -57,11 +58,27 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<st
 
   result.get(UIData.wordTransformKey)?.modes.add(KeyMode.Visible);
   result.get(UIData.wordTransformKey)?.modes.add(KeyMode.WordTransformKey);
+  result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Visible);
+  result.get(UIData.repeatModeKey)?.modes.add(KeyMode.RepeatModeKey);
+  result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Modifier);
+  result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Available); // tmp
   if (wordTransforms.length != 0)
     result.get(UIData.wordTransformKey)?.modes.add(KeyMode.Available);
 
   return result;
 }
+
+/*************/
+
+const toggleKeyRepeat = ((key: string): [effect: Effect | undefined, ((gs:GameState) => void) | undefined]=>
+  [undefined,
+    ((gs: GameState) => {
+      gs.toggleRepeatMode = false;
+      if (gs.repeatingKeys.has(key))
+        gs.repeatingKeys.delete(key);
+      else
+        gs.repeatingKeys.add(key);
+  })]);
 
 /******************************** */
 // commands
@@ -98,16 +115,31 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
     const level:number = effect.level as number;
     return ((gs:GameState) => { gs.maxWordSize = level});
   }
+  else if (effect.type == EffectType.LetterRepeaterUnlock) {
+    const letter:string = effect.letter as string;
+    return ((gs:GameState) => { gs.repeatableKeys.add(letter) });
+  }
+  else if (effect.type == EffectType.ToggleRepeater) {
+    return ((gs:GameState) => { gs.toggleRepeatMode = !gs.toggleRepeatMode });
+  }
   return null;
 }
 
-export const executeTransform = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>):
+const toggleRepeatEffect:Effect = {type: EffectType.ToggleRepeater};
+
+export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>):
 [effect: Effect | undefined, ((gs:GameState) => void) | undefined] => {
-    
   const modes:Set<KeyMode> = status.modes;
-//  console.log(modes)
+
   // TODO : what to do if TRANSFORM and UNLOCKED?
-  if (modes.has(KeyMode.WordTransform) && modes.has(KeyMode.Available))
+  if (modes.has(KeyMode.RepeatModeKey) && modes.has(KeyMode.Available))
+  {
+    return [toggleRepeatEffect, undefined];
+  }
+    
+  if (modes.has(KeyMode.RepeatToggleAvailable) && modes.has(KeyMode.Unlocked))
+    return toggleKeyRepeat(key);
+  else if (modes.has(KeyMode.WordTransform) && modes.has(KeyMode.Available))
     return wordTransform(stream, dict);
   else if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
     return letterTransform(key, stream, dict);
@@ -115,9 +147,12 @@ export const executeTransform = (key: string, status: KeyStatus, stream: Array<L
     return wordTransform(stream, dict);
   else if (modes.has(KeyMode.Unlocked) && modes.has(KeyMode.Letter))
     return directInput(key);
+  /*
+  // unused
   else if ( modes.has(KeyMode.Modifier) &&
            ((modes.has(KeyMode.Available) || modes.has(KeyMode.Unlocked))))
     return toggleModifier(key);
+  */
   else 
     console.log("Error: key not available"); // should this case be intercepted higher up in the stack
   return [undefined, undefined];
@@ -132,15 +167,16 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: 
     console.log('Error: unknown key : ' + key);
     return [];
   }
-  const [effect, transformResult] = executeTransform (key, status, stream, dict);
-  if (transformResult)
-  {
-    const effectResult = effect ? executeEffect(effect, stream, dict) : null;
-    if (effectResult)
-      return [effectResult, transformResult];
-    else
-      return [transformResult];
-  }
+  const [effect, transformResult] = executeKeyFunction (key, status, stream, dict);
+ 
+
+  const effectResult = effect ? executeEffect(effect, stream, dict) : null;
+  if (transformResult && effectResult)
+    return [effectResult, transformResult];
+  else if (effectResult)
+      return [effectResult];
+  else if (transformResult)
+    return [transformResult];
   return [];
 }
 

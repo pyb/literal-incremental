@@ -71,6 +71,8 @@ const GameMain = () => {
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.visibleKeys,
                                                                    GS.unlockedKeys,
                                                                    GS.pressedKeys,
+                                                                   GS.repeatableKeys,
+                                                                   GS.toggleRepeatMode,
                                                                    GS.stream,
                                                                    GS.dict);
 
@@ -93,8 +95,10 @@ const GameMain = () => {
         lookupAndExecute(key, false);
     }
 
-    const lookupAndExecute = (key:string, release:boolean):void => {
+    const lookupAndExecute = (key:string, release:boolean, realPress:boolean= false):void => {
         const status = keyStatus.get(key);
+        const autoRepeat:boolean = GS.repeatingKeys.has(key);
+
         if (release) {
             if (timeoutIds.has(key)) {
                 window.clearTimeout(timeoutIds.get(key));
@@ -104,22 +108,40 @@ const GameMain = () => {
             }
             setGS((gs:GameState) => {
                 gs.pressedKeys.delete(key);
+                gs.longPressedKeys.delete(key);
             });
         }
         else {
             if (status &&
                 (status.modes.has(KeyMode.Available) ||
                  status.modes.has(KeyMode.Unlocked))) {
-                setGS((gs:GameState) => {
-                    gs.pressedKeys.add(key);
-                 });
+                if (realPress)
+                    setGS((gs:GameState) => {
+                        gs.longPressedKeys.add(key);
+                     });
+                if (!autoRepeat)
+                {
+                    setGS((gs:GameState) => {
+                        gs.pressedKeys.add(key);
+                     });
+                }
                 const updates:Array<Types.StateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict);
                 updates.forEach((update) => setGS(update));
-                
-                const id:number = window.setTimeout(()=>processTimeout(key), GS.repeatDelay);
-                setTimeoutIds((timeoutIds) => {
-                    timeoutIds.set(key, id);
-                });
+
+                let repeatDelay:number;
+                if (autoRepeat)
+                {
+                    repeatDelay = GS.repeatDelay; // TODO : per-key repeat delay
+                }
+                else 
+                    repeatDelay = GS.repeatDelay;
+                if (GS.longPressedKeys.has(key) || autoRepeat)
+                {
+                    const id:number = window.setTimeout(() => processTimeout(key), repeatDelay);
+                    setTimeoutIds((timeoutIds) => {
+                        timeoutIds.set(key, id);
+                    });
+                }
             }
         }
     }
@@ -133,6 +155,10 @@ const GameMain = () => {
     // executed every tick
     const processInterval = () => {
         setGS((gs:GameState) => gs.pressedKeys.clear());
+        GS.repeatingKeys.forEach((key:string) =>{
+            if (!timeoutIds.has(key))
+                lookupAndExecute(key, false);
+        });
         save(GS);
     }
 
@@ -141,11 +167,10 @@ const GameMain = () => {
         processInterval();
     }
 
-
     React.useEffect(() => {
         setGS(load());
         intervalId.current = window.setInterval(() => setDoProcessInterval(true),
-        UIData.tick);
+                                                UIData.tick);
       return () => {
         window.clearInterval(intervalId.current);
       };

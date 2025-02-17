@@ -21,6 +21,7 @@ export enum EffectType {
     WordLengthUnlock,
     LetterUnlock,
     LetterRepeaterUnlock,
+    ToggleRepeater,
     // ...
 }
 
@@ -60,6 +61,8 @@ export enum KeyMode {
     Transform,
     Timeout,
     WordTransformKey, // ie Enter
+    RepeatModeKey, // ie Control
+    RepeatToggleAvailable,
 }
 
 export enum Modifier {
@@ -107,12 +110,16 @@ export type GameState = {
     visibleKeys: Set<string>,
     unlockedKeys: Array<string>,
     pressedKeys: Set<string>,
+    longPressedKeys: Set<string>,
+    repeatingKeys: Set<string>,
+    repeatableKeys: Set<string>,
 
     log: Array<LogItem>,
     logKey: number,
 
     repeatDelay: number, // later: per-key repeat delay
     maxWordSize: number,
+    toggleRepeatMode: boolean,
 }
 
 export type UIState = {
