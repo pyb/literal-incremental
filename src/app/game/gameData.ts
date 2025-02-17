@@ -13,6 +13,8 @@ export const keyVisibility = new Map<string, number>([
     ['e', 100],
     ['w', 1000]]);
 
+export const gameKeys = new Set<string> ( [...keyVisibility.keys()]);
+
 //const startingVisibleKeys = ["i", "n", "w", "e", UIData.wordTransformKey];
 const startingVisibleKeys = new Set<string>();
 keyVisibility.forEach((visibility:number, key:string) => { if (visibility == 0) startingVisibleKeys.add(key)});
@@ -95,10 +97,12 @@ export const initialGameState:GameState = {
     //stream: [],
     visibleKeys: startingVisibleKeys,
     unlockedKeys: startingUnlockedKeys,
-    pressedKeys: new Set<string>([]),
-    longPressedKeys: new Set<string>([]),
-    repeatingKeys: new Set<string>([]),
+    pressedKeys: new Set<string>(),
+    repeatingKeys: new Set<string>(),
+    activeKeys: new Set<string>(),
     repeatableKeys: new Set<string>(["i"]),
+    keysToTrigger: new Set<string>(),
+    currentPressedKeysTracker: new Map<string, number>(),
     dict:dict,
     lastTransform: undefined,
     log: log,

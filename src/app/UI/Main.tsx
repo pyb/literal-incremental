@@ -11,20 +11,13 @@ import Keyboard from "UI/Keyboard"
 import StreamComponent from "UI/Stream"
 import * as GameData from "game/gameData"
 import * as Types from "game/gameTypes"
-import {KeyStatus, KeyMode, GameState} from "game/gameTypes"
+import {KeyStatus, KeyMode, GameState, GameStateUpdate} from "game/gameTypes"
 import * as Game from "game/game"
 import * as KH from "game/keyboardHandling"
 import RCScout from "UI/RCScout";
-import Log from "./Log"
-import UIData from "./uiData";
+import Log from "UI/Log"
+import UIData from "UI/uiData";
 import { load, save } from "game/persist";
-
-/*
-    Functionality in this file:
-    -Rendering (Dict, Stream, Keyboard components)
-    -Low level keyboard handling
-    -Other UI (footer...)
-*/
 
 interface DebugProps {
     glyphs: number,
@@ -63,26 +56,93 @@ const GameMain = () => {
     const [timeoutIds, setTimeoutIds] = useImmer<Map<string, number>>(new Map<string, number>);
     const [doProcessInterval, setDoProcessInterval] = React.useState<boolean>(false);
 
-    //console.log(GS.repeatingKeys)
     const intervalId = React.useRef<number>(0);
-
-    // Could I create a GS.keyStatus variable and put this calculation behind useEffect to avoid creating 
-    // a new keyStatus every frame, and re-rendering Keyboard every frame? Useful, possible?
 
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.visibleKeys,
                                                                    GS.unlockedKeys,
+                                                                   GS.activeKeys,
                                                                    GS.pressedKeys,
                                                                    GS.repeatableKeys,
                                                                    GS.toggleRepeatMode,
                                                                    GS.stream,
                                                                    GS.dict);
 
-    // TODO rename this...? calls Game.execute
-    // and find a better place for all the code below
+    // executed every tick
+    const processInterval = () => {
+        GS.keysToTrigger.forEach((key:string) => {
+            const updates:Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict);
+            updates.forEach((update) => {if (update) setGS(update)});
+        });
+        setGS((gs:GameState) => gs.keysToTrigger.clear());
 
-    // Have 1 per-key jstimeoutid in state
-    // Create a timeout event according to key's repeat delay
-    // Delete the timeout event if key released
+        const update:GameStateUpdate = KH.handleTick();
+        if (update)
+            setGS(update);
+        save(GS);
+    }
+
+    if (doProcessInterval) {
+        setDoProcessInterval(false);
+        processInterval();
+    }
+
+    //console.log(GS.pressedKeys)
+    React.useEffect(() => {
+        setGS(load());
+        intervalId.current = window.setInterval(() => setDoProcessInterval(true),
+            UIData.tick);
+        KH.setup((key: string, pressed: boolean) => {
+            const update: GameStateUpdate = KH.changeKeyPressStatus(key, pressed);
+            if (update)
+                setGS(update);
+        });
+        return () => {
+            KH.teardown();
+            window.clearInterval(intervalId.current);
+        };
+    }, [setGS]);
+
+    const resetCallback = () => {
+        setGS(GameData.initialGameState);
+    }
+
+    const speedupCallback = () => {
+        setGS((gs:GameState) => {gs.repeatDelay = (gs.repeatDelay == GameData.fastRepeat) ? GameData.slowRepeat : GameData.fastRepeat;})
+    }
+
+    return (
+        <div className={styles.game}>
+            <div className={styles.gameTop}>
+                <Dict dict={GS.dict} lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
+            </div>
+            <div className={styles.gameMiddle}>
+                <StreamComponent stream={GS.stream} dict={GS.dict} />
+                <Keyboard keyStatus={keyStatus} />
+            </div>
+            <div className={styles.gameFooter}>
+                <Footer items={[
+                    <Log key={0} log={GS.log} />,
+                    <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
+                    <RCScout key={3} />,
+                    <Debug key={4}
+                           speedupCallback={speedupCallback}
+                           glyphs={GS.glyphs}
+                           repeatDelay={GS.repeatDelay}
+                           last={GS.lastTransform ?
+                            (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
+                            ""} />
+                            
+                ]} />
+      
+            </div>
+        </div>
+    );
+}
+
+export default GameMain;
+
+
+/*
     const processTimeout = (key: string) => {
         if (timeoutIds.has(key)) {
             window.clearTimeout(timeoutIds.get(key));
@@ -146,72 +206,4 @@ const GameMain = () => {
             }
         }
     }
-
-    React.useEffect(() => {
-        KH.setup(lookupAndExecute);
-        return KH.teardown;
-      //}, [GS.stream, GS.dict]);
-    });
-
-    // executed every tick
-    const processInterval = () => {
-        setGS((gs:GameState) => gs.pressedKeys.clear());
-        GS.repeatingKeys.forEach((key:string) =>{
-            if (!timeoutIds.has(key))
-                lookupAndExecute(key, false);
-        });
-        save(GS);
-    }
-
-    if (doProcessInterval) {
-        setDoProcessInterval(false);
-        processInterval();
-    }
-
-    React.useEffect(() => {
-        setGS(load());
-        intervalId.current = window.setInterval(() => setDoProcessInterval(true),
-                                                UIData.tick);
-      return () => {
-        window.clearInterval(intervalId.current);
-      };
-    }, []);
-    
-    const resetCallback = () => {
-        setGS(GameData.initialGameState);
-    }
-
-    const speedupCallback = () => {
-        setGS((gs:GameState) => {gs.repeatDelay = (gs.repeatDelay == GameData.fastRepeat) ? GameData.slowRepeat : GameData.fastRepeat;})
-    }
-
-    return (
-        <div className={styles.game}>
-            <div className={styles.gameTop}>
-                <Dict dict={GS.dict} lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
-            </div>
-            <div className={styles.gameMiddle}>
-                <StreamComponent stream={GS.stream} dict={GS.dict} />
-                <Keyboard keyStatus={keyStatus} />
-            </div>
-            <div className={styles.gameFooter}>
-                <Footer items={[
-                    <Log key={0} log={GS.log} />,
-                    <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
-                    <RCScout key={3} />,
-                    <Debug key={4}
-                           speedupCallback={speedupCallback}
-                           glyphs={GS.glyphs}
-                           repeatDelay={GS.repeatDelay}
-                           last={GS.lastTransform ?
-                            (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
-                            ""} />
-                            
-                ]} />
-      
-            </div>
-        </div>
-    );
-}
-
-export default GameMain;
+*/

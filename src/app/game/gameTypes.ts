@@ -15,7 +15,7 @@ export type Transform = {
     effect?: Effect,
 }
 
-export type StateUpdate = ((gs:GameState) => void);
+export type GameStateUpdate = ((gs:GameState) => void) | null;
 
 export enum EffectType {
     WordLengthUnlock,
@@ -110,9 +110,11 @@ export type GameState = {
     visibleKeys: Set<string>,
     unlockedKeys: Array<string>,
     pressedKeys: Set<string>,
-    longPressedKeys: Set<string>,
+    activeKeys: Set<string>,
     repeatingKeys: Set<string>,
     repeatableKeys: Set<string>,
+    keysToTrigger: Set<string>,
+    currentPressedKeysTracker: Map<string, number>, // map key to elapsed time since last press
 
     log: Array<LogItem>,
     logKey: number,
