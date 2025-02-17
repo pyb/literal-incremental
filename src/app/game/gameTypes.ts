@@ -104,7 +104,7 @@ export type GameState = {
     stream: Array<Letter>,
     dict: Array<Transform>,
     lastTransform: Transform|undefined,
-    visibleKeys: Array<string>,
+    visibleKeys: Set<string>,
     unlockedKeys: Array<string>,
     pressedKeys: Set<string>,
 

@@ -4,32 +4,18 @@ import { EffectType , Effect } from "game/gameTypes";
 import * as Test from "test/testData"
 import UIData from "UI/uiData";
 
-const keyVisibility = new Map<string, number>([
+export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
     [UIData.wordTransformKey, 50],
     ['e', 100],
     ['w', 1000]]);
 
-const startingVisibleKeys = ["i", "n", "w", "e", UIData.wordTransformKey];
+//const startingVisibleKeys = ["i", "n", "w", "e", UIData.wordTransformKey];
+const startingVisibleKeys = new Set<string>();
+keyVisibility.forEach((visibility:number, key:string) => { if (visibility == 0) startingVisibleKeys.add(key)});
+
 const startingUnlockedKeys = ["i"];
-
-/*
-export enum EffectType {
-    WordLengthUnlock,
-    LetterUnlock,
-    LetterRepeaterUnlock,
-    // ...
-}
-
-export type Effect = {
-    type: EffectType,
-    id?: number,
-    shortDesc?: string,
-    level?: number,
-    letter?: string,
-}
-*/
 
 const unlockEffect1:Effect = {
     type: EffectType.LetterUnlock,

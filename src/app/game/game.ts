@@ -1,6 +1,6 @@
 import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Effect, EffectType, StateUpdate} from "game/gameTypes"
 import * as Stream from "game/streamops"
-import {specialKeys} from "game/gameData"
+import {specialKeys, keyVisibility} from "game/gameData"
 import UIData from "UI/uiData"
 import { tr } from "motion/react-client";
 
@@ -10,7 +10,7 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
 });
 
 // Compute key status?
-export const computeKeyStatus = (visibleKeys:Array<string>, unlockedKeys: Array<string>, pressedKeys: Set<string>,
+export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<string>, pressedKeys: Set<string>,
                                  stream: Array<Letter>, dict: Array<Transform>):
     Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
@@ -144,6 +144,7 @@ const directInput = (key: string):[effect: Effect | undefined, ((gs:GameState) =
   return [undefined,
     ((gs:GameState) => {
       gs.glyphs += 1;
+      keyVisibility.forEach((visibility:number, key:string) => { if (visibility <= gs.glyphs) gs.visibleKeys.add(key)});
       gs.stream = Stream.addLetter(key, gs.stream);
     })];
 }
