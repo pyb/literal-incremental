@@ -140,7 +140,7 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
   if (modes.has(KeyMode.RepeatToggleAvailable) && modes.has(KeyMode.Unlocked))
     return toggleKeyRepeat(key);
   else if (modes.has(KeyMode.WordTransform) && modes.has(KeyMode.Available))
-    return wordTransform(stream, dict);
+    return wordTransform(stream, dict, key);
   else if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
     return letterTransform(key, stream, dict);
   else if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available))
@@ -180,6 +180,10 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>, stream: 
   return [];
 }
 
+const findTransform = (id: number, dict:Array<Transform>):Transform|undefined => {
+  return dict.find((transform:Transform) => transform.id = id);
+}
+
 const directInput = (key: string):[effect: Effect | undefined, ((gs:GameState) => void) | undefined]  => {
   return [undefined,
     ((gs:GameState) => {
@@ -207,8 +211,14 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
     })];
 }
 
-const wordTransform = (stream:Array<Letter>, dict:Array<Transform>): [effect: Effect | undefined, ((gs:GameState) => void) | undefined] => {
-  const transforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
+const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:string=""):
+   [effect: Effect | undefined, ((gs:GameState) => void) | undefined] => {
+  let transforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
+
+  if (trigger.length > 0)
+  {
+    transforms = transforms.filter((tl:TransformLocation) => findTransform(tl.id, dict)?.output == trigger);
+  }
   const transformLocation = transforms[0];
   
   if (!transformLocation)

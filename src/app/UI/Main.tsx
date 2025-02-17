@@ -63,6 +63,7 @@ const GameMain = () => {
     const [timeoutIds, setTimeoutIds] = useImmer<Map<string, number>>(new Map<string, number>);
     const [doProcessInterval, setDoProcessInterval] = React.useState<boolean>(false);
 
+    //console.log(GS.repeatingKeys)
     const intervalId = React.useRef<number>(0);
 
     // Could I create a GS.keyStatus variable and put this calculation behind useEffect to avoid creating 
