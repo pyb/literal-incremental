@@ -203,13 +203,16 @@ const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
 }
 
 // 2) For each word in the transforms, look for its last occurence in the input
-export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>):Array<TransformLocation> => {
+export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>, maxLength: number = NaN):Array<TransformLocation> => {
     const revInput:Array<Letter> = input.toReversed();
     const revInputS:string = inputToString(revInput);
     let result:Array<TransformLocation> = [];
 
     // Note : this wd be a bug if a word transform existed that had only one repeated letter (eg AA -> ...)
-    const wordTransforms:Array<Transform> = transforms.filter((transforms) => transforms.input.length > 1);
+    const wordTransforms:Array<Transform> = transforms.filter((transforms) =>
+        (transforms.input.length > 1) &&
+        (isNaN(maxLength) || (transforms.input.length) < maxLength) );
+
     wordTransforms.forEach((transform:Transform) => {
         const wordS:string = transform.input;
         const revWordS:string = Util.sreverse(wordS);

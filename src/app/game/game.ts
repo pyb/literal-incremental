@@ -94,6 +94,10 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
     const letter:string = effect.letter as string;
     return ((gs:GameState) => { gs.unlockedKeys.push(letter)});
   }
+  else if (effect.type == EffectType.WordLengthUnlock) {
+    const level:number = effect.level as number;
+    return ((gs:GameState) => { gs.maxWordSize = level});
+  }
   return null;
 }
 
