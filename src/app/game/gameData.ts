@@ -91,8 +91,8 @@ export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repe
 
 export const initialGameState:GameState = {
     glyphs: 0,
-    //stream:Test.testInput,
-    stream: [],
+    stream:Test.testInput,
+    //stream: [],
     visibleKeys: startingVisibleKeys,
     unlockedKeys: startingUnlockedKeys,
     pressedKeys: new Set<string>([]),
