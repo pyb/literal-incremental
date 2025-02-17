@@ -195,6 +195,13 @@ const inputToString = (input: Array<Letter>):string => {
     return input.map((letter: Letter) => letter.text).join('');
 }
 
+const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
+    if (a.location != b.location)
+        return (b.location-a.location);
+    else
+        return (b.word.length - a.word.length);
+}
+
 // 2) For each word in the transforms, look for its last occurence in the input
 export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>):Array<TransformLocation> => {
     const revInput:Array<Letter> = input.toReversed();
@@ -228,7 +235,7 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>)
             } 
         }
     });
-    return result.sort((a, b) => (b.location - a.location)); // the rightmost words come first
+    return result.sort(sortTransforms); // the rightmost words come first
 }
 
 /****************************************************************/
