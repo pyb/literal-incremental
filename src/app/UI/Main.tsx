@@ -64,12 +64,13 @@ const GameMain = () => {
                                                                    GS.repeatableKeys,
                                                                    GS.toggleRepeatMode,
                                                                    GS.stream,
-                                                                   GS.dict);
+                                                                   GS.dict,
+                                                                   GS.unlockedTransforms);
 
     // executed every tick
     const processInterval = () => {
         GS.keysToTrigger.forEach((key:string) => {
-            const updates:Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict);
+            const updates:Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict, GS.unlockedTransforms);
             updates.forEach((update) => {if (update) setGS(update)});
         });
         setGS((gs:GameState) => gs.keysToTrigger.clear());
@@ -112,7 +113,7 @@ const GameMain = () => {
     return (
         <div className={styles.game}>
             <div className={styles.gameTop}>
-                <Dict dict={GS.dict} lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
+                <Dict dict={Game.unlockedDict(GS.dict, GS.unlockedTransforms)} lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
             </div>
             <div className={styles.gameMiddle}>
                 <StreamComponent stream={GS.stream} dict={GS.dict} />

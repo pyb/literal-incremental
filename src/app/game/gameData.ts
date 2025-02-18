@@ -36,8 +36,13 @@ const unlockEffect1:Effect = {
     letter: "e",
 }
 
+const unlockTransform1:Effect = {
+    type:EffectType.TransformUnlock,
+    transform: 5,
+}
 export const dict: Array<Types.Transform> = [
     {
+        id:0,
         visibility: 300,
         input: "win",
         output: "",
@@ -45,18 +50,30 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Win the Game."
     },
     {
+        id:1,
         n: 10,
         visibility: 100,
         input: "i",
         output: "n",
     },
     {
+        id:2,
         n: 10,
         visibility: 1000,
         input: "n",
         output: "e"
     },
     {
+        id:3,
+        visibility: 1000,
+        input: "ne",
+        output: "",
+        shortDesc: "ULK_T1",
+        longDesc: "Unlock Transform REPI",
+        effect: unlockTransform1,
+    },
+    {
+        id:4,
         visibility: 500,
         input: "in",
         output: "",
@@ -65,6 +82,7 @@ export const dict: Array<Types.Transform> = [
         effect: unlockEffect1,
     },
     {
+        id:5,
         visibility: 3000,
         input: "inn",
         output: "",
@@ -72,6 +90,7 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock I repeater"
     },
     { // should there be something required to unlock this?
+        id:6,
         visibility: 30,
         input: "i",
         output: "",
@@ -79,13 +98,13 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock two-letter words",
     },
     
-    { input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
-    { input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
+    { id:100, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
+    { id:101, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
  //   { n: 3, input: "bar", output: "w" },
-    { input: "bar", output: "w" },
-    { input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
+    { id:102, input: "bar", output: "w" },
+    { id:103, input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
 
-].map((item, id) => ({ ...item, id: id }));
+];
 
 const welcomeMessage = "Welcome to Literal Incremental.";
 
@@ -115,6 +134,8 @@ export const initialGameState:GameState = {
     currentPressedKeysTracker: new Map<string, number>(),
     dict:dict,
     lastTransform: undefined,
+    unlockedTransforms: new Set<number>([0,1,2,3,4]),
+
     log: log,
     logKey: UIData.logSize,
     repeatDelay: slowRepeat,

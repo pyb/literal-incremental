@@ -22,6 +22,8 @@ export enum EffectType {
     LetterUnlock,
     LetterRepeaterUnlock,
     ToggleRepeater,
+    UpgradeRepeater,
+    TransformUnlock,
     // ...
 }
 
@@ -31,6 +33,7 @@ export type Effect = {
     shortDesc?: string,
     level?: number,
     letter?: string,
+    transform?: number, // id
 }
 
 export const emptyTransform:Transform = {
@@ -65,36 +68,10 @@ export enum KeyMode {
     RepeatToggleAvailable,
 }
 
-export enum Modifier {
-    None, // need this?
-    Autorepeat,
-    // ...
-}
-
-/*
-export enum ActionType {
-    None, // need this?
-    Transform,
-    Input,
-    ToggleModifier,
-    Glyph, // increase glyphs score
-    //...
-}
-
-export type Action = {
-    type: Array<ActionType>,
-    transformId?: number,
-    letter?: string,
-    modifier?: string,
-    glyphs?: number,
-}
-*/
-
 export type KeyStatus = {
     key: string,
     modes: Set<KeyMode>,
     transformId?: number,
-    modifier?: Modifier,
 }
 
 export type LogItem = {
@@ -107,6 +84,8 @@ export type GameState = {
     stream: Array<Letter>,
     dict: Array<Transform>,
     lastTransform: Transform|undefined,
+    unlockedTransforms: Set<number>,
+    
     visibleKeys: Set<string>,
     unlockedKeys: Array<string>,
     pressedKeys: Set<string>,
