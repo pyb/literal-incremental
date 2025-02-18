@@ -8,7 +8,7 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
   modes: new Set<KeyMode>
 });
 
-// Compute key status?
+// Note: This is a "View" ie an alternative way or presenting game state data
 export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<string>, activeKeys:Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
                                  stream: Array<Letter>, dict: Array<Transform>, unlockedTransforms: Set<number>):
     Map<string, KeyStatus> => {
@@ -71,7 +71,7 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<st
   return result;
 }
 
-/*************/
+/*********************************/
 
 const toggleKeyRepeat = ((key: string): [effect: Effect | undefined, GameStateUpdate]=>
   [undefined,
@@ -83,7 +83,7 @@ const toggleKeyRepeat = ((key: string): [effect: Effect | undefined, GameStateUp
         gs.repeatingKeys.add(key);
   })]);
 
-/******************************** */
+/*********************************/
 // commands
 
 /*
@@ -254,10 +254,6 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
     gs.lastTransform = transform;
     gs.stream = Stream.applyWordTransform(transform, stream, transformLocation.location)
   })];
-}
-
-const toggleModifier = (key:string):any => {
-  return [undefined, undefined];
 }
 
 export const unlockedDict = (dict: Array<Transform>, unlockedTransforms:Set<number>):Array<Transform> => 

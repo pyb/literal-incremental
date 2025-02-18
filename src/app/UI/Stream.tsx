@@ -28,21 +28,23 @@ const prioOpacity = (prio: number) => {
     }
 }
 
-const streamToText = (input:Array<Letter>, index:number) => {
-    return (<span className={prioStyle(index)} style={prioOpacity(index)} key={index}>
-        <span key={0}>{" "}</span>
-        {input.map((l:Letter, index:number) =>
-            (l.n > 5) ?
-                <span key={index + 1}>
-                    <span> {l.text} </span>
-                    <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span>
-                </span> :
-                <span key={index + 1}>
-                    <span> {l.text.repeat(l.n)} </span>
-                </span>
-            )}
-        </span>);
-}
+const streamToText = (input: Array<Letter>, index: number) => {
+    return (
+        <span className={styles.streamWord}>
+            <span className={prioStyle(index)} style={prioOpacity(index)} key={index}>
+                <span> &nbsp; </span>
+                {input.map((l: Letter, index: number) =>
+                    (l.n > 5) ?
+                        <span key={index}>
+                            { l.text}
+                            <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span>
+                        </span> :
+                        <span key={index}>
+                            {l.text.repeat(l.n)}
+                        </span>
+                )}
+            </span>
+        </span>);}
 
 interface Props {
     stream: Array<Letter>,
