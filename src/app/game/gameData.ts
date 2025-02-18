@@ -59,7 +59,7 @@ const repeaterI:Effect = {
 export const dict: Array<Types.Transform> = [
     {
         id:0,
-        visibility: 300,
+        visibility: 10,
         input: "win",
         output: "",
         shortDesc: "WIN",

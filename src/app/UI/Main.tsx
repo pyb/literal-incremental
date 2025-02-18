@@ -137,9 +137,7 @@ const GameMain = () => {
                            last={GS.lastTransform ?
                             (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
                             ""} />
-                            
                 ]} />
-      
             </div>
         </div>
     );
