@@ -160,7 +160,7 @@ export const initialGameState:GameState = {
     //stream:Test.testInput,
     stream: [],
     visibleKeys: startingVisibleKeys,
-    unlockedKeys: startingUnlockedKeys,
+    unlockedKeys: new Set<string>(startingUnlockedKeys),
     pressedKeys: new Set<string>(),
     repeatingKeys: new Set<string>(),
     activeKeys: new Set<string>(),

@@ -9,7 +9,7 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
 });
 
 // Note: This is a "View" ie an alternative way or presenting game state data
-export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<string>, activeKeys:Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
+export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<string>, activeKeys:Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
                                  stream: Array<Letter>, dict: Array<Transform>, unlockedTransforms: Set<number>):
     Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
@@ -18,10 +18,8 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<st
   const letterTransforms:Map<string, TransformLocation> = Stream.scanForLetters(stream, dict);
   const wordTransforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
   const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
-      
-  visibleKeys.forEach((key:string) =>
-    result.set(key, createEmptyKeyStatus(key)));
-  unlockedKeys.forEach((key:string) =>
+
+  [...visibleKeys, ...unlockedKeys].forEach((key:string) =>
     result.set(key, createEmptyKeyStatus(key)));
 
   wordTransforms.forEach((transformLocation: TransformLocation) => {
@@ -35,6 +33,9 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Array<st
   });
 
   visibleKeys.forEach((key:string) => {
+    console.log("vis")
+    console.log(key)
+
     result.get(key)?.modes.add(KeyMode.Visible);
     if (!specialKeys.has(key))
       result.get(key)?.modes.add(KeyMode.Letter);
@@ -112,7 +113,10 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
 ((gs:GameState) => void) | null => {
   if (effect.type == EffectType.LetterUnlock) {
     const letter:string = effect.letter as string;
-    return ((gs:GameState) => { gs.unlockedKeys.push(letter)});
+    return ((gs:GameState) => {
+      gs.unlockedKeys.add(letter);
+      gs.visibleKeys.add(letter)
+    });
   }
   else if (effect.type == EffectType.WordLengthUnlock) {
     const level:number = effect.level as number;
@@ -148,8 +152,11 @@ const toggleRepeatEffect:Effect = {type: EffectType.ToggleRepeater};
 
 export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>, unlockedTransforms:Set<number>):
 [effect: Effect | undefined, GameStateUpdate] => {
+ 
   const modes:Set<KeyMode> = status.modes;
   const availableDict: Array<Transform> = unlockedDict(dict, unlockedTransforms);
+
+  console.log(modes)
 
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.RepeatModeKey) && modes.has(KeyMode.Available))

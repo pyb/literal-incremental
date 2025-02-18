@@ -87,7 +87,7 @@ export type GameState = {
     unlockedTransforms: Set<number>,
 
     visibleKeys: Set<string>,
-    unlockedKeys: Array<string>,
+    unlockedKeys: Set<string>,
     pressedKeys: Set<string>,
     activeKeys: Set<string>,
     repeatingKeys: Set<string>,
@@ -100,7 +100,7 @@ export type GameState = {
 
     repeatDelays: Map<string, number>, // later: per-key repeat delay
     repeatDelayMultiplier: number,
-    
+
     maxWordSize: number,
     toggleRepeatMode: boolean,
 }
