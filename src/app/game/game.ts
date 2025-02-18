@@ -127,6 +127,14 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
         gs.repeatDelays.set(letter, initialRepeatDelay);
      });
   }
+  else if (effect.type == EffectType.UpgradeRepeater) {
+    const letter:string = effect.letter as string;
+    return ((gs:GameState) => {
+      const currentDelay:number = gs.repeatDelays.get(letter) || initialRepeatDelay; // should always be defined, but...
+      const factor:number = effect.level as number;
+        gs.repeatDelays.set(letter, currentDelay / factor);
+     });
+  }
   else if (effect.type == EffectType.ToggleRepeater) {
     return ((gs:GameState) => { gs.toggleRepeatMode = !gs.toggleRepeatMode });
   }

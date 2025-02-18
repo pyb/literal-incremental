@@ -114,7 +114,7 @@ export const dict: Array<Types.Transform> = [
         shortDesc: "2LW",
         longDesc: "Unlock two-letter words",
     },
-    { // should there be something required to unlock this?
+    {
         id:7,
         visibility: 30,
         input: "ninini",
@@ -123,6 +123,15 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock WIN",
         effect: unlockWin,
     },
+    {
+        id:8,
+        input: "nininin",
+        output: "",
+        shortDesc: "REPI+",
+        longDesc: "Improve repeat delay I",
+        effect: repeatRateUpgradeI,
+    },
+
     { id:100, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
     { id:101, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
  //   { n: 3, input: "bar", output: "w" },
@@ -160,7 +169,7 @@ export const initialGameState:GameState = {
     currentPressedKeysTracker: new Map<string, number>(),
     dict:dict,
     lastTransform: undefined,
-    unlockedTransforms: new Set<number>([1,2,3,4,7]),
+    unlockedTransforms: new Set<number>([1,2,3,4,7,8]),
 
     log: log,
     logKey: UIData.logSize,
