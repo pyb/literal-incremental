@@ -30,8 +30,8 @@ const prioOpacity = (prio: number) => {
 
 const streamToText = (input: Array<Letter>, index: number) => {
     return (
-        <span className={styles.streamWord}>
-            <span className={prioStyle(index)} style={prioOpacity(index)} key={index}>
+        <span className={styles.streamWord} key={index}>
+            <span className={prioStyle(index)} style={prioOpacity(index)}>
                 <span className={styles.smallSpace}> &nbsp; </span>
                 {input.map((l: Letter, index: number) =>
                     (l.n > 5) ?
