@@ -115,6 +115,12 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock two-letter words",
     },
     {
+        id:16,
+        visibility: 30,
+        input: "neg",
+        output: "w",
+    },
+    {
         id:7,
         visibility: 30,
         input: "ninini",
@@ -134,7 +140,7 @@ export const dict: Array<Types.Transform> = [
 
     { id:100, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
     { id:101, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
- //   { n: 1001, input: "bar", output: "w" },
+ //   { id: 1001, n:3, input: "bar", output: "w" },
     { id:102, input: "bar", output: "w" },
     { id:103, input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
 
@@ -155,6 +161,8 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
+const initialTransforms:Array<number> = [1,2,3,4,7];
+
 export const initialGameState:GameState = {
     glyphs: 0,
     //stream:Test.testInput,
@@ -169,7 +177,8 @@ export const initialGameState:GameState = {
     currentPressedKeysTracker: new Map<string, number>(),
     dict:dict,
     lastTransform: undefined,
-    unlockedTransforms: new Set<number>([1,2,3,4,7,8]),
+    unlockedTransforms: new Set<number>(initialTransforms),
+    visibleTransforms: new Set<number>(initialTransforms.concat([8])),
     log: log,
     logKey: UIData.logSize,
     repeatDelayMultiplier: 1,

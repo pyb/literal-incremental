@@ -11,7 +11,7 @@ import Keyboard from "UI/Keyboard"
 import StreamComponent from "UI/Stream"
 import * as GameData from "game/gameData"
 import * as Types from "game/gameTypes"
-import {KeyStatus, KeyMode, GameState, GameStateUpdate} from "game/gameTypes"
+import {KeyStatus, KeyMode, GameState, GameStateUpdate, Transform} from "game/gameTypes"
 import * as Game from "game/game"
 import * as KH from "game/keyboardHandling"
 import RCScout from "UI/RCScout";
@@ -65,7 +65,8 @@ const GameMain = () => {
                                                                    GS.toggleRepeatMode,
                                                                    GS.stream,
                                                                    GS.dict,
-                                                                   GS.unlockedTransforms);
+                                                                   GS.unlockedTransforms
+                                                                );
 
     // executed every tick
     const processInterval = () => {
@@ -110,10 +111,15 @@ const GameMain = () => {
         setGS((gs:GameState) => {gs.repeatDelayMultiplier = (gs.repeatDelayMultiplier== 1) ? GameData.fastRepeat : 1});
     }
 
+    const visibleDict: Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
+
     return (
         <div className={styles.game}>
             <div className={styles.gameTop}>
-                <Dict dict={Game.unlockedDict(GS.dict, GS.unlockedTransforms)} lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
+                <Dict dict={visibleDict}
+                      unlockedDict={new Set<number>(Game.unlockedDict(GS.dict, GS.unlockedTransforms)
+                                                        .map((transform:Transform)=> transform.id))}
+                      lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
             </div>
             <div className={styles.gameMiddle}>
                 <StreamComponent stream={GS.stream} dict={GS.dict} />
@@ -140,70 +146,3 @@ const GameMain = () => {
 }
 
 export default GameMain;
-
-
-/*
-    const processTimeout = (key: string) => {
-        if (timeoutIds.has(key)) {
-            window.clearTimeout(timeoutIds.get(key));
-            setTimeoutIds((timeoutIds) => {
-                timeoutIds.delete(key);
-            });
-        }
-        setGS((gs:GameState) => {
-            gs.pressedKeys.delete(key);
-        });
-        lookupAndExecute(key, false);
-    }
-
-    const lookupAndExecute = (key:string, release:boolean, realPress:boolean= false):void => {
-        const status = keyStatus.get(key);
-        const autoRepeat:boolean = GS.repeatingKeys.has(key);
-
-        if (release) {
-            if (timeoutIds.has(key)) {
-                window.clearTimeout(timeoutIds.get(key));
-                setTimeoutIds((timeoutIds) => {
-                    timeoutIds.delete(key);
-                });
-            }
-            setGS((gs:GameState) => {
-                gs.pressedKeys.delete(key);
-                gs.longPressedKeys.delete(key);
-            });
-        }
-        else {
-            if (status &&
-                (status.modes.has(KeyMode.Available) ||
-                 status.modes.has(KeyMode.Unlocked))) {
-                if (realPress)
-                    setGS((gs:GameState) => {
-                        gs.longPressedKeys.add(key);
-                     });
-                if (!autoRepeat)
-                {
-                    setGS((gs:GameState) => {
-                        gs.pressedKeys.add(key);
-                     });
-                }
-                const updates:Array<Types.StateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict);
-                updates.forEach((update) => setGS(update));
-
-                let repeatDelay:number;
-                if (autoRepeat)
-                {
-                    repeatDelay = GS.repeatDelay; // TODO : per-key repeat delay
-                }
-                else 
-                    repeatDelay = GS.repeatDelay;
-                if (GS.longPressedKeys.has(key) || autoRepeat)
-                {
-                    const id:number = window.setTimeout(() => processTimeout(key), repeatDelay);
-                    setTimeoutIds((timeoutIds) => {
-                        timeoutIds.set(key, id);
-                    });
-                }
-            }
-        }
-    }
-*/

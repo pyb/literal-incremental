@@ -209,8 +209,13 @@ const findTransform = (id: number, dict:Array<Transform>):Transform|undefined =>
 const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate]  => {
   return [undefined,
     ((gs:GameState) => {
-      gs.glyphs += 1;
-      keyVisibility.forEach((visibility:number, key:string) => { if (visibility <= gs.glyphs) gs.visibleKeys.add(key)});
+      const glyphs = gs.glyphs + 1;
+      gs.glyphs = glyphs + 1;
+      keyVisibility.forEach((visibility:number, key:string) => { if (visibility <= glyphs) gs.visibleKeys.add(key)});
+      gs.dict.forEach((transform:Transform) => {
+        if (transform.visibility && transform.visibility <= glyphs)
+          gs.visibleTransforms.add(transform.id);
+      });
       gs.stream = Stream.addLetter(key, gs.stream);
     })];
 }

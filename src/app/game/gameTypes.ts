@@ -85,6 +85,7 @@ export type GameState = {
     dict: Array<Transform>,
     lastTransform: Transform|undefined,
     unlockedTransforms: Set<number>,
+    visibleTransforms: Set<number>,
 
     visibleKeys: Set<string>,
     unlockedKeys: Set<string>,
