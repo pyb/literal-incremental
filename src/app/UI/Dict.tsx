@@ -24,7 +24,7 @@ const LongItem = ({ item, unlocked }: { item: Transform, unlocked: boolean }) =>
 };
 
 const ShortItem = ({ item, unlocked }: { item: Transform, unlocked: boolean}) => {
-    const content = item.shortDesc ? item.shortDesc : item.output;
+    const content = item.output ? item.output : item.shortDesc ;
     const contentStyle = item.shortDesc ? styles.SIdesc : styles.itemScore;
 
     return (

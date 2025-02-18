@@ -8,9 +8,9 @@ export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
     [UIData.wordTransformKey, 20],
-    [UIData.repeatModeKey, 50],
-    ['e', 100],
-    ['w', 100]]);
+    [UIData.repeatModeKey, 200],
+    ['e', 150],
+    ['w', 150]]);
 /*
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
@@ -182,7 +182,7 @@ export const initialGameState:GameState = {
     visibleTransforms: new Set<number>([]),
     log: log,
     logKey: UIData.logSize,
-    repeatDelayMultiplier: 1,
+    repeatDelayMultiplier: 10,
     repeatDelays: new Map<string, number>([["i", initialRepeatDelay]]),
     maxWordSize: 1,
     toggleRepeatMode: false,

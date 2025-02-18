@@ -34,12 +34,17 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<stri
     result.set(key, createEmptyKeyStatus(key)));
 
   wordTransforms.forEach((transformLocation: TransformLocation) => {
-    const transform:Transform|undefined =  availableDict.find((t)=> t.id == transformLocation.id);
-    const key = transform?.output;
-    if (key && key.length == 1)
+    const transform =  availableDict.find((t)=> t.id == transformLocation.id);
+    if (transform)
     {
-      result.get(key)?.modes.add(KeyMode.WordTransform);
-      result.get(key)?.modes.add(KeyMode.Available);
+      const key = transform.output;
+      if (key && key.length == 1)
+      {
+        result.get(key)?.modes.add(KeyMode.WordTransform);
+        result.get(key)?.modes.add(KeyMode.Available);
+      }
+      else
+        result.get(UIData.wordTransformKey)?.modes.add(KeyMode.Available);
     }
   });
 
@@ -74,8 +79,6 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<stri
     result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Active);
   if (repeatableKeys.size > 0)
     result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Available);
-  if (wordTransforms.length != 0)
-    result.get(UIData.wordTransformKey)?.modes.add(KeyMode.Available);
 
   return result;
 }
@@ -224,16 +227,16 @@ const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate] 
       const glyphs = gs.glyphs + 1;
       gs.glyphs = glyphs;
       keyVisibility.forEach((visibility:number, key:string) => { if (visibility == glyphs) {
-        addLog("Key " + key + " available." , gs);
+        addLog("Key available : " + key, gs);
         gs.visibleKeys.add(key);
       } });
       gs.dict.forEach((transform:Transform) => {
         if (transform.visibility && transform.visibility == glyphs)
         {
           if (transform.shortDesc)
-            addLog("New transform available : " + transform.shortDesc , gs);
+            addLog("Transform available : " + transform.shortDesc , gs);
           else
-            addLog("New transform available.", gs);
+            addLog("Transform available.", gs);
           gs.visibleTransforms.add(transform.id);
         }
           

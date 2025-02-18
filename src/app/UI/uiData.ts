@@ -5,7 +5,7 @@ export const uiData = {
     wordTransformKey: wordTransformKey,
     repeatModeKey: repeatModeKey,
     tick: 50,
-    highlightDuration: 60,
+    highlightDuration: 20,
     logSize: 5,
     maxKeyboardRowSize: 6,
     dictLongForm: 3,
