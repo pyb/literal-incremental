@@ -68,6 +68,7 @@ export const dict: Array<Types.Transform> = [
         id:1,
         n: 100,
         visibility: 20,
+        shortDesc: "I->N",
         input: "i",
         output: "n",
     },

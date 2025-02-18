@@ -1,7 +1,18 @@
 import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Effect, EffectType, GameStateUpdate} from "game/gameTypes"
+import * as Types from "game/gameTypes"
 import * as Stream from "game/streamops"
 import {specialKeys, keyVisibility, initialRepeatDelay} from "game/gameData"
 import UIData from "UI/uiData"
+
+const addLog = (message: string, gs: GameState) => {
+    gs.log.splice(0, 1) // remove first
+    const logItem: Types.LogItem = {
+      text: message,
+      key: gs.logKey
+    }
+    gs.logKey += 1;
+    gs.log.push(logItem);
+}
 
 const createEmptyKeyStatus = (key:string):KeyStatus => ({
   key:key,
@@ -212,10 +223,20 @@ const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate] 
     ((gs:GameState) => {
       const glyphs = gs.glyphs + 1;
       gs.glyphs = glyphs;
-      keyVisibility.forEach((visibility:number, key:string) => { if (visibility <= glyphs) gs.visibleKeys.add(key)});
+      keyVisibility.forEach((visibility:number, key:string) => { if (visibility == glyphs) {
+        addLog("Key " + key + " available." , gs);
+        gs.visibleKeys.add(key);
+      } });
       gs.dict.forEach((transform:Transform) => {
-        if (transform.visibility && transform.visibility <= glyphs)
+        if (transform.visibility && transform.visibility == glyphs)
+        {
+          if (transform.shortDesc)
+            addLog("New transform available : " + transform.shortDesc , gs);
+          else
+            addLog("New transform available.", gs);
           gs.visibleTransforms.add(transform.id);
+        }
+          
       });
       gs.stream = Stream.addLetter(key, gs.stream);
     })];

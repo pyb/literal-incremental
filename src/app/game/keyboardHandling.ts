@@ -2,7 +2,7 @@
 
 // Low level keyboard handling
 import UIData from "UI/uiData";
-import { GameState, GameStateUpdate } from "./gameTypes";
+import { GameState, GameStateUpdate } from "game/gameTypes";
 import { gameKeys } from "game/gameData";
 
 /*

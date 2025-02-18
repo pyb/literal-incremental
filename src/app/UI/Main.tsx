@@ -55,7 +55,6 @@ const GameMain = () => {
     const [GS, setGS] = useImmer<GameState>(GameData.initialGameState);
     const [timeoutIds, setTimeoutIds] = useImmer<Map<string, number>>(new Map<string, number>);
     const [doProcessInterval, setDoProcessInterval] = React.useState<boolean>(false);
-
     const intervalId = React.useRef<number>(0);
 
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.visibleKeys,
@@ -66,8 +65,7 @@ const GameMain = () => {
                                                                    GS.stream,
                                                                    GS.dict,
                                                                    GS.visibleTransforms,
-                                                                   GS.unlockedTransforms
-                                                                );
+                                                                   GS.unlockedTransforms);
 
     // executed every tick
     const processInterval = () => {
@@ -93,7 +91,6 @@ const GameMain = () => {
         processInterval();
     }
 
-    //console.log(GS.pressedKeys)
     React.useEffect(() => {
         setGS(load());
         intervalId.current = window.setInterval(() => setDoProcessInterval(true),

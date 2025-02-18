@@ -25,7 +25,7 @@ const Log = ({ log }: Props) => {
     return (
         <ul className={styles.log}>
             {log.slice(0, l - 1).map(
-                (logItem: LogItem) => <li key={logItem.key}><span>&nbsp;&nbsp;&nbsp;</span><span>{logItem.text}</span></li>
+                (logItem: LogItem) => <li key={logItem.key}><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><span>{logItem.text}</span></li>
             )}
             {/*<li className={styles.lastLog} key={log[l-1]?.key}><span>&nbsp;&gt;&nbsp;</span><span>{log[l-1]?.text}</span></li> &mdash;*/}
             <li className={styles.lastLog} key={log[l-1]?.key}><span>&nbsp; &tilde; </span><span>{log[l-1]?.text}</span></li>
