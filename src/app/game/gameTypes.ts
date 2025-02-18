@@ -11,7 +11,7 @@ export type Transform = {
     n?: number,
     input: string, // word or letter
     output: string,
-    visibility?: number,
+    visibility: number,
     effect?: Effect,
 }
 
@@ -37,7 +37,7 @@ export type Effect = {
 }
 
 export const emptyTransform:Transform = {
-    id:0, n:0, input:"", output:""
+    id:0, n:0, input:"", output:"", visibility:0
 }
 
 export type TransformLocation = {

@@ -55,17 +55,20 @@ const Dict = ({ dict, unlockedDict, lastTransform }: Props) => {
 
     return (
         <div className={styles.dictComponent}>
-            <div className={styles.longArea}>
-                <div className={styles.longAreaMain}>
-                    {longItems.map((item: Transform, index: number) => <LongItem key={index} item={item} unlocked={unlockedDict.has(item.id)}/>)}
-                </div>
-                <div className={styles.lastTransform}>
-                    {lastTransform.input && <ShortItem item={lastTransform}  unlocked={unlockedDict.has(lastTransform.id)} />}
-                </div>
-            </div>
-            <div className={styles.shortArea}>
-                {shortItems.slice(0, maxShortItems).map((item: Transform) => <ShortItem key={item.input} item={item} unlocked={unlockedDict.has(item.id)} />)}
-            </div>
+            {dict.length > 0 &&
+                <>
+                    <div className={styles.longArea}>
+                        <div className={styles.longAreaMain}>
+                            {longItems.map((item: Transform, index: number) => <LongItem key={index} item={item} unlocked={unlockedDict.has(item.id)} />)}
+                        </div>
+                        <div className={styles.lastTransform}>
+                            {lastTransform.input && <ShortItem item={lastTransform} unlocked={unlockedDict.has(lastTransform.id)} />}
+                        </div>
+                    </div>
+                    <div className={styles.shortArea}>
+                        {shortItems.slice(0, maxShortItems).map((item: Transform) => <ShortItem key={item.input} item={item} unlocked={unlockedDict.has(item.id)} />)}
+                    </div>
+                </>}
         </div>
     );
 };

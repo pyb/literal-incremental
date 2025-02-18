@@ -7,9 +7,8 @@ import UIData from "UI/uiData";
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
-    [UIData.wordTransformKey, 5],
-    [UIData.repeatModeKey, 3],
-    //['control', 3],
+    [UIData.wordTransformKey, 20],
+    [UIData.repeatModeKey, 50],
     ['e', 100],
     ['w', 100]]);
 /*
@@ -59,7 +58,7 @@ const repeaterI:Effect = {
 export const dict: Array<Types.Transform> = [
     {
         id:0,
-        visibility: 10,
+        visibility: 200,
         input: "win",
         output: "",
         shortDesc: "WIN",
@@ -68,7 +67,7 @@ export const dict: Array<Types.Transform> = [
     {
         id:1,
         n: 10,
-        visibility: 100,
+        visibility: 20,
         input: "i",
         output: "n",
     },
@@ -90,7 +89,7 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:4,
-        visibility: 500,
+        visibility: 300,
         input: "in",
         output: "",
         shortDesc: "ULK_E",
@@ -108,7 +107,7 @@ export const dict: Array<Types.Transform> = [
     },
     { // should there be something required to unlock this?
         id:6,
-        visibility: 30,
+        visibility: 300,
         input: "i",
         output: "",
         shortDesc: "2LW",
@@ -116,13 +115,13 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:16,
-        visibility: 30,
+        visibility: 1000,
         input: "neg",
         output: "w",
     },
     {
         id:7,
-        visibility: 30,
+        visibility: 1000,
         input: "ninini",
         output: "",
         shortDesc: "ULWIN",
@@ -132,17 +131,18 @@ export const dict: Array<Types.Transform> = [
     {
         id:8,
         input: "nininin",
+        visibility: 1000,
         output: "",
         shortDesc: "REPI+",
         longDesc: "Improve repeat delay I",
         effect: repeatRateUpgradeI,
     },
 
-    { id:100, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
-    { id:101, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
- //   { id: 1001, n:3, input: "bar", output: "w" },
-    { id:102, input: "bar", output: "w" },
-    { id:103, input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
+    { id:100, visibility: 1000, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
+    { id:101, visibility: 1000, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
+ //   { id: 1001, visibility: 1000, n:3, input: "bar", output: "w" },
+    { id:102, visibility: 1000, input: "bar", output: "w" },
+    { id:103, visibility: 1000, input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
 
 ];
 
@@ -161,7 +161,7 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
-const initialTransforms:Array<number> = [1];
+const initialTransforms:Array<number> = [];
 
 export const initialGameState:GameState = {
     glyphs: 0,
