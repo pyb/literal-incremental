@@ -54,3 +54,7 @@
 .prioDefault {
     color: #505050;
 }
+
+.smallSpace {
+    font-size: 50%;
+}

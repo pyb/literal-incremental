@@ -32,7 +32,7 @@ const streamToText = (input: Array<Letter>, index: number) => {
     return (
         <span className={styles.streamWord}>
             <span className={prioStyle(index)} style={prioOpacity(index)} key={index}>
-                <span> &nbsp; </span>
+                <span className={styles.smallSpace}> &nbsp; </span>
                 {input.map((l: Letter, index: number) =>
                     (l.n > 5) ?
                         <span key={index}>
@@ -43,6 +43,7 @@ const streamToText = (input: Array<Letter>, index: number) => {
                             {l.text.repeat(l.n)}
                         </span>
                 )}
+                <span className={styles.smallSpace}> &nbsp; </span>
             </span>
         </span>);}
 
