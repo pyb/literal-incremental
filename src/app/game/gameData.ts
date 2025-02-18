@@ -170,11 +170,10 @@ export const initialGameState:GameState = {
     dict:dict,
     lastTransform: undefined,
     unlockedTransforms: new Set<number>([1,2,3,4,7,8]),
-
     log: log,
     logKey: UIData.logSize,
     repeatDelayMultiplier: 1,
     repeatDelays: new Map<string, number>(),
-    maxWordSize: 3,
+    maxWordSize: 1,
     toggleRepeatMode: false,
 };

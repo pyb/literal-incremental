@@ -2,7 +2,6 @@ import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Eff
 import * as Stream from "game/streamops"
 import {specialKeys, keyVisibility, initialRepeatDelay} from "game/gameData"
 import UIData from "UI/uiData"
-import { tr } from "motion/react-client";
 
 const createEmptyKeyStatus = (key:string):KeyStatus => ({
   key:key,
