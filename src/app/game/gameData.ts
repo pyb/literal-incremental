@@ -44,6 +44,18 @@ const unlockWin:Effect = {
     type:EffectType.TransformUnlock,
     transform: 0,
 }
+
+const repeatRateUpgradeI:Effect = {
+    type:EffectType.UpgradeRepeater,
+    letter: "i",
+    level:2, // 2x
+}
+
+const repeaterI:Effect = {
+    type:EffectType.LetterRepeaterUnlock,
+    letter: "i",
+}
+
 export const dict: Array<Types.Transform> = [
     {
         id:0,
@@ -91,7 +103,8 @@ export const dict: Array<Types.Transform> = [
         input: "inn",
         output: "",
         shortDesc: "REPI",
-        longDesc: "Unlock I repeater"
+        longDesc: "Unlock I repeater",
+        effect: repeaterI,
     },
     { // should there be something required to unlock this?
         id:6,
@@ -110,7 +123,6 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock WIN",
         effect: unlockWin,
     },
-    
     { id:100, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
     { id:101, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
  //   { n: 3, input: "bar", output: "w" },
@@ -128,8 +140,9 @@ for (let i = 0 ; i < UIData.logSize - 1 ; i++)
 }
 log.push({text: welcomeMessage, key: UIData.logSize - 1});
 
-export const slowRepeat = 500;
-export const fastRepeat = 50;
+export const fastRepeat = 10;
+
+export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
@@ -151,7 +164,8 @@ export const initialGameState:GameState = {
 
     log: log,
     logKey: UIData.logSize,
-    repeatDelay: slowRepeat,
+    repeatDelayMultiplier: 1,
+    repeatDelays: new Map<string, number>(),
     maxWordSize: 3,
     toggleRepeatMode: false,
 };

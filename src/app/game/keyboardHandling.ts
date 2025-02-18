@@ -88,7 +88,7 @@ export const handleTick = ():GameStateUpdate => {
         otherKeys.forEach((key:string) => gs.currentPressedKeysTracker.delete(key));
         
         gs.currentPressedKeysTracker.forEach((elapsed: number, key: string) => {
-            if ((elapsed + delta) >= gs.repeatDelay)
+            if ((elapsed + delta) >= (gs.repeatDelays.get(key) as number) / gs.repeatDelayMultiplier)
             {
                 gs.currentPressedKeysTracker.set(key, 0);
                 gs.keysToTrigger.add(key);

@@ -1,6 +1,6 @@
 import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Effect, EffectType, GameStateUpdate} from "game/gameTypes"
 import * as Stream from "game/streamops"
-import {specialKeys, keyVisibility} from "game/gameData"
+import {specialKeys, keyVisibility, initialRepeatDelay} from "game/gameData"
 import UIData from "UI/uiData"
 import { tr } from "motion/react-client";
 
@@ -121,7 +121,11 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
   }
   else if (effect.type == EffectType.LetterRepeaterUnlock) {
     const letter:string = effect.letter as string;
-    return ((gs:GameState) => { gs.repeatableKeys.add(letter) });
+    return ((gs:GameState) => {
+      gs.repeatableKeys.add(letter);
+      if (!gs.repeatDelays.has(letter))
+        gs.repeatDelays.set(letter, initialRepeatDelay);
+     });
   }
   else if (effect.type == EffectType.ToggleRepeater) {
     return ((gs:GameState) => { gs.toggleRepeatMode = !gs.toggleRepeatMode });

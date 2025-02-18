@@ -23,15 +23,15 @@ interface DebugProps {
     glyphs: number,
     last: string,
     speedupCallback: () => void,
-    repeatDelay: number,
+    repeatMultiplier: number,
 }
 
-const Debug = ({ glyphs, last, speedupCallback, repeatDelay }: DebugProps) => {
+const Debug = ({ glyphs, last, speedupCallback, repeatMultiplier }: DebugProps) => {
     return (
         <div className={styles.debug}>
             <div>{"Glyphs : " + glyphs.toString()}</div>
             <div>{"Last : " + last}</div>
-            <button key={2} className={styles.reset} onClick={speedupCallback}>{(repeatDelay == GameData.fastRepeat)? " Slower" : "Faster"}</button>
+            <button key={2} className={styles.reset} onClick={speedupCallback}>{(repeatMultiplier == GameData.fastRepeat)? " Slower" : "Faster"}</button>
         </div>
     );
 }
@@ -107,7 +107,7 @@ const GameMain = () => {
     }
 
     const speedupCallback = () => {
-        setGS((gs:GameState) => {gs.repeatDelay = (gs.repeatDelay == GameData.fastRepeat) ? GameData.slowRepeat : GameData.fastRepeat;})
+        setGS((gs:GameState) => {gs.repeatDelayMultiplier = (gs.repeatDelayMultiplier== 1) ? GameData.fastRepeat : 1});
     }
 
     return (
@@ -127,7 +127,7 @@ const GameMain = () => {
                     <Debug key={4}
                            speedupCallback={speedupCallback}
                            glyphs={GS.glyphs}
-                           repeatDelay={GS.repeatDelay}
+                           repeatMultiplier={GS.repeatDelayMultiplier}
                            last={GS.lastTransform ?
                             (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
                             ""} />

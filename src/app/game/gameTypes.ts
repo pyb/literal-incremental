@@ -85,7 +85,7 @@ export type GameState = {
     dict: Array<Transform>,
     lastTransform: Transform|undefined,
     unlockedTransforms: Set<number>,
-    
+
     visibleKeys: Set<string>,
     unlockedKeys: Array<string>,
     pressedKeys: Set<string>,
@@ -98,7 +98,9 @@ export type GameState = {
     log: Array<LogItem>,
     logKey: number,
 
-    repeatDelay: number, // later: per-key repeat delay
+    repeatDelays: Map<string, number>, // later: per-key repeat delay
+    repeatDelayMultiplier: number,
+    
     maxWordSize: number,
     toggleRepeatMode: boolean,
 }
