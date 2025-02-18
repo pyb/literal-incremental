@@ -173,7 +173,7 @@ export const initialGameState:GameState = {
     log: log,
     logKey: UIData.logSize,
     repeatDelayMultiplier: 1,
-    repeatDelays: new Map<string, number>(),
+    repeatDelays: new Map<string, number>([["i", initialRepeatDelay]]),
     maxWordSize: 1,
     toggleRepeatMode: false,
 };

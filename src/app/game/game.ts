@@ -33,9 +33,6 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<stri
   });
 
   visibleKeys.forEach((key:string) => {
-    console.log("vis")
-    console.log(key)
-
     result.get(key)?.modes.add(KeyMode.Visible);
     if (!specialKeys.has(key))
       result.get(key)?.modes.add(KeyMode.Letter);
@@ -115,7 +112,9 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
     const letter:string = effect.letter as string;
     return ((gs:GameState) => {
       gs.unlockedKeys.add(letter);
-      gs.visibleKeys.add(letter)
+      gs.visibleKeys.add(letter);
+      if (!gs.repeatDelays.has(letter))
+        gs.repeatDelays.set(letter, initialRepeatDelay);
     });
   }
   else if (effect.type == EffectType.WordLengthUnlock) {
@@ -126,8 +125,6 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
     const letter:string = effect.letter as string;
     return ((gs:GameState) => {
       gs.repeatableKeys.add(letter);
-      if (!gs.repeatDelays.has(letter))
-        gs.repeatDelays.set(letter, initialRepeatDelay);
      });
   }
   else if (effect.type == EffectType.UpgradeRepeater) {
@@ -155,8 +152,6 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
  
   const modes:Set<KeyMode> = status.modes;
   const availableDict: Array<Transform> = unlockedDict(dict, unlockedTransforms);
-
-  console.log(modes)
 
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.RepeatModeKey) && modes.has(KeyMode.Available))
