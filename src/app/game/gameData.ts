@@ -3,8 +3,7 @@ import * as Types from "game/gameTypes";
 import { EffectType , Effect } from "game/gameTypes";
 import * as Test from "test/testData"
 import UIData from "UI/uiData";
-/*
-// Disabled for early testing
+
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
@@ -12,16 +11,16 @@ export const keyVisibility = new Map<string, number>([
     [UIData.repeatModeKey, 3],
     //['control', 3],
     ['e', 100],
-    ['w', 1000]]);
-*/
+    ['w', 100]]);
+/*
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 0],
     [UIData.wordTransformKey, 0],
     [UIData.repeatModeKey, 0],
-    //['control', 3],
     ['e', 0],
     ['w', 0]]);
+*/
 
 export const gameKeys = new Set<string> ( [...keyVisibility.keys()]);
 
@@ -39,6 +38,11 @@ const unlockEffect1:Effect = {
 const unlockTransform1:Effect = {
     type:EffectType.TransformUnlock,
     transform: 5,
+}
+
+const unlockWin:Effect = {
+    type:EffectType.TransformUnlock,
+    transform: 0,
 }
 export const dict: Array<Types.Transform> = [
     {
@@ -97,6 +101,15 @@ export const dict: Array<Types.Transform> = [
         shortDesc: "2LW",
         longDesc: "Unlock two-letter words",
     },
+    { // should there be something required to unlock this?
+        id:7,
+        visibility: 30,
+        input: "ninini",
+        output: "",
+        shortDesc: "ULWIN",
+        longDesc: "Unlock WIN",
+        effect: unlockWin,
+    },
     
     { id:100, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
     { id:101, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
@@ -134,7 +147,7 @@ export const initialGameState:GameState = {
     currentPressedKeysTracker: new Map<string, number>(),
     dict:dict,
     lastTransform: undefined,
-    unlockedTransforms: new Set<number>([0,1,2,3,4]),
+    unlockedTransforms: new Set<number>([1,2,3,4,7]),
 
     log: log,
     logKey: UIData.logSize,
