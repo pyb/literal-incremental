@@ -53,6 +53,7 @@ const Key = ({text, modes}:KeyProps) => {
         setHighlight(false);
         setTimeoutId(0);
     }
+
     if (!modes.has(KeyMode.Active) && highlight) {
        setHighlight(false);
     }

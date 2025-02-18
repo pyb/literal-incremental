@@ -37,6 +37,7 @@
 
 .lastTransform {
     flex-basis:25%;
+    opacity: .7;
 }
 
 .number {

@@ -70,16 +70,21 @@ const GameMain = () => {
 
     // executed every tick
     const processInterval = () => {
+        save(GS);
+        const activeKeys = new Set<string>();
         GS.keysToTrigger.forEach((key:string) => {
             const updates:Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict, GS.unlockedTransforms);
-            updates.forEach((update) => {if (update) setGS(update)});
+            updates.forEach((update) => {if (update) {
+                activeKeys.add(key);
+                setGS(update);
+            }});
         });
         setGS((gs:GameState) => gs.keysToTrigger.clear());
-
+        // The below will add keys to keysToTrigger
         const update:GameStateUpdate = KH.handleTick();
         if (update)
             setGS(update);
-        save(GS);
+        setGS((gs:GameState) => {gs.activeKeys = activeKeys});
     }
 
     if (doProcessInterval) {

@@ -161,7 +161,7 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
-const initialTransforms:Array<number> = [1,2,3,4,7];
+const initialTransforms:Array<number> = [1];
 
 export const initialGameState:GameState = {
     glyphs: 0,
@@ -178,7 +178,7 @@ export const initialGameState:GameState = {
     dict:dict,
     lastTransform: undefined,
     unlockedTransforms: new Set<number>(initialTransforms),
-    visibleTransforms: new Set<number>(initialTransforms.concat([8])),
+    visibleTransforms: new Set<number>(initialTransforms),
     log: log,
     logKey: UIData.logSize,
     repeatDelayMultiplier: 1,
