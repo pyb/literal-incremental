@@ -134,7 +134,6 @@ const GameMain = () => {
             <div className={styles.gameFooter}>
                 <Footer items={[
                     <Log key={0} log={GS.log} />,
-                    <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
                     <RCScout key={3} />,
                     <Debug key={4}
                            speedupCallback={speedupCallback}
@@ -142,7 +141,8 @@ const GameMain = () => {
                            repeatMultiplier={GS.repeatDelayMultiplier}
                            last={GS.lastTransform ?
                             (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
-                            ""} />
+                            ""} />,
+                    <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
                 ]} />
             </div>
         </div>
