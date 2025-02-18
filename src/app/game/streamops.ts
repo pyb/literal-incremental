@@ -155,7 +155,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
 // Only return the rightmost letter transform for each letter
 export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform>): Map<string, TransformLocation> => {
     let result = new Map<string, TransformLocation>();
-    transforms.forEach((transform: Transform, index: number) => {
+    transforms.forEach((transform: Transform) => {
         const transformLetter = transform.output;
         if (transformLetter.length == 1) {
             const inputWord:string = transform.input;
@@ -171,7 +171,7 @@ export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform
                         const current = result.get(transformLetter);
                         if (!current ||
                             current.location < pos)
-                            result.set(transformLetter, { id: index, word: key, location: pos });
+                            result.set(transformLetter, { id: transform.id, word: key, location: pos });
                     }
                 });
             }

@@ -223,7 +223,7 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
   const id:number = transformLocation.id;
   const transform = dict.find((item:Transform) => item.id == id);
   if (!transform)
-    throw new Error('Bug: transform id not found');
+    throw new Error("Bug: transform id " + id.toString() + " not found");
 
   return [transform.effect, 
     ((gs:GameState) => {

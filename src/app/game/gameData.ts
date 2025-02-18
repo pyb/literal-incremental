@@ -134,7 +134,7 @@ export const dict: Array<Types.Transform> = [
 
     { id:100, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
     { id:101, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
- //   { n: 3, input: "bar", output: "w" },
+ //   { n: 1001, input: "bar", output: "w" },
     { id:102, input: "bar", output: "w" },
     { id:103, input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
 
