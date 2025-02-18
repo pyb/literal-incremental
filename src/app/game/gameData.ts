@@ -66,7 +66,7 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:1,
-        n: 10,
+        n: 100,
         visibility: 20,
         input: "i",
         output: "n",
@@ -161,7 +161,7 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
-const initialTransforms:Array<number> = [];
+const initialUnlockedTransforms:Array<number> = [1];
 
 export const initialGameState:GameState = {
     glyphs: 0,
@@ -177,8 +177,8 @@ export const initialGameState:GameState = {
     currentPressedKeysTracker: new Map<string, number>(),
     dict:dict,
     lastTransform: undefined,
-    unlockedTransforms: new Set<number>(initialTransforms),
-    visibleTransforms: new Set<number>(initialTransforms),
+    unlockedTransforms: new Set<number>(initialUnlockedTransforms),
+    visibleTransforms: new Set<number>([]),
     log: log,
     logKey: UIData.logSize,
     repeatDelayMultiplier: 1,

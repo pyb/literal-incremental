@@ -10,10 +10,10 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
 
 // Note: This is a "View" ie an alternative way or presenting game state data
 export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<string>, activeKeys:Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
-                                 stream: Array<Letter>, dict: Array<Transform>, unlockedTransforms: Set<number>):
+                                 stream: Array<Letter>, dict: Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms: Set<number>):
     Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
-  const availableDict: Array<Transform> = unlockedDict(dict, unlockedTransforms);
+  const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
 
   const letterTransforms:Map<string, TransformLocation> = Stream.scanForLetters(stream, dict);
   const wordTransforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
@@ -147,11 +147,12 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
 
 const toggleRepeatEffect:Effect = {type: EffectType.ToggleRepeater};
 
-export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>, unlockedTransforms:Set<number>):
+export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>,
+  visibleTransforms:Set<number>, unlockedTransforms:Set<number>):
 [effect: Effect | undefined, GameStateUpdate] => {
  
   const modes:Set<KeyMode> = status.modes;
-  const availableDict: Array<Transform> = unlockedDict(dict, unlockedTransforms);
+  const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
 
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.RepeatModeKey) && modes.has(KeyMode.Available))
@@ -181,7 +182,7 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
 }
 
 export const execute = (key: string, keyStatus: Map<string, KeyStatus>,
-                        stream: Array<Letter>, dict:Array<Transform>, unlockedTransforms:Set<number>):
+                        stream: Array<Letter>, dict:Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms:Set<number>):
     Array<GameStateUpdate> => {
   const status = keyStatus.get(key);
   if (!status)
@@ -190,7 +191,7 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>,
     console.log('Error: unknown key : ' + key);
     return [];
   }
-  const [effect, transformResult] = executeKeyFunction (key, status, stream, dict, unlockedTransforms);
+  const [effect, transformResult] = executeKeyFunction(key, status, stream, dict, visibleTransforms, unlockedTransforms);
  
   const effectResult = effect ? executeEffect(effect, stream, dict) : null;
   if (transformResult && effectResult)
@@ -263,5 +264,5 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   })];
 }
 
-export const unlockedDict = (dict: Array<Transform>, unlockedTransforms:Set<number>):Array<Transform> => 
-  dict.filter((transform:Transform) => unlockedTransforms.has(transform.id));
+export const unlockedDict = (dict: Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms:Set<number>):Array<Transform> => 
+  dict.filter((transform:Transform) => (unlockedTransforms.has(transform.id) && visibleTransforms.has(transform.id)));

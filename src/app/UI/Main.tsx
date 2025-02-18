@@ -65,6 +65,7 @@ const GameMain = () => {
                                                                    GS.toggleRepeatMode,
                                                                    GS.stream,
                                                                    GS.dict,
+                                                                   GS.visibleTransforms,
                                                                    GS.unlockedTransforms
                                                                 );
 
@@ -73,7 +74,7 @@ const GameMain = () => {
         save(GS);
         const activeKeys = new Set<string>();
         GS.keysToTrigger.forEach((key:string) => {
-            const updates:Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict, GS.unlockedTransforms);
+            const updates:Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
             updates.forEach((update) => {if (update) {
                 activeKeys.add(key);
                 setGS(update);
@@ -122,7 +123,7 @@ const GameMain = () => {
         <div className={styles.game}>
             <div className={styles.gameTop}>
                 <Dict dict={visibleDict}
-                      unlockedDict={new Set<number>(Game.unlockedDict(GS.dict, GS.unlockedTransforms)
+                      unlockedDict={new Set<number>(Game.unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms)
                                                         .map((transform:Transform)=> transform.id))}
                       lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
             </div>
