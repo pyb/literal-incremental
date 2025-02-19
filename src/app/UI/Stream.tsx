@@ -20,22 +20,21 @@ const prioStyle = (prio: number) => {
 }
 
 const prioOpacity = (prio: number) => {
-    if (prio < 10)
+    if (prio < 6)
         return {}
     else return {
         //opacity: 3/Math.sqrt(prio)
-        opacity: 10/(prio)
+        opacity: 6/(prio)
     }
 }
 
-const streamToText = (input: [Array<Letter>, string], index: number) => {
+const streamToText = (input: [Array<Letter>, string], index: number, wordIndex?: number) => {
     const letters:Array<Letter> = input[0];
     const word:string = input[1];
-    //console.log(letters);
-    //console.log(word)
+    const style = wordIndex ? prioStyle(wordIndex) : styles.prioDefault;
     return (
         <span className={styles.streamWord} key={index}>
-            <span className={prioStyle(index)} style={prioOpacity(index)}>
+            <span className={style} style={prioOpacity(index)}>
                 <span className={styles.smallSpace}> &nbsp; </span>
                 {letters.map((l: Letter, index: number) =>
                     (l.n > 5) ?
@@ -70,9 +69,14 @@ const Stream = ({stream, dict}: Props) => {
     }
     const l:number = separatedStream.length;
 
+    let colorIndex = 1;
+    
     return (
         <div className={styles.streamComponent}>
-                {separatedStream.reverse().map(streamToText).reverse()}
+                {separatedStream.reverse()
+                                .map((input: [Array<Letter>, string], i:number) => 
+                                    streamToText(input, i, input[1].length > 1 ? colorIndex++ : undefined))
+                                .reverse()}
         </div>
     )
 }
