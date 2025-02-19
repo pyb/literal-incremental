@@ -60,8 +60,6 @@ interface Props {
 
 const Stream = ({stream, dict}: Props) => {
     const [streamSplit, streamWords]:[Array<number>, Array<string>] = StreamOps.inputWordSplit(stream, dict);
-//    console.log(streamSplit)
-    console.log(streamWords)
     let i = 0;
     const separatedStream:Array<[Array<Letter>, string]> = [];
     for (let p = 1 ; p < streamSplit.length ; p++) // first number of streamSplit is always 0

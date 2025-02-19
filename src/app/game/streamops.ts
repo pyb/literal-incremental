@@ -196,9 +196,18 @@ const inputToString = (input: Array<Letter>):string => {
     return input.map((letter: Letter) => letter.text).join('');
 }
 
+// This behaviour will probably be updated 
+// For now we prioritise rightmost transform, unless a longer transform exists using the same letters
+// We could change to : always pick the longest word.
 const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
-    if (a.location != b.location)
-        return (b.location-a.location);
+    //console.log("sorting " + a.word + " at " + a.location.toString() + " vs " + b.word + " at " + b.location.toString());
+    const aLen:number = a.word.length;
+    const bLen:number = b.word.length;
+    const aEnd:number = a.location + aLen;
+    const bEnd:number = b.location + bLen;
+
+    if (aEnd != bEnd)
+        return (bEnd-aEnd);
     else
         return (b.word.length - a.word.length);
 }
@@ -219,8 +228,8 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>,
         let pos:number = NaN;
         transform.words?.forEach((word: string) => {
             const revWordS: string = Util.sreverse(word);
-            const wordA: Array<Letter> = convertStringToWord(word);
-            const revWordA: Array<Letter> = wordA.toReversed();
+            //const wordA: Array<Letter> = convertStringToWord(word);
+            //const revWordA: Array<Letter> = wordA.toReversed();
             const i = revInputS.indexOf(revWordS);
             let pos:number = NaN;
             if (i != -1) {
@@ -238,6 +247,7 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>,
                 
                 if (flag) {
                 */
+                //console.log("found " + word + " in " + Util.sreverse(revInputS))
                 const newPos = (input.length - i) - word.length;
                 if (isNaN(pos))
                     pos = newPos;
@@ -288,5 +298,6 @@ export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): [A
             resultWords.push(lastWord.word);
         }
     }
+    resultWords.push(""); // otherwise it's off by 1
     return [resultPositions.toReversed(), resultWords.toReversed()];
 }
