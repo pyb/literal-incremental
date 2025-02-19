@@ -68,8 +68,10 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:1,
-        n: 100,
-        visibility: 20,
+        //n: 100,
+        n:10,
+        //visibility: 20,
+        visibility: 1,
         shortDesc: "I->N",
         letter: "i",
         output: "n",
@@ -90,6 +92,7 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock Transform REPI",
         effect: unlockTransform1,
     },
+    /*
     {
         id:4,
         visibility: 300,
@@ -99,9 +102,11 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock letter e",
         effect: unlockEffect1,
     },
+    */
     {
         id:5,
-        visibility: 3000,
+        //visibility: 3000,
+        visibility: 1,
         word: "inn",
         output: "",
         shortDesc: "REPI",
@@ -170,7 +175,7 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
-const initialUnlockedTransforms:Array<number> = [0, 1];
+const initialUnlockedTransforms:Array<number> = [0, 1, 5];
 
 export const initialGameState:GameState = {
     glyphs: 0,

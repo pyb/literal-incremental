@@ -39,6 +39,10 @@ const convertStringToWord = (s:string):Array<Letter> => {
     return result;
 }
 
+const convertWordToString = (w:Array<Letter>):string => {
+    return w.map((l:Letter) => l.text).join("");
+}
+
 /****************************************************************/
 // Replace
 
@@ -113,10 +117,18 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
     return cleanupStream(result);
 }
 
+// Maybe TODO if/when we implement word transform with multiplicity : this, but with letter multiplicities in word input.
+
 export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
     let result:Array<Letter> = [...stream];
 
-    // TODO: this, but with letter multiplicities in word input.
+    // sanity check that stream at location matches one anagram
+    const anagrams = transform.words as Set<string>;
+    const len:number = transform.word?.length as number;
+    const wordAtLocation = convertWordToString(stream.slice(location, len));
+    if (!anagrams.has(wordAtLocation))
+        throw new Error("Couldn't find " + transform.word + " in " + wordAtLocation);
+
     const word:Array<Letter> = convertStringToWord(transform.word as string);
 
     const output:string = transform.output;
@@ -200,7 +212,6 @@ const inputToString = (input: Array<Letter>):string => {
 // For now we prioritise rightmost transform, unless a longer transform exists using the same letters
 // We could change to : always pick the longest word.
 const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
-    //console.log("sorting " + a.word + " at " + a.location.toString() + " vs " + b.word + " at " + b.location.toString());
     const aLen:number = a.word.length;
     const bLen:number = b.word.length;
     const aEnd:number = a.location + aLen;
@@ -213,7 +224,7 @@ const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
 }
 
 // 2) For each word in the transforms, look for its last occurence in the input
-export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>, maxLength: number = NaN):
+export const scanForWords1 = (input: Array<Letter>, transforms: Array<Transform>, maxLength: number = NaN):
         Array<TransformLocation> => {
     const revInput:Array<Letter> = input.toReversed();
     const revInputS:string = inputToString(revInput);
@@ -258,6 +269,73 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>,
         if (pos)
             result.push({ id: transform.id, location: pos, word: transform.word as string})
         });
+    });
+    return result.sort(sortTransforms); // the rightmost words come first
+}
+
+
+const sortWord = (l1:Letter, l2:Letter):number => ((l1.text > l2.text) ? 1 : -1);
+
+const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
+    const result: Array<Letter> = structuredClone(stream);
+    for (let i = 0; i < stream.length - 1 ; i++)
+    {
+        if (result[i].text == result[i+1].text)
+        {
+            result[i+1].n += result[i].n;
+            result[i].n = 0;
+        }
+    }
+    return result.filter((letter:Letter) => letter.n != 0);
+}
+
+// 2) For each word in the transforms, look for its last occurence in the input
+// Rewritten to account for for anagrams, and letter multiplicities ; eg the stream N(2)I should match the transform INN->...
+export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>, maxLength: number = NaN):
+        Array<TransformLocation> => {
+    const revInput:Array<Letter> = input.toReversed();
+    let result:Array<TransformLocation> = [];
+
+    // Note : this wd be a bug if a word transform existed that had only one repeated letter (eg AA -> ...)
+    const wordTransforms:Array<Transform> = transforms.filter((transform) =>
+        (transform.word &&
+        (isNaN(maxLength) || (transform.word.length < maxLength))));
+
+    wordTransforms.forEach((transform: Transform) => {
+        let pos: number = NaN;
+        const word:string = transform.word as string;
+        const sortedWord:Array<Letter> = compressSortedStream(convertStringToWord(word)
+                                                                .toSorted(sortWord));
+        const length:number = sortedWord.length;
+        const developedLength:number = word.length;
+
+        for (let i = 0; i < input.length - length; i++) {
+            //No. try all the compressed Streams starting from i, as long as their final length is equal to length!
+            // ugh. Let's limit to max length = developed length of word
+            // 
+            for (let l = length; l <= developedLength; l++) {
+                const subStream: Array<Letter> = compressSortedStream(revInput.slice(i, i + l).toSorted(sortWord));
+                let match: boolean = true;
+                for (let k = 0; k < length; k++) {
+                    if (sortedWord[k].text != subStream[k].text ||
+                        sortedWord[k].n > subStream[k].n)
+                    {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    //console.log("matched " + transform.word + " @ " + convertWordToString (revInput.slice(i, i + l)));
+                    const newPos = (input.length - i) - length;
+                    if (isNaN(pos))
+                        pos = newPos;
+                    else
+                        pos = Math.max(pos, newPos);
+                }
+            }
+        }
+        if (pos)
+            result.push({ id: transform.id, location: pos, word: transform.word as string });
     });
     return result.sort(sortTransforms); // the rightmost words come first
 }

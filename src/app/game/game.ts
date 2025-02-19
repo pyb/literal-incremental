@@ -1,6 +1,6 @@
 import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Effect, EffectType, GameStateUpdate} from "game/gameTypes"
 import * as Types from "game/gameTypes"
-import * as Stream from "game/streamops"
+import * as StreamOp from "game/streamops"
 import {specialKeys, keyVisibility, initialRepeatDelay} from "game/gameData"
 import UIData from "UI/uiData"
 
@@ -26,8 +26,8 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<stri
   const result = new Map<string, KeyStatus>([]);
   const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
 
-  const letterTransforms:Map<string, TransformLocation> = Stream.scanForLetters(stream, dict);
-  const wordTransforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
+  const letterTransforms:Map<string, TransformLocation> = StreamOp.scanForLetters(stream, dict);
+  const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(stream, dict);
   const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
 
   [...visibleKeys, ...unlockedKeys].forEach((key:string) =>
@@ -241,16 +241,18 @@ const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate] 
         }
           
       });
-      gs.stream = Stream.addLetter(key, gs.stream);
+      gs.stream = StreamOp.addLetter(key, gs.stream);
     })];
 }
 
 const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform>):
     [effect: Effect | undefined, GameStateUpdate] => {
-  const transforms:Map<string, TransformLocation> = Stream.scanForLetters(stream, dict);
+  const transforms:Map<string, TransformLocation> = StreamOp.scanForLetters(stream, dict);
   const transformLocation = transforms.get(key);
   if (!transformLocation)
+  {
     throw new Error('Bug: transform not found');
+  } 
   const id:number = transformLocation.id;
   const transform = dict.find((item:Transform) => item.id == id);
   if (!transform)
@@ -260,13 +262,13 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
     ((gs:GameState) => {
       //gs.stream = Stream.addLetter(key, gs.stream);
       gs.lastTransform = transform;
-      gs.stream = Stream.applyLetterTransform(transform, stream, transformLocation.location)
+      gs.stream = StreamOp.applyLetterTransform(transform, stream, transformLocation.location)
     })];
 }
 
 const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:string=""):
    [effect: Effect | undefined, GameStateUpdate] => {
-  let transforms:Array<TransformLocation> = Stream.scanForWords(stream, dict);
+  let transforms:Array<TransformLocation> = StreamOp.scanForWords(stream, dict);
 
   if (trigger.length > 0)
   {
@@ -284,7 +286,7 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   return [transform.effect,
     ((gs:GameState) => {
     gs.lastTransform = transform;
-    gs.stream = Stream.applyWordTransform(transform, stream, transformLocation.location)
+    gs.stream = StreamOp.applyWordTransform(transform, stream, transformLocation.location)
   })];
 }
 
