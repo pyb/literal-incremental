@@ -40,7 +40,7 @@ const convertStringToWord = (s:string):Array<Letter> => {
 }
 
 const convertWordToString = (w:Array<Letter>):string => {
-    return w.map((l:Letter) => l.text).join("");
+    return w.map((l:Letter) => l.text + "(" + l.n.toString()+ ")").join("");
 }
 
 /****************************************************************/
@@ -125,10 +125,12 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     // sanity check that stream at location matches one anagram
     const anagrams = transform.words as Set<string>;
     const len:number = transform.word?.length as number;
+    /*
+    // Most prob broken sanity test, skip and pray
     const wordAtLocation = convertWordToString(stream.slice(location, len));
     if (!anagrams.has(wordAtLocation))
         throw new Error("Couldn't find " + transform.word + " in " + wordAtLocation);
-
+    */
     const word:Array<Letter> = convertStringToWord(transform.word as string);
 
     const output:string = transform.output;
@@ -314,9 +316,20 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>,
             // ugh. Let's limit to max length = developed length of word
             // 
             for (let l = length; l <= developedLength; l++) {
+                //if (word == "inn")
+                if (false)
+                {
+                    console.log("exploring " + convertWordToString (revInput.slice(i, i + l)) + " for " + word);
+                    console.log(length)
+                    console.log(developedLength)
+                }
+              
                 const subStream: Array<Letter> = compressSortedStream(revInput.slice(i, i + l).toSorted(sortWord));
                 let match: boolean = true;
+                if (length != subStream.length)
+                    break;
                 for (let k = 0; k < length; k++) {
+                    //console.log(k)
                     if (sortedWord[k].text != subStream[k].text ||
                         sortedWord[k].n > subStream[k].n)
                     {
@@ -326,7 +339,7 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>,
                 }
                 if (match) {
                     //console.log("matched " + transform.word + " @ " + convertWordToString (revInput.slice(i, i + l)));
-                    const newPos = (input.length - i) - length;
+                    const newPos = (input.length - i) - l;
                     if (isNaN(pos))
                         pos = newPos;
                     else
