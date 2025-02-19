@@ -78,7 +78,7 @@ export const addLetter = (letter: string, input: Array<Letter>): Array<Letter> =
 }
 
 export const applyLetterTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
-    if (!stream[location] || stream[location].text != transform.input) // sanity check
+    if (!stream[location] || ! transform.letter || stream[location].text != transform.letter) // sanity check
         throw new Error('Bug: bad transformation arguments! Bad letter');
     
     let result:Array<Letter> = [...stream];
@@ -117,7 +117,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     let result:Array<Letter> = [...stream];
 
     // TODO: this, but with letter multiplicities in word input.
-    const word:Array<Letter> = convertStringToWord(transform.input);
+    const word:Array<Letter> = convertStringToWord(transform.word as string);
 
     const output:string = transform.output;
     let i:number = 0;
@@ -158,14 +158,13 @@ export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform
     transforms.forEach((transform: Transform) => {
         const transformLetter = transform.output;
         if (transformLetter.length == 1) {
-            const inputWord:string = transform.input;
-            if(inputWord.length == 1)
+            if(transform.letter)
             {
                 const l = input.length;
                 input.toReversed().forEach((letter: Letter, k: number) => {
                     const pos = l - 1 - k;
                     const key: string = letter.text;
-                    if ((key == inputWord) &&
+                    if ((key == transform.letter) &&
                         (letter.n >= (transform.n || 1)))
                     {
                         const current = result.get(transformLetter);
@@ -175,16 +174,18 @@ export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform
                     }
                 });
             }
-            else { // "word to letter" transform. Convention : n is always 1. no "b(2)l(2)a(2) -> x" transforms
-                const revWord = Util.sreverse(inputWord);
+            else if (transform.word){ // "word to letter" transform. Convention : n is always 1. no "b(2)l(2)a(2) -> x" transforms
+                const revWord = Util.sreverse(transform.word);
                 const revInputS:string = inputToString(input.toReversed());
                 const i = revInputS.indexOf(revWord);
                 if (i != -1)
                 {
-                    const pos = (input.length - i) - inputWord.length;
-                    result.set(transformLetter, {id: transform.id, location: pos, word: inputWord})
+                    const pos = (input.length - i) - transform.word.length;
+                    result.set(transformLetter, {id: transform.id, location: pos, word: transform.word})
                 }
             }
+            else
+                console.log("Error : Transform " + transform.id.toString() + " does nothing!")
  
         }
     });
@@ -203,40 +204,50 @@ const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
 }
 
 // 2) For each word in the transforms, look for its last occurence in the input
-export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>, maxLength: number = NaN):Array<TransformLocation> => {
+export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>, maxLength: number = NaN):
+        Array<TransformLocation> => {
     const revInput:Array<Letter> = input.toReversed();
     const revInputS:string = inputToString(revInput);
     let result:Array<TransformLocation> = [];
 
     // Note : this wd be a bug if a word transform existed that had only one repeated letter (eg AA -> ...)
-    const wordTransforms:Array<Transform> = transforms.filter((transforms) =>
-        (transforms.input.length > 1) &&
-        (isNaN(maxLength) || (transforms.input.length) < maxLength) );
+    const wordTransforms:Array<Transform> = transforms.filter((transform) =>
+        (transform.word &&
+        (isNaN(maxLength) || (transform.word.length < maxLength))));
 
-    wordTransforms.forEach((transform:Transform) => {
-        const wordS:string = transform.input;
-        const revWordS:string = Util.sreverse(wordS);
-        const wordA:Array<Letter> = convertStringToWord(wordS);
-        const revWordA:Array<Letter> = wordA.toReversed();
-        const i = revInputS.indexOf(revWordS);
-        if (i != -1)
-        {
-            let flag = true;
-            // Check multiplicities
-            for (let k = 0 ; k < wordS.length ; k++)
-            {
-                if (revInput[i+k].n < revWordA[k].n)
-                {
-                    flag = false;
-                    break;
-                }  
+    wordTransforms.forEach((transform: Transform) => {
+        let pos:number = NaN;
+        transform.words?.forEach((word: string) => {
+            const revWordS: string = Util.sreverse(word);
+            const wordA: Array<Letter> = convertStringToWord(word);
+            const revWordA: Array<Letter> = wordA.toReversed();
+            const i = revInputS.indexOf(revWordS);
+            let pos:number = NaN;
+            if (i != -1) {
+                /*
+                // unused
+                let flag = true;
+              
+                // Check multiplicities
+                for (let k = 0; k < word.length; k++) {
+                    if (revInput[i + k].n < revWordA[k].n) {
+                        flag = false;
+                        break;
+                    }
+                }
+                
+                if (flag) {
+                */
+                const newPos = (input.length - i) - word.length;
+                if (isNaN(pos))
+                    pos = newPos;
+                else
+                    pos = Math.max(pos, newPos);
+                //}
             }
-            if (flag)
-            {
-                const pos = (input.length - i) - wordS.length;
-                result.push({id: transform.id, location: pos, word: wordS})
-            } 
-        }
+        if (pos)
+            result.push({ id: transform.id, location: pos, word: transform.word as string})
+        });
     });
     return result.sort(sortTransforms); // the rightmost words come first
 }
@@ -245,13 +256,14 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>,
 // Rendering
 
 // Backwards scan
-// return indices where the Letter Array should be split
-export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): Array<number> => {
-    const result:Array<number> = [];
+// return indices where the Letter Array should be split ; and the original words
+export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): [Array<number>, Array<string>] => {
+    const resultPositions:Array<number> = [];
+    const resultWords:Array<string> = [];
     const len:number = input.length;
 
     let k = len;
-    result.push(len);
+    resultPositions.push(len);
     while (k > 0)
     {
         const restInput:Array<Letter> = input.slice(0, k);
@@ -261,17 +273,20 @@ export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): Ar
         if (!lastWord)
         {
             for (let i = k - 1; i >= 0 ; i--) {
-                result.push(i); // single letters
+                resultPositions.push(i); // single letters
+                resultWords.push("");
             }
             k = 0;
         }
         else {
             for (let i = k ; i > (lastWord.location + lastWord.word.length); i--) {
-                result.push(i - 1); // single letters
+                resultPositions.push(i - 1); // single letters
+                resultWords.push("");
             }
-            result.push(lastWord.location);
+            resultPositions.push(lastWord.location);
             k = lastWord.location;
+            resultWords.push(lastWord.word);
         }
     }
-    return result.toReversed();
+    return [resultPositions.toReversed(), resultWords.toReversed()];
 }

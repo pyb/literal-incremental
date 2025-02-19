@@ -28,12 +28,16 @@ const prioOpacity = (prio: number) => {
     }
 }
 
-const streamToText = (input: Array<Letter>, index: number) => {
+const streamToText = (input: [Array<Letter>, string], index: number) => {
+    const letters:Array<Letter> = input[0];
+    const word:string = input[1];
+    //console.log(letters);
+    //console.log(word)
     return (
         <span className={styles.streamWord} key={index}>
             <span className={prioStyle(index)} style={prioOpacity(index)}>
                 <span className={styles.smallSpace}> &nbsp; </span>
-                {input.map((l: Letter, index: number) =>
+                {letters.map((l: Letter, index: number) =>
                     (l.n > 5) ?
                         <span key={index}>
                             { l.text}
@@ -43,6 +47,8 @@ const streamToText = (input: Array<Letter>, index: number) => {
                             {l.text.repeat(l.n)}
                         </span>
                 )}
+                {word &&
+                    <span className={styles.realWord}>[{word}]</span>}
                 <span className={styles.smallSpace}> &nbsp; </span>
             </span>
         </span>);}
@@ -53,12 +59,15 @@ interface Props {
 };
 
 const Stream = ({stream, dict}: Props) => {
-    const streamSplit:Array<number> = StreamOps.inputWordSplit(stream, dict);
-
+    const [streamSplit, streamWords]:[Array<number>, Array<string>] = StreamOps.inputWordSplit(stream, dict);
+//    console.log(streamSplit)
+    console.log(streamWords)
     let i = 0;
-    const separatedStream:Array<Array<Letter>> = [];
-    for (const k of streamSplit) {
-        separatedStream.push(stream.slice(i, k));
+    const separatedStream:Array<[Array<Letter>, string]> = [];
+    for (let p = 1 ; p < streamSplit.length ; p++) // first number of streamSplit is always 0
+    {
+        const k:number = streamSplit[p];
+        separatedStream.push([stream.slice(i, k), streamWords[p]]);
         i = k;
     }
     const l:number = separatedStream.length;

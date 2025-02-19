@@ -4,7 +4,7 @@ import UIData from "UI/uiData"
 
 
 const wordOrLetter = (item: Transform) => {
-    return ((item.input && item.input.length > 1) ? item.input : (<span className={styles.letter}>{item.input}</span>));
+    return (item.word? item.word : (<span className={styles.letter}>{item.letter}</span>));
 }
 
 const LongItem = ({ item, unlocked }: { item: Transform, unlocked: boolean }) => {
@@ -62,11 +62,11 @@ const Dict = ({ dict, unlockedDict, lastTransform }: Props) => {
                             {longItems.map((item: Transform, index: number) => <LongItem key={index} item={item} unlocked={unlockedDict.has(item.id)} />)}
                         </div>
                         <div className={styles.lastTransform}>
-                            {lastTransform.input && <ShortItem item={lastTransform} unlocked={unlockedDict.has(lastTransform.id)} />}
+                            {(lastTransform.word || lastTransform.letter) && <ShortItem item={lastTransform} unlocked={unlockedDict.has(lastTransform.id)} />}
                         </div>
                     </div>
                     <div className={styles.shortArea}>
-                        {shortItems.slice(0, maxShortItems).map((item: Transform) => <ShortItem key={item.input} item={item} unlocked={unlockedDict.has(item.id)} />)}
+                        {shortItems.slice(0, maxShortItems).map((item: Transform) => <ShortItem key={item.word || item.letter} item={item} unlocked={unlockedDict.has(item.id)} />)}
                     </div>
                 </>}
         </div>

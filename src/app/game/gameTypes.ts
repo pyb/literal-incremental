@@ -9,7 +9,9 @@ export type Transform = {
     longDesc?: string,
     shortDesc?: string,
     n?: number,
-    input: string, // word or letter
+    letter?: string, // for letter transforms
+    word?: string,
+    words?: Set<string>, // all anagramsm for word transform
     output: string,
     visibility: number,
     effect?: Effect,
@@ -37,7 +39,7 @@ export type Effect = {
 }
 
 export const emptyTransform:Transform = {
-    id:0, n:0, input:"", output:"", visibility:0
+    id:0, n:0, output:"", visibility:0
 }
 
 export type TransformLocation = {

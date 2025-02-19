@@ -3,6 +3,7 @@ import * as Types from "game/gameTypes";
 import { EffectType , Effect } from "game/gameTypes";
 import * as Test from "test/testData"
 import UIData from "UI/uiData";
+import {allAnagrams} from "game/util"
 
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
@@ -58,8 +59,9 @@ const repeaterI:Effect = {
 export const dict: Array<Types.Transform> = [
     {
         id:0,
-        visibility: 200,
-        input: "win",
+        //visibility: 200,
+        visibility: 0,
+        word: "win",
         output: "",
         shortDesc: "WIN",
         longDesc: "Win the Game."
@@ -69,20 +71,20 @@ export const dict: Array<Types.Transform> = [
         n: 100,
         visibility: 20,
         shortDesc: "I->N",
-        input: "i",
+        letter: "i",
         output: "n",
     },
     {
         id:2,
         n: 10,
         visibility: 1000,
-        input: "n",
+        letter: "n",
         output: "e"
     },
     {
         id:3,
         visibility: 1000,
-        input: "ne",
+        word: "ne",
         output: "",
         shortDesc: "ULK_T1",
         longDesc: "Unlock Transform REPI",
@@ -91,7 +93,7 @@ export const dict: Array<Types.Transform> = [
     {
         id:4,
         visibility: 300,
-        input: "in",
+        word: "in",
         output: "",
         shortDesc: "ULK_E",
         longDesc: "Unlock letter e",
@@ -100,7 +102,7 @@ export const dict: Array<Types.Transform> = [
     {
         id:5,
         visibility: 3000,
-        input: "inn",
+        word: "inn",
         output: "",
         shortDesc: "REPI",
         longDesc: "Unlock I repeater",
@@ -109,7 +111,7 @@ export const dict: Array<Types.Transform> = [
     { // should there be something required to unlock this?
         id:6,
         visibility: 300,
-        input: "i",
+        letter: "i",
         output: "",
         shortDesc: "2LW",
         longDesc: "Unlock two-letter words",
@@ -117,13 +119,13 @@ export const dict: Array<Types.Transform> = [
     {
         id:16,
         visibility: 1000,
-        input: "neg",
+        word: "neg",
         output: "w",
     },
     {
         id:7,
         visibility: 1000,
-        input: "ninini",
+        word: "ninini",
         output: "",
         shortDesc: "ULWIN",
         longDesc: "Unlock WIN",
@@ -131,7 +133,7 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:8,
-        input: "nininin",
+        word: "nininin",
         visibility: 1000,
         output: "",
         shortDesc: "REPI+",
@@ -139,13 +141,19 @@ export const dict: Array<Types.Transform> = [
         effect: repeatRateUpgradeI,
     },
 
-    { id:100, visibility: 1000, input: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
-    { id:101, visibility: 1000, input: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
+    { id:100, visibility: 1000, word: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
+    { id:101, visibility: 1000, word: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
  //   { id: 1001, visibility: 1000, n:3, input: "bar", output: "w" },
-    { id:102, visibility: 1000, input: "bar", output: "w" },
-    { id:103, visibility: 1000, input: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
+    { id:102, visibility: 1000, word: "bar", output: "w" },
+    { id:103, visibility: 1000, word: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
 
 ];
+
+dict.forEach((transform:Types.Transform) => {
+    const word = transform.word;
+    if (word)
+        transform.words = allAnagrams(word);
+});
 
 const welcomeMessage = "Welcome to Literal Incremental.";
 
@@ -162,12 +170,12 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
-const initialUnlockedTransforms:Array<number> = [1];
+const initialUnlockedTransforms:Array<number> = [0, 1];
 
 export const initialGameState:GameState = {
     glyphs: 0,
-    //stream:Test.testInput,
-    stream: [],
+    stream:Test.testInput,
+    //stream: [],
     visibleKeys: startingVisibleKeys,
     unlockedKeys: new Set<string>(startingUnlockedKeys),
     pressedKeys: new Set<string>(),

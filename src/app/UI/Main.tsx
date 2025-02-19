@@ -137,7 +137,8 @@ const GameMain = () => {
                            glyphs={GS.glyphs}
                            repeatMultiplier={GS.repeatDelayMultiplier}
                            last={GS.lastTransform ?
-                            (GS.lastTransform.output ? GS.lastTransform.output : GS.lastTransform.input) :
+                            (GS.lastTransform.output ? GS.lastTransform.output 
+                                                     : (GS.lastTransform.letter || GS.lastTransform.word) as string) :
                             ""} />,
                     <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
                 ]} />
