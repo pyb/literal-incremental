@@ -118,75 +118,64 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
 }
 
 // Maybe TODO if/when we implement word transform with multiplicity : this, but with letter multiplicities in word input.
+  
+/*
+ New algo.
+ "Stops" are letters not in the transform word.
+ R to L : while not reaching a stop, process each letter (decrease its n and also the words Letter's n)
+  [maybe copy the letter sequence till the next stop to a separate working area, and also the word]
+  If reach a stop, fail. Cancel everything. jump to before the stop.
+  If word is empty, success.  
 
-export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
+*/
+
+export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location:number): Array<Letter> => {
     let result:Array<Letter> = structuredClone(stream);
+    const word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
+    const wordLetters = new Set<string>(word.map((letter:Letter) => letter.text));
 
-    // Most prob broken sanity test, skip and pray
-    /*
-    // sanity check that stream at location matches one anagram
-    const anagrams = transform.words as Set<string>;
-    const len:number = transform.word?.length as number;
-    
-    const wordAtLocation = convertWordToString(stream.slice(location, len));
-    if (!anagrams.has(wordAtLocation))
-        throw new Error("Couldn't find " + transform.word + " in " + wordAtLocation);
-    */
-
-    //  Algo : Go through stream letters R to L, substract what's needed (keep a tally of Word's letters and substract from those to keep track)
-
-    let word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
-    
-    let i = location;
-    while (word.length != 0)
+    let k:number = stream.length;
+    while(k > 0)
     {
-        if (location == stream.length)
-            throw new Error("Error : end of stream looking for " + transform.word);
-        const streamLetter:Letter = result[location];
-        const wordLetter = word.find((l:Letter) => (l.text == streamLetter.text));
-        if (!wordLetter)
-            location++;
-        else {
-            const k = Math.min(wordLetter.n, streamLetter.n);
-            wordLetter.n -= k;
-            streamLetter.n -= k;
-            location++;
-            word = cleanupStream(word);
+        const wordCopy:Array<Letter> = structuredClone(word);
+        let i = k-1;
+        if ( !wordLetters.has(result[i].text))
+        {
+            k = i;
+            continue;
         }
+        while (i >= 0 &&
+               wordLetters.has(result[i].text) )
+            i--;
+        
+        const section:Array<Letter> = structuredClone(stream.slice(i+1,k));
+        const secLength:number = section.length;
+        
+        let success = false;
+
+        for (let p = secLength - 1 ; p >= 0 ; p--)
+        {
+            const streamLetter:Letter = section[p];
+            const wordLetter:Letter = wordCopy.find((l:Letter) => l.text == streamLetter.text) as Letter;
+            const N = Math.min(streamLetter.n, wordLetter.n);
+            streamLetter.n -= N;
+            wordLetter.n -= N;
+            if (!wordCopy.find((l:Letter) => l.n != 0))
+                // It worked
+            {
+                success = true;
+                break;
+            }
+        }
+        if (success)
+        {
+            result.splice(i+1, secLength, ...section);
+            break;
+        }
+        k = i; 
     }
-    const replacementWord:Array<Letter> = convertStringToWord(transform.output);
-    result.splice(location, 0, ...replacementWord);
     return cleanupStream(result);
 }
-    /*
-    // Old:
-    const output:string = transform.output;
-
-    let i:number = 0;
-    let k:number = 0;
-    while (i < word.length) {
-        let letter = result[location + k];
-        if(!letter)
-            throw new Error('Bug: out of bounds');
-        if (letter.text != word[i].text)
-            throw new Error('Bug: bad transformation arguments! Bad word letter');
-        if (letter.n == word[i].n) { 
-            result.splice(location + k, 1); // delete the Letter in place
-        }
-        else {
-            const updatedLetter:Letter = {
-                text: letter.text,
-                n: letter.n - word[i].n
-            };
-            result.splice(location + k, 1, updatedLetter);
-            k++;
-        }
-        i++;
-    }
-    const letters = [...output].map((l: string):Letter => { return {text:l, n:1} });
-    result.splice(location + i, 0, ...letters);
-    */
-
 /****************************************************************/
 // Search
 // Bug: I had forgotten that some transform convert words into letters! Are they Letter Transforms?
@@ -256,13 +245,6 @@ const sortWord = (l1:Letter, l2:Letter):number => ((l1.text > l2.text) ? 1 : -1)
 const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
     const result: Array<Letter> = structuredClone(stream);
    
-    if (result[0].text == "i" && result[1].text == "n")
-        {
-            console.log("inn");
-            console.log(stream)
-            console.log(result)
-        }
-  
     for (let i = 0; i < stream.length - 1 ; i++)
     {
         if (result[i].text == result[i+1].text)
@@ -271,12 +253,6 @@ const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
             result[i].n = 0;
         }
     }
-    if (result[0].text == "i" && result[1].text == "n")
-        {
-            console.log("inn");
-            console.log(stream)
-            console.log(result)
-        }
     return result.filter((letter:Letter) => (letter.n != 0));
 }
 
@@ -297,28 +273,16 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>,
         const word:string = transform.word as string;
         const sortedWord:Array<Letter> = compressSortedStream(convertStringToWord(word)
                                                                 .toSorted(sortWord));
-        const length:number = sortedWord.length;
+        const compressedLength:number = sortedWord.length;
         const developedLength:number = word.length;
 
-        for (let i = 0; i < input.length - length; i++) {
-            //No. try all the compressed Streams starting from i, as long as their final length is equal to length!
-            // ugh. Let's limit to max length = developed length of word
-            // 
-            for (let l = length; l <= developedLength; l++) {
-                //if (word == "inn")
-                if (false)
-                {
-                    console.log("exploring " + convertWordToString (revInput.slice(i, i + l)) + " for " + word);
-                    console.log(length)
-                    console.log(developedLength)
-                }
-              
+        for (let i = 0; i < input.length - compressedLength; i++) {
+            for (let l = compressedLength; l <= developedLength; l++) {
                 const subStream: Array<Letter> = compressSortedStream(revInput.slice(i, i + l).toSorted(sortWord));
-                let match: boolean = true;
-                if (length != subStream.length)
+                if (compressedLength != subStream.length) // is this a problem for some words? eg "riffraff" 
                     break;
-                for (let k = 0; k < length; k++) {
-                    //console.log(k)
+                let match: boolean = true;
+                for (let k = 0; k < compressedLength; k++) {
                     if (sortedWord[k].text != subStream[k].text ||
                         sortedWord[k].n > subStream[k].n)
                     {
@@ -327,7 +291,6 @@ export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>,
                     }
                 }
                 if (match) {
-                    //console.log("matched " + transform.word + " @ " + convertWordToString (revInput.slice(i, i + l)));
                     const newPos = (input.length - i) - l;
                     if (isNaN(pos))
                         pos = newPos;
