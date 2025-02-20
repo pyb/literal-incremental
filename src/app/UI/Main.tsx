@@ -51,6 +51,8 @@ const Footer = ({items}: {items: Array<React.ReactNode>}) => {
       </div>);
 }
 
+let k:number = 0;
+
 const GameMain = () => {
     const [GS, setGS] = useImmer<GameState>(GameData.initialGameState);
     const [timeoutIds, setTimeoutIds] = useImmer<Map<string, number>>(new Map<string, number>);
@@ -115,6 +117,9 @@ const GameMain = () => {
     }
 
     const visibleDict: Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
+
+    //console.log("render " + k.toString());
+    //k++;
 
     return (
         <div className={styles.game}>

@@ -135,17 +135,15 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
 
     //  Algo : Go through stream letters R to L, substract what's needed (keep a tally of Word's letters and substract from those to keep track)
 
-    const word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
-    /*
-    console.log("awt")
-    console.log(transform.word)
-    console.log(word)
-    */
+    let word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
+    
     let i = location;
     while (word.length != 0)
     {
+        if (location == stream.length)
+            throw new Error("Error : end of stream looking for " + transform.word);
         const streamLetter:Letter = result[location];
-        const wordLetter = word.find((l:Letter) => l.text = streamLetter.text);
+        const wordLetter = word.find((l:Letter) => (l.text == streamLetter.text));
         if (!wordLetter)
             location++;
         else {
@@ -153,9 +151,8 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
             wordLetter.n -= k;
             streamLetter.n -= k;
             location++;
+            word = cleanupStream(word);
         }
-        if (location == stream.length)
-            throw new Error("Error : end of stream looking for " + transform.word);
     }
     const replacementWord:Array<Letter> = convertStringToWord(transform.output);
     result.splice(location, 0, ...replacementWord);
@@ -257,11 +254,15 @@ const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
 const sortWord = (l1:Letter, l2:Letter):number => ((l1.text > l2.text) ? 1 : -1);
 
 const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
-    console.log("cst")
-    console.log(stream)
     const result: Array<Letter> = structuredClone(stream);
-    console.log("result")
-    console.log(result)
+   
+    if (result[0].text == "i" && result[1].text == "n")
+        {
+            console.log("inn");
+            console.log(stream)
+            console.log(result)
+        }
+  
     for (let i = 0; i < stream.length - 1 ; i++)
     {
         if (result[i].text == result[i+1].text)
@@ -270,8 +271,12 @@ const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
             result[i].n = 0;
         }
     }
-    console.log("cst result")
-    console.log(result)
+    if (result[0].text == "i" && result[1].text == "n")
+        {
+            console.log("inn");
+            console.log(stream)
+            console.log(result)
+        }
     return result.filter((letter:Letter) => (letter.n != 0));
 }
 
