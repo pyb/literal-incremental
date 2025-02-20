@@ -1,14 +1,14 @@
 import { GameState } from "game/gameTypes";
 import * as Types from "game/gameTypes";
 import { EffectType , Effect } from "game/gameTypes";
-import * as Test from "test/testData"
+//import * as Test from "test/testData"
 import UIData from "UI/uiData";
 import {allAnagrams} from "game/util"
 
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
-    [UIData.wordTransformKey, 0],
+    [UIData.wordTransformKey, 20],
     [UIData.repeatModeKey, 200],
     ['e', 150],
     ['w', 150]]);
@@ -28,7 +28,7 @@ export const gameKeys = new Set<string> ( [...keyVisibility.keys()]);
 const startingVisibleKeys = new Set<string>();
 keyVisibility.forEach((visibility:number, key:string) => { if (visibility == 0) startingVisibleKeys.add(key)});
 
-const startingUnlockedKeys = ["i", "Enter"];
+const startingUnlockedKeys = ["i"];
 
 const unlockEffect1:Effect = {
     type: EffectType.LetterUnlock,
@@ -59,8 +59,7 @@ const repeaterI:Effect = {
 export const dict: Array<Types.Transform> = [
     {
         id:0,
-        //visibility: 200,
-        visibility: 0,
+        visibility: 200,
         word: "win",
         output: "",
         shortDesc: "WIN",
@@ -68,10 +67,8 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:1,
-        //n: 100,
-        n:10,
-        //visibility: 20,
-        visibility: 1,
+        n: 100,
+        visibility: 20,
         shortDesc: "I->N",
         letter: "i",
         output: "n",
@@ -92,7 +89,6 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock Transform REPI",
         effect: unlockTransform1,
     },
-    /*
     {
         id:4,
         visibility: 300,
@@ -102,13 +98,12 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock letter e",
         effect: unlockEffect1,
     },
-    */
     {
         id:5,
-        //visibility: 3000,
-        visibility: 1,
+        visibility: 3000,
         word: "inn",
-        output: "f",
+        //output: "f",
+        output: "",
         shortDesc: "REPI",
         longDesc: "Unlock I repeater",
         effect: repeaterI,
@@ -179,8 +174,8 @@ const initialUnlockedTransforms:Array<number> = [0, 1, 5];
 
 export const initialGameState:GameState = {
     glyphs: 0,
-    stream:Test.testInput,
-    //stream: [],
+    //stream:Test.testInput,
+    stream: [],
     visibleKeys: startingVisibleKeys,
     unlockedKeys: new Set<string>(startingUnlockedKeys),
     pressedKeys: new Set<string>(),
@@ -195,7 +190,7 @@ export const initialGameState:GameState = {
     visibleTransforms: new Set<number>([]),
     log: log,
     logKey: UIData.logSize,
-    repeatDelayMultiplier: 10,
+    repeatDelayMultiplier: 1,
     repeatDelays: new Map<string, number>([["i", initialRepeatDelay]]),
     maxWordSize: 1,
     toggleRepeatMode: false,
