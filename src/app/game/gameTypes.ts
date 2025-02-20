@@ -84,8 +84,12 @@ export type LogItem = {
 
 export type GameState = {
     glyphs: number,
+    maxWordSize: number,
+    toggleRepeatMode: boolean,
+
     stream: Array<Letter>,
     dict: Array<Transform>,
+
     lastTransform: Transform|undefined,
     unlockedTransforms: Set<number>,
     visibleTransforms: Set<number>,
@@ -102,11 +106,8 @@ export type GameState = {
     log: Array<LogItem>,
     logKey: number,
 
-    repeatDelays: Map<string, number>, // later: per-key repeat delay
+    repeatDelays: Map<string, number>,
     repeatDelayMultiplier: number,
-
-    maxWordSize: number,
-    toggleRepeatMode: boolean,
 }
 
 export type UIState = {

@@ -234,12 +234,11 @@ const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate] 
         if (transform.visibility && transform.visibility == glyphs)
         {
           if (transform.shortDesc)
-            addLog("Transform available : " + transform.shortDesc , gs);
+            addLog("Transform available : " + transform.n?.toString() + transform.shortDesc , gs);
           else
             addLog("Transform available.", gs);
           gs.visibleTransforms.add(transform.id);
         }
-          
       });
       gs.stream = StreamOp.addLetter(key, gs.stream);
     })];
