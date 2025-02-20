@@ -29,6 +29,8 @@ export const gameKeys = new Set<string> ( [...keyVisibility.keys()]);
 const startingVisibleKeys = new Set<string>();
 keyVisibility.forEach((visibility:number, key:string) => { if (visibility == 0) startingVisibleKeys.add(key)});
 
+const tombStone = "x"; // "Tombstone" letter, which will block parts of the stream from joining to form words
+
 const startingUnlockedKeys = ["i"];
 
 const unlockEffect1:Effect = {
@@ -55,6 +57,16 @@ const repeatRateUpgradeI:Effect = {
 const repeaterI:Effect = {
     type:EffectType.LetterRepeaterUnlock,
     letter: "i",
+}
+
+const unlockTwoLetter:Effect = {
+    type:EffectType.WordLengthUnlock,
+    level:2,
+}
+
+const unlockThreeLetter:Effect = {
+    type:EffectType.WordLengthUnlock,
+    level:3,
 }
 
 export const dict: Array<Types.Transform> = [
@@ -101,6 +113,15 @@ export const dict: Array<Types.Transform> = [
         effect: unlockEffect1,
     },
     {
+        id:54,
+        visibility: 3000,
+        word: "in",
+        output: tombStone,
+        shortDesc: "3LW",
+        longDesc: "Unlock three-letter words",
+        effect: unlockThreeLetter,
+    },
+    {
         id:5,
         visibility: 3000,
         word: "inn",
@@ -117,6 +138,7 @@ export const dict: Array<Types.Transform> = [
         output: "",
         shortDesc: "2LW",
         longDesc: "Unlock two-letter words",
+        effect: unlockTwoLetter,
     },
     {
         id:16,

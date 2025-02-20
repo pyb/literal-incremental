@@ -26,6 +26,7 @@ export enum EffectType {
     ToggleRepeater,
     UpgradeRepeater,
     TransformUnlock,
+
     // ...
 }
 
