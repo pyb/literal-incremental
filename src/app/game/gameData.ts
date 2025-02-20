@@ -8,7 +8,8 @@ import {allAnagrams} from "game/util"
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
-    [UIData.wordTransformKey, 20],
+    // This should become visible slightly before the first word transform does ("in"?)
+    [UIData.wordTransformKey, 250],
     [UIData.repeatModeKey, 200],
     ['e', 150],
     ['w', 150]]);
@@ -67,7 +68,7 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:1,
-        n: 100,
+        n: 40,
         visibility: 20,
         shortDesc: "I->N",
         letter: "i",
@@ -170,7 +171,7 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
-const initialUnlockedTransforms:Array<number> = [0, 1, 5];
+const initialUnlockedTransforms:Array<number> = [1];
 
 export const initialGameState:GameState = {
     glyphs: 0,

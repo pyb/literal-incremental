@@ -117,20 +117,17 @@ const GameMain = () => {
     }
 
     const visibleDict: Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
-
-    //console.log("render " + k.toString());
-    //k++;
-
+    const unlockedDict = new Set<number>(Game.unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms)
+                                        .map((transform:Transform)=> transform.id));
     return (
         <div className={styles.game}>
             <div className={styles.gameTop}>
                 <Dict dict={visibleDict}
-                      unlockedDict={new Set<number>(Game.unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms)
-                                                        .map((transform:Transform)=> transform.id))}
+                      unlockedDict={unlockedDict}
                       lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
             </div>
             <div className={styles.gameMiddle}>
-                <StreamComponent stream={GS.stream} dict={GS.dict} />
+                <StreamComponent stream={GS.stream} dict={GS.dict.filter((transform:Transform) => unlockedDict.has(transform.id))} />
                 <Keyboard keyStatus={keyStatus} />
             </div>
             <div className={styles.gameFooter}>
