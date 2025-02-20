@@ -26,9 +26,13 @@
     margin-right: -3px;
 }
 
-.prio1 {
+.currentWord {
     color: red;
     font-size:120%;
+}
+
+.prio1 {
+    color: yellow;
 }
 
 .prio2 {

@@ -31,7 +31,7 @@ const prioOpacity = (prio: number) => {
 const streamToText = (input: [Array<Letter>, string], index: number, wordIndex?: number) => {
     const letters:Array<Letter> = input[0];
     const word:string = input[1];
-    const style = wordIndex ? prioStyle(wordIndex) : styles.prioDefault;
+    const style = index==0 ? styles.currentWord :(wordIndex ? prioStyle(wordIndex) : styles.prioDefault);
     return (
         <span className={styles.streamWord} key={index}>
             <span className={style} style={prioOpacity(index)}>
