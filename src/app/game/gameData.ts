@@ -10,8 +10,8 @@ export const keyVisibility = new Map<string, number>([
     ['n', 10],
     // This should become visible slightly before the first word transform does ("in"?)
     [UIData.wordTransformKey, 250],
-    [UIData.repeatModeKey, 200],
-    ['e', 150],
+    [UIData.repeatModeKey, 400],
+    ['e', 600],
     ['w', 150]]);
 /*
 export const keyVisibility = new Map<string, number>([
@@ -90,6 +90,7 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock Transform REPI",
         effect: unlockTransform1,
     },
+    // should this be unlocked from the start?
     {
         id:4,
         visibility: 300,
@@ -109,10 +110,10 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock I repeater",
         effect: repeaterI,
     },
-    { // should there be something required to unlock this?
+    { // should there be something required to unlock this? Also, it's not working
         id:6,
         visibility: 300,
-        letter: "i",
+        word: "i",
         output: "",
         shortDesc: "2LW",
         longDesc: "Unlock two-letter words",

@@ -41,7 +41,7 @@
 }
 
 .number {
-    font-size: 120%;
+    color: grey;
 }
 
 .score {
@@ -51,8 +51,8 @@
 
 .qty {
     composes: number;
-    color: lightyellow;
-    font-size: 100%;
+    color: rgb(182, 182, 164);
+    font-size: 85%;
     margin-right: 2px;
 }
 
@@ -67,10 +67,11 @@
 }
 
 .letter {
-/*    color: #888899;*/
-    color: rgb(221, 127, 26);
+    color: rgb(212, 182, 215);
     margin-left: 2px;
+    font-size:120%
 }
+
 .word {
     color: #cccccc;
 }
@@ -135,9 +136,11 @@
 }
 
 .itemScore {
-    font-size: 85%;
-    color: rgb(253, 186, 116);
+    font-size: 120%;
+    color: rgb(249, 214, 252);
 /*
+    color: rgb(253, 186, 116);
+
     color: #1a3478;
     color: #aa44ee;*/
 }
