@@ -120,20 +120,51 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
 // Maybe TODO if/when we implement word transform with multiplicity : this, but with letter multiplicities in word input.
 
 export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location: number): Array<Letter> => {
-    let result:Array<Letter> = [...stream];
+    let result:Array<Letter> = structuredClone(stream);
 
+    // Most prob broken sanity test, skip and pray
+    /*
     // sanity check that stream at location matches one anagram
     const anagrams = transform.words as Set<string>;
     const len:number = transform.word?.length as number;
-    /*
-    // Most prob broken sanity test, skip and pray
+    
     const wordAtLocation = convertWordToString(stream.slice(location, len));
     if (!anagrams.has(wordAtLocation))
         throw new Error("Couldn't find " + transform.word + " in " + wordAtLocation);
     */
-    const word:Array<Letter> = convertStringToWord(transform.word as string);
 
+    //  Algo : Go through stream letters R to L, substract what's needed (keep a tally of Word's letters and substract from those to keep track)
+
+    const word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
+    /*
+    console.log("awt")
+    console.log(transform.word)
+    console.log(word)
+    */
+    let i = location;
+    while (word.length != 0)
+    {
+        const streamLetter:Letter = result[location];
+        const wordLetter = word.find((l:Letter) => l.text = streamLetter.text);
+        if (!wordLetter)
+            location++;
+        else {
+            const k = Math.min(wordLetter.n, streamLetter.n);
+            wordLetter.n -= k;
+            streamLetter.n -= k;
+            location++;
+        }
+        if (location == stream.length)
+            throw new Error("Error : end of stream looking for " + transform.word);
+    }
+    const replacementWord:Array<Letter> = convertStringToWord(transform.output);
+    result.splice(location, 0, ...replacementWord);
+    return cleanupStream(result);
+}
+    /*
+    // Old:
     const output:string = transform.output;
+
     let i:number = 0;
     let k:number = 0;
     while (i < word.length) {
@@ -157,9 +188,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     }
     const letters = [...output].map((l: string):Letter => { return {text:l, n:1} });
     result.splice(location + i, 0, ...letters);
-
-    return cleanupStream(result);
-}
+    */
 
 /****************************************************************/
 // Search
@@ -225,61 +254,14 @@ const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
         return (b.word.length - a.word.length);
 }
 
-// 2) For each word in the transforms, look for its last occurence in the input
-export const scanForWords1 = (input: Array<Letter>, transforms: Array<Transform>, maxLength: number = NaN):
-        Array<TransformLocation> => {
-    const revInput:Array<Letter> = input.toReversed();
-    const revInputS:string = inputToString(revInput);
-    let result:Array<TransformLocation> = [];
-
-    // Note : this wd be a bug if a word transform existed that had only one repeated letter (eg AA -> ...)
-    const wordTransforms:Array<Transform> = transforms.filter((transform) =>
-        (transform.word &&
-        (isNaN(maxLength) || (transform.word.length < maxLength))));
-
-    wordTransforms.forEach((transform: Transform) => {
-        let pos:number = NaN;
-        transform.words?.forEach((word: string) => {
-            const revWordS: string = Util.sreverse(word);
-            //const wordA: Array<Letter> = convertStringToWord(word);
-            //const revWordA: Array<Letter> = wordA.toReversed();
-            const i = revInputS.indexOf(revWordS);
-            let pos:number = NaN;
-            if (i != -1) {
-                /*
-                // unused
-                let flag = true;
-              
-                // Check multiplicities
-                for (let k = 0; k < word.length; k++) {
-                    if (revInput[i + k].n < revWordA[k].n) {
-                        flag = false;
-                        break;
-                    }
-                }
-                
-                if (flag) {
-                */
-                //console.log("found " + word + " in " + Util.sreverse(revInputS))
-                const newPos = (input.length - i) - word.length;
-                if (isNaN(pos))
-                    pos = newPos;
-                else
-                    pos = Math.max(pos, newPos);
-                //}
-            }
-        if (pos)
-            result.push({ id: transform.id, location: pos, word: transform.word as string})
-        });
-    });
-    return result.sort(sortTransforms); // the rightmost words come first
-}
-
-
 const sortWord = (l1:Letter, l2:Letter):number => ((l1.text > l2.text) ? 1 : -1);
 
 const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
+    console.log("cst")
+    console.log(stream)
     const result: Array<Letter> = structuredClone(stream);
+    console.log("result")
+    console.log(result)
     for (let i = 0; i < stream.length - 1 ; i++)
     {
         if (result[i].text == result[i+1].text)
@@ -288,7 +270,9 @@ const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
             result[i].n = 0;
         }
     }
-    return result.filter((letter:Letter) => letter.n != 0);
+    console.log("cst result")
+    console.log(result)
+    return result.filter((letter:Letter) => (letter.n != 0));
 }
 
 // 2) For each word in the transforms, look for its last occurence in the input

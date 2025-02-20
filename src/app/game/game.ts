@@ -173,15 +173,15 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
   {
     return [toggleRepeatEffect, null];
   }
-    
+  
   if (modes.has(KeyMode.RepeatToggleAvailable) && modes.has(KeyMode.Unlocked))
     return toggleKeyRepeat(key);
+  else if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available))
+    return wordTransform(stream, availableDict);
   else if (modes.has(KeyMode.WordTransform) && modes.has(KeyMode.Available))
     return wordTransform(stream, availableDict, key);
   else if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
     return letterTransform(key, stream, availableDict);
-  else if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available))
-    return wordTransform(stream, availableDict);
   else if (modes.has(KeyMode.Unlocked) && modes.has(KeyMode.Letter))
     return directInput(key);
   /*

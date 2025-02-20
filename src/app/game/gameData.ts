@@ -8,7 +8,7 @@ import {allAnagrams} from "game/util"
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
-    [UIData.wordTransformKey, 20],
+    [UIData.wordTransformKey, 0],
     [UIData.repeatModeKey, 200],
     ['e', 150],
     ['w', 150]]);
@@ -28,7 +28,7 @@ export const gameKeys = new Set<string> ( [...keyVisibility.keys()]);
 const startingVisibleKeys = new Set<string>();
 keyVisibility.forEach((visibility:number, key:string) => { if (visibility == 0) startingVisibleKeys.add(key)});
 
-const startingUnlockedKeys = ["i"];
+const startingUnlockedKeys = ["i", "Enter"];
 
 const unlockEffect1:Effect = {
     type: EffectType.LetterUnlock,
@@ -108,7 +108,7 @@ export const dict: Array<Types.Transform> = [
         //visibility: 3000,
         visibility: 1,
         word: "inn",
-        output: "",
+        output: "f",
         shortDesc: "REPI",
         longDesc: "Unlock I repeater",
         effect: repeaterI,
