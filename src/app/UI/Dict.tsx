@@ -7,12 +7,12 @@ const wordOrLetter = (item: Transform) => {
     return (item.word? item.word : (<span className={styles.letter}>{item.letter}</span>));
 }
 
-const LongItem = ({ item, unlocked }: { item: Transform, unlocked: boolean }) => {
+const LongItem = ({ item, isUnlocked }: { item: Transform, isUnlocked: boolean }) => {
     const content = item.longDesc ? item.longDesc : item.output;
     const contentStyle = item.longDesc ? styles.LIdesc : styles.itemScore;
 
     return (
-        <div className={unlocked ? styles.unlocked : styles.locked}>
+        <div className={isUnlocked ? styles.unlocked : styles.locked}>
             <span> {/* todo : use divs instead to control the vertical alignment */}
                 {item.n && <span className={styles.qty}>{item.n}</span>}
                 <span className={styles.LIword}>{wordOrLetter(item)}</span>
@@ -23,12 +23,12 @@ const LongItem = ({ item, unlocked }: { item: Transform, unlocked: boolean }) =>
     )
 };
 
-const ShortItem = ({ item, unlocked }: { item: Transform, unlocked: boolean}) => {
+const ShortItem = ({ item, isUnlocked }: { item: Transform, isUnlocked: boolean}) => {
     const content = item.output ? item.output : item.shortDesc ;
     const contentStyle = item.shortDesc ? styles.SIdesc : styles.itemScore;
 
     return (
-        <div className={unlocked ? styles.unlocked : styles.locked}>
+        <div className={isUnlocked ? styles.unlocked : styles.locked}>
 
             <div className={styles.shortItem}>
                 {item.n && <span className={styles.qty}>{item.n}</span>}
@@ -48,9 +48,8 @@ interface Props {
 };
 
 const Dict = ({ dict, unlockedDict, lastTransform }: Props) => {
-    const longItems: Array<Transform> = dict.slice(0, UIData.dictLongForm);
-    const shortItems: Array<Transform> = dict.slice(UIData.dictLongForm);
-
+    const longItems: Array<Transform> = dict.slice(0, UIData.dictLongItems);
+    const shortItems: Array<Transform> = dict.slice(UIData.dictLongItems);
     const maxShortItems = UIData.dictColumns * UIData.dictRows;
 
     return (
@@ -59,14 +58,16 @@ const Dict = ({ dict, unlockedDict, lastTransform }: Props) => {
                 <>
                     <div className={styles.longArea}>
                         <div className={styles.longAreaMain}>
-                            {longItems.map((item: Transform, index: number) => <LongItem key={index} item={item} unlocked={unlockedDict.has(item.id)} />)}
+                            {longItems.map((item: Transform, index: number) => 
+                                <LongItem key={index} item={item} isUnlocked={unlockedDict.has(item.id)} />)}
                         </div>
                         <div className={styles.lastTransform}>
-                            {(lastTransform.word || lastTransform.letter) && <ShortItem item={lastTransform} unlocked={unlockedDict.has(lastTransform.id)} />}
+                            {(lastTransform.word || lastTransform.letter) && <ShortItem item={lastTransform} isUnlocked={unlockedDict.has(lastTransform.id)} />}
                         </div>
                     </div>
                     <div className={styles.shortArea}>
-                        {shortItems.slice(0, maxShortItems).map((item: Transform) => <ShortItem key={item.word || item.letter} item={item} unlocked={unlockedDict.has(item.id)} />)}
+                        {shortItems.slice(0, maxShortItems).map((item: Transform) =>
+                             <ShortItem key={item.word || item.letter} item={item} isUnlocked={unlockedDict.has(item.id)} />)}
                     </div>
                 </>}
         </div>

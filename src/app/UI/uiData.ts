@@ -8,7 +8,7 @@ export const uiData = {
     highlightDuration: 20,
     logSize: 5,
     maxKeyboardRowSize: 6,
-    dictLongForm: 3,
+    dictLongItems: 3,
     dictRows: 3,
     dictColumns: 3,
     letterRepeatThreshold: 5,

@@ -28,15 +28,15 @@ const prioOpacity = (prio: number) => {
     }
 }
 
-const streamToText = (input: [Array<Letter>, string], index: number, wordIndex?: number) => {
-    const letters:Array<Letter> = input[0];
-    const word:string = input[1];
+const wordToElement = (input: [Array<Letter>, string], index: number, wordIndex?: number) => {
+    const word:Array<Letter> = input[0];
+    const wordS:string = input[1];
     const style = index==0 ? styles.currentWord :(wordIndex ? prioStyle(wordIndex) : styles.prioDefault);
     return (
         <span className={styles.streamWord} key={index}>
             <span className={style} style={prioOpacity(index)}>
                 <span className={styles.smallSpace}> &nbsp; </span>
-                {letters.map((l: Letter, index: number) =>
+                {word.map((l: Letter, index: number) =>
                     (l.n > 5) ?
                         <span key={index}>
                             { l.text}
@@ -46,8 +46,8 @@ const streamToText = (input: [Array<Letter>, string], index: number, wordIndex?:
                             {l.text.repeat(l.n)}
                         </span>
                 )}
-                {word &&
-                    <span className={styles.realWord}>[{word}]</span>}
+                {wordS &&
+                    <span className={styles.realWord}>[{wordS}]</span>}
                 <span className={styles.smallSpace}> &nbsp; </span>
             </span>
         </span>);}
@@ -67,15 +67,13 @@ const Stream = ({stream, dict}: Props) => {
         separatedStream.push([stream.slice(i, k), streamWords[p]]);
         i = k;
     }
-    const l:number = separatedStream.length;
 
     let colorIndex = 1;
-    
     return (
         <div className={styles.streamComponent}>
                 {separatedStream.reverse()
                                 .map((input: [Array<Letter>, string], i:number) => 
-                                    streamToText(input, i, input[1].length > 1 ? colorIndex++ : undefined))
+                                    wordToElement(input, i, input[1].length > 1 ? colorIndex++ : undefined))
                                 .reverse()}
         </div>
     )
