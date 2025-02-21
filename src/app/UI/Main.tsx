@@ -150,11 +150,16 @@ const GameMain = () => {
                       unlockedDict={unlockedDict}
                       lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
             </div>
-            <div className={styles.gameMiddle}>
-                <StreamComponent stream={GS.stream} lastDestroyedWord={GS.destroyed} destroyedLocation={GS.destroyedLocation} 
-                                 dict={GS.dict.filter((transform:Transform) => unlockedDict.has(transform.id))} />
-                <Keyboard keyStatus={keyStatus} />
+            <div className={GS.glyphs > 1 ? styles.gameMiddleBorder : undefined}>
+                <div className={styles.gameMiddle}>
+                    {GS.glyphs > 1 &&
+                        <StreamComponent stream={GS.stream} lastDestroyedWord={GS.destroyed} destroyedLocation={GS.destroyedLocation}
+                            dict={GS.dict.filter((transform: Transform) => unlockedDict.has(transform.id))} />
+                    }
+                    <Keyboard keyStatus={keyStatus} />
+                </div>
             </div>
+            {GS.glyphs >= 5 &&
             <div className={styles.gameFooter}>
                 <Footer items={[
                     <Log key={0} log={GS.log} />,
@@ -169,7 +174,7 @@ const GameMain = () => {
                             ""} />,
                     <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
                 ]} />
-            </div>
+            </div>}
         </div>
     );
 }

@@ -15,6 +15,9 @@ button.reset {
     text-align: center;
     justify-content: space-around;
     min-height: 30vh;
+}
+
+.gameMiddleBorder {
     border-style: solid;
     border-width: 1px;
     border-color: #333333;
