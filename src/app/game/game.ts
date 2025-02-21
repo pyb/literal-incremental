@@ -252,6 +252,7 @@ const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate] 
         }
       });
       gs.stream = StreamOp.addLetter(key, gs.stream);
+      gs.destroyed = undefined;
     })];
 }
 
@@ -272,7 +273,8 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
     ((gs:GameState) => {
       //gs.stream = Stream.addLetter(key, gs.stream);
       gs.lastTransform = transform;
-      gs.stream = StreamOp.applyLetterTransform(transform, stream, transformLocation.location)
+      gs.stream = StreamOp.applyLetterTransform(transform, stream, transformLocation.location);
+      gs.destroyed = undefined;
     })];
 }
 

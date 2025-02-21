@@ -28,6 +28,8 @@ const prioOpacity = (prio: number) => {
 }
 
 const wordToElement = (input: [Array<Letter>, string, boolean], idx: number, wordIndex?: number) => {
+    if( idx == 1)
+        console.log(input[0].length)
     const word: Array<Letter> = input[0];
     const wordS: string = input[1];
     const destroyed: boolean = input[2];
@@ -68,21 +70,19 @@ const Stream = ({stream, dict, lastDestroyedWord, destroyedLocation}: Props) => 
     const [streamSplit, streamWords]:[Array<number>, Array<string>] = StreamOps.inputWordSplit(stream, dict);
     let i = 0;
     const separatedStream:Array<[Array<Letter>, string, boolean]> = [];
-    console.log("len  : " + streamSplit.length.toString())
 
     for (let p = 1 ; p < streamSplit.length ; p++) // first number of streamSplit is always 0
     {
         const k:number = streamSplit[p];
         if ( lastDestroyedWord && destroyedLocation  >= i && destroyedLocation < k )
-            separatedStream.push([lastDestroyedWord, "", true]);
+        {
+            //console.log(lastDestroyedWord)
+            //separatedStream.push([lastDestroyedWord, "", true]);
+        }
+          
         separatedStream.push([stream.slice(i, k), streamWords[p], false]);
-        
         i = k;
     }
-    separatedStream.push([stream.slice(i), "", false]);
-    console.log("foo")
-    console.log(separatedStream.length)
-//    console.log(stream)
 
     let colorIndex = 1;
     return (
