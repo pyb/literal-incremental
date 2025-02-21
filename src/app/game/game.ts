@@ -281,13 +281,11 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
 const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:string=""):
    [Effect | undefined, GameStateUpdate] => {
   let transforms:Array<TransformLocation> = StreamOp.scanForWords(stream, dict);
-
   if (trigger.length > 0)
   {
     transforms = transforms.filter((tl:TransformLocation) => findTransform(tl.id, dict)?.output == trigger);
   }
   const transformLocation = transforms[0];
-  
   if (!transformLocation)
     throw new Error('Bug: transform not found');
 
@@ -298,7 +296,7 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   return [transform.effect,
     ((gs:GameState) => {
     gs.lastTransform = transform;
-    const wordTransformResult:StreamOp.WordTransformResult = StreamOp.applyWordTransform(transform, stream, transformLocation.location);
+    const wordTransformResult:StreamOp.WordTransformResult = StreamOp.applyWordTransform(transform, stream);
     gs.stream = wordTransformResult.result;
     gs.destroyed = wordTransformResult.destroyed;
     gs.destroyedLocation = wordTransformResult.destroyedLocation || 0;

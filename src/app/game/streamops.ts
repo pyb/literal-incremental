@@ -276,7 +276,9 @@ const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
     return result.filter((letter:Letter) => (letter.n != 0));
 }
 
-export const scanForWords2 = (input: Array<Letter>, dict: Array<Transform>) => {
+// 2) For each word in the transforms, look for its last occurence in the input
+// Rewritten to account for for anagrams, and letter multiplicities ; eg the stream N(2)I should match the transform INN->...
+export const scanForWords = (input: Array<Letter>, dict: Array<Transform>) => {
     const revInput:Array<Letter> = input.toReversed();
     let result:Array<TransformLocation> = [];
 
@@ -290,55 +292,6 @@ export const scanForWords2 = (input: Array<Letter>, dict: Array<Transform>) => {
     })
 
     return result.sort(sortTransforms);
-}
-
-// 2) For each word in the transforms, look for its last occurence in the input
-// Rewritten to account for for anagrams, and letter multiplicities ; eg the stream N(2)I should match the transform INN->...
-export const scanForWords = (input: Array<Letter>, dict: Array<Transform>, maxLength: number = NaN):
-        Array<TransformLocation> => {
-    const revInput:Array<Letter> = input.toReversed();
-    let result:Array<TransformLocation> = [];
-
-    // Note : this wd be a bug if a word transform existed that had only one repeated letter (eg AA -> ...)
-    const wordTransforms:Array<Transform> = dict.filter((transform) =>
-        (transform.word &&
-        (isNaN(maxLength) || (transform.word.length < maxLength))));
-
-    wordTransforms.forEach((transform: Transform) => {
-        let pos: number = NaN;
-        const word:string = transform.word as string;
-        const sortedWord:Array<Letter> = compressSortedStream(convertStringToWord(word)
-                                                                .toSorted(sortWord));
-        const compressedLength:number = sortedWord.length;
-        const developedLength:number = word.length;
-
-        for (let i = 0; i < input.length - compressedLength; i++) {
-            for (let l = compressedLength; l <= developedLength; l++) {
-                const subStream: Array<Letter> = compressSortedStream(revInput.slice(i, i + l).toSorted(sortWord));
-                if (compressedLength != subStream.length) // is this a problem for some words? eg "riffraff" 
-                    break;
-                let match: boolean = true;
-                for (let k = 0; k < compressedLength; k++) {
-                    if (sortedWord[k].text != subStream[k].text ||
-                        sortedWord[k].n > subStream[k].n)
-                    {
-                        match = false;
-                        break;
-                    }
-                }
-                if (match) {
-                    const newPos = (input.length - i) - l;
-                    if (isNaN(pos))
-                        pos = newPos;
-                    else
-                        pos = Math.max(pos, newPos);
-                }
-            }
-        }
-        if (pos)
-            result.push({ id: transform.id, location: pos, word: transform.word as string });
-    });
-    return result.sort(sortTransforms); // the rightmost words come first
 }
 
 /****************************************************************/
@@ -356,7 +309,7 @@ export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): [A
     while (k > 0)
     {
         const restInput:Array<Letter> = input.slice(0, k);
-        const bwSortedWordPositions:Array<TransformLocation> = scanForWords2(restInput, dict);
+        const bwSortedWordPositions:Array<TransformLocation> = scanForWords(restInput, dict);
         
         const lastWord = bwSortedWordPositions[0];
         if (!lastWord)
