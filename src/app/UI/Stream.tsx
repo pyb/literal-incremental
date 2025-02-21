@@ -28,8 +28,6 @@ const prioOpacity = (prio: number) => {
 }
 
 const wordToElement = (input: [Array<Letter>, string, boolean], idx: number, wordIndex?: number) => {
-    if( idx == 1)
-        console.log(input[0].length)
     const word: Array<Letter> = input[0];
     const wordS: string = input[1];
     const destroyed: boolean = input[2];

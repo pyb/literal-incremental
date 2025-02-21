@@ -298,6 +298,9 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   return [transform.effect,
     ((gs:GameState) => {
     gs.lastTransform = transform;
-    [gs.stream, gs.destroyed, gs.destroyedLocation] = StreamOp.applyWordTransform(transform, stream, transformLocation.location)
+    const wordTransformResult:StreamOp.WordTransformResult = StreamOp.applyWordTransform(transform, stream, transformLocation.location);
+    gs.stream = wordTransformResult.result;
+    gs.destroyed = wordTransformResult.destroyed;
+    gs.destroyedLocation = wordTransformResult.destroyedLocation || 0;
   })];
 }

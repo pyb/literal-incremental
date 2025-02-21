@@ -131,8 +131,15 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
 
 */
 
-export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location:number)
-: [Array<Letter>, Word|undefined, number] => {
+export type WordTransformResult = {
+    result: Array<Letter>,
+    destroyed?: Word,
+    destroyedLocation?: number,
+    success: boolean,
+}
+
+export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location:number=0)
+:WordTransformResult => {
     let result:Array<Letter> = structuredClone(stream);
     const word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
     const wordLetters = new Set<string>(word.map((letter:Letter) => letter.text));
@@ -140,6 +147,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     let k:number = stream.length;
     let destroyed:Word|undefined;
     let destroyedLocation:number = 0;
+    let success = false;
 
     while(k > 0)
     {
@@ -156,8 +164,6 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
         
         const section:Array<Letter> = structuredClone(stream.slice(i+1,k));
         const secLength:number = section.length;
-        
-        let success = false;
 
         for (let p = secLength - 1 ; p >= 0 ; p--)
         {
@@ -182,8 +188,14 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
         }
         k = i; 
     }
-    return [cleanupStream(result), destroyed, destroyedLocation];
+    return {
+        result: cleanupStream(result),
+        destroyed: destroyed,
+        destroyedLocation: destroyedLocation,
+        success: success,
+    };
 }
+
 /****************************************************************/
 // Search
 // Bug: I had forgotten that some transform convert words into letters! Are they Letter Transforms?
@@ -264,15 +276,31 @@ const compressSortedStream = (stream: Array<Letter>):Array<Letter> => {
     return result.filter((letter:Letter) => (letter.n != 0));
 }
 
+export const scanForWords2 = (input: Array<Letter>, dict: Array<Transform>) => {
+    const revInput:Array<Letter> = input.toReversed();
+    let result:Array<TransformLocation> = [];
+
+    // Note : this wd be a bug if a word transform existed that had only one repeated letter (eg AA -> ...)
+    const wordTransforms:Array<Transform> = dict.filter(transform =>transform.word);
+        
+    wordTransforms.forEach((transform: Transform) => {
+       const r:WordTransformResult = applyWordTransform(transform, input);
+       if (r.success)
+        result.push({ id: transform.id, location: r.destroyedLocation as number, word: transform.word as string });
+    })
+
+    return result.sort(sortTransforms);
+}
+
 // 2) For each word in the transforms, look for its last occurence in the input
 // Rewritten to account for for anagrams, and letter multiplicities ; eg the stream N(2)I should match the transform INN->...
-export const scanForWords = (input: Array<Letter>, transforms: Array<Transform>, maxLength: number = NaN):
+export const scanForWords = (input: Array<Letter>, dict: Array<Transform>, maxLength: number = NaN):
         Array<TransformLocation> => {
     const revInput:Array<Letter> = input.toReversed();
     let result:Array<TransformLocation> = [];
 
     // Note : this wd be a bug if a word transform existed that had only one repeated letter (eg AA -> ...)
-    const wordTransforms:Array<Transform> = transforms.filter((transform) =>
+    const wordTransforms:Array<Transform> = dict.filter((transform) =>
         (transform.word &&
         (isNaN(maxLength) || (transform.word.length < maxLength))));
 
@@ -328,7 +356,7 @@ export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): [A
     while (k > 0)
     {
         const restInput:Array<Letter> = input.slice(0, k);
-        const bwSortedWordPositions:Array<TransformLocation> = scanForWords(restInput, dict);
+        const bwSortedWordPositions:Array<TransformLocation> = scanForWords2(restInput, dict);
         
         const lastWord = bwSortedWordPositions[0];
         if (!lastWord)
