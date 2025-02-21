@@ -8,6 +8,7 @@
     padding-right: 2vh;
     text-align:right;
     margin: auto;
+    margin-bottom:10%;
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
@@ -16,7 +17,6 @@
 
 .streamContent {
     text-align: end;
-
 }
 
 .superscript {
@@ -27,10 +27,9 @@
 }
 
 .currentWord {
-    color: red;
+    color:red;
     font-size:120%;
 }
-
 .prio1 {
     color: yellow;
 }
@@ -65,4 +64,19 @@
 
 .realWord {
     font-size: 70%;
+}
+
+@keyframes emp {
+    from {
+        vertical-align: super;
+    }
+    to {
+        vertical-align: baseline;
+    }
+}
+
+
+.lastLetter {
+    animation-duration: .15s;
+    animation-name: emp;
 }

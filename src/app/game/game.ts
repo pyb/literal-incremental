@@ -141,7 +141,9 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
     });
   }
   else if (type == EffectType.WordLengthUnlock) {
-    return ((gs:GameState) => { gs.maxWordSize = level});
+    return ((gs:GameState) => {
+      gs.maxWordSize = level;
+    });
   }
   else if (type == EffectType.LetterRepeaterUnlock) {
     return ((gs:GameState) => {
@@ -155,10 +157,14 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
      });
   }
   else if (type == EffectType.ToggleRepeater) {
-    return ((gs:GameState) => { gs.toggleRepeatMode = !gs.toggleRepeatMode });
+    return ((gs:GameState) => {
+      gs.toggleRepeatMode = !gs.toggleRepeatMode;
+    });
   }
   else if (type == EffectType.TransformUnlock) {
-    return ((gs:GameState) => { gs.unlockedTransforms.add(id) });
+    return ((gs:GameState) => {
+      gs.unlockedTransforms.add(id);
+    });
   }
   else
     return null;
@@ -167,8 +173,8 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
 const toggleRepeatEffect:Effect = {type: EffectType.ToggleRepeater};
 
 export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>,
-  visibleTransforms:Set<number>, unlockedTransforms:Set<number>):
-[effect: Effect | undefined, GameStateUpdate] => {
+    visibleTransforms:Set<number>, unlockedTransforms:Set<number>)
+    :[Effect | undefined, GameStateUpdate] => {
  
   const modes:Set<KeyMode> = status.modes;
   const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
