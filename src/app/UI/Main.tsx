@@ -11,7 +11,7 @@ import Keyboard from "UI/Keyboard"
 import StreamComponent from "UI/Stream"
 import * as GameData from "game/gameData"
 import * as Types from "game/gameTypes"
-import {KeyStatus, KeyMode, GameState, GameStateUpdate, Transform} from "game/gameTypes"
+import {KeyStatus, GameState, GameStateUpdate, Transform} from "game/gameTypes"
 import * as Game from "game/game"
 import * as KH from "game/keyboardHandling"
 import RCScout from "UI/RCScout";
@@ -55,7 +55,6 @@ let k:number = 0;
 
 const GameMain = () => {
     const [GS, setGS] = useImmer<GameState>(GameData.initialGameState);
-    const [timeoutIds, setTimeoutIds] = useImmer<Map<string, number>>(new Map<string, number>);
     const [doProcessInterval, setDoProcessInterval] = React.useState<boolean>(false);
     const intervalId = React.useRef<number>(0);
 
@@ -68,10 +67,33 @@ const GameMain = () => {
                                                                    GS.dict,
                                                                    GS.visibleTransforms,
                                                                    GS.unlockedTransforms);
+    const visibleDict: Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
+    const unlockedDict = new Set<number>(Game.unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms)
+                                        .map((transform:Transform)=> transform.id));
 
+    if (GS.keysToTrigger.size > 0)
+    {
+        const activeKeys = new Set<string>();
+        GS.keysToTrigger.forEach((key: string) => {
+            const updates: Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
+            updates.forEach((update) => {
+                if (update) {
+                    activeKeys.add(key);
+                    setGS(update);
+                }
+            });
+        });
+        setGS((gs: GameState) => {
+            gs.keysToTrigger.clear();
+            gs.activeKeys = activeKeys
+        });
+    }
+  
     // executed every tick
     const processInterval = () => {
         save(GS);
+        
+        /*
         const activeKeys = new Set<string>();
         GS.keysToTrigger.forEach((key:string) => {
             const updates:Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
@@ -81,11 +103,14 @@ const GameMain = () => {
             }});
         });
         setGS((gs:GameState) => gs.keysToTrigger.clear());
+        */
         // The below will add keys to keysToTrigger
         const update:GameStateUpdate = KH.handleTick();
         if (update)
             setGS(update);
+        /*
         setGS((gs:GameState) => {gs.activeKeys = activeKeys});
+        */
     }
 
     if (doProcessInterval) {
@@ -111,14 +136,10 @@ const GameMain = () => {
     const resetCallback = () => {
         setGS(GameData.initialGameState);
     }
-
     const speedupCallback = () => {
         setGS((gs:GameState) => {gs.repeatDelayMultiplier = (gs.repeatDelayMultiplier== 1) ? GameData.fastRepeat : 1});
     }
 
-    const visibleDict: Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
-    const unlockedDict = new Set<number>(Game.unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms)
-                                        .map((transform:Transform)=> transform.id));
     return (
         <div className={styles.game}>
             <div className={styles.gameTop}>
