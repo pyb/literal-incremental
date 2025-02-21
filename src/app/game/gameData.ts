@@ -9,7 +9,8 @@ export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 10],
     // This should become visible slightly before the first word transform does ("in"?)
-    [UIData.wordTransformKey, 250],
+    //[UIData.wordTransformKey, 250],
+    [UIData.wordTransformKey, 10],
     [UIData.repeatModeKey, 400],
     ['e', 600],
     ['w', 150]]);
@@ -115,7 +116,7 @@ export const dict: Array<Types.Transform> = [
     {
         id:54,
         visibility: 3000,
-        word: "in",
+        word: "inlll",
         output: tombStone,
         shortDesc: "3LW",
         longDesc: "Unlock three-letter words",
@@ -123,7 +124,8 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:5,
-        visibility: 3000,
+        //visibility: 3000,
+        visibility: 30,
         word: "inn",
         //output: "f",
         output: "",
@@ -194,7 +196,8 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
-const initialUnlockedTransforms:Array<number> = [1];
+//const initialUnlockedTransforms:Array<number> = [1];
+const initialUnlockedTransforms:Array<number> = [1,5];
 
 export const initialGameState:GameState = {
     glyphs: 0,
@@ -214,8 +217,11 @@ export const initialGameState:GameState = {
     visibleTransforms: new Set<number>([]),
     log: log,
     logKey: UIData.logSize,
-    repeatDelayMultiplier: 1,
+    repeatDelayMultiplier: fastRepeat,
+    //repeatDelayMultiplier: 1,
     repeatDelays: new Map<string, number>([["i", initialRepeatDelay]]),
-    maxWordSize: 1,
+    maxWordSize: 3,
     toggleRepeatMode: false,
+    destroyed: undefined,
+    destroyedLocation: 0,
 };

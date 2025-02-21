@@ -245,7 +245,7 @@ const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate] 
         if (transform.visibility && transform.visibility == glyphs)
         {
           if (transform.shortDesc)
-            addLog("Transform available : " + transform.n?.toString() + transform.shortDesc , gs);
+            addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.shortDesc , gs);
           else
             addLog("Transform available.", gs);
           gs.visibleTransforms.add(transform.id);
@@ -296,6 +296,6 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   return [transform.effect,
     ((gs:GameState) => {
     gs.lastTransform = transform;
-    gs.stream = StreamOp.applyWordTransform(transform, stream, transformLocation.location)
+    [gs.stream, gs.destroyed, gs.destroyedLocation] = StreamOp.applyWordTransform(transform, stream, transformLocation.location)
   })];
 }

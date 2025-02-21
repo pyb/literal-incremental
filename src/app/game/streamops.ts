@@ -131,12 +131,16 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
 
 */
 
-export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location:number): Array<Letter> => {
+export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location:number)
+: [Array<Letter>, Word|undefined, number] => {
     let result:Array<Letter> = structuredClone(stream);
     const word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
     const wordLetters = new Set<string>(word.map((letter:Letter) => letter.text));
 
     let k:number = stream.length;
+    let destroyed:Word|undefined;
+    let destroyedLocation:number = 0;
+
     while(k > 0)
     {
         const wordCopy:Array<Letter> = structuredClone(word);
@@ -171,12 +175,14 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
         }
         if (success)
         {
+            destroyed = result.slice(i+1, secLength);
+            destroyedLocation = i+1;
             result.splice(i+1, secLength, ...section);
             break;
         }
         k = i; 
     }
-    return cleanupStream(result);
+    return [cleanupStream(result), destroyed, destroyedLocation];
 }
 /****************************************************************/
 // Search
@@ -335,6 +341,7 @@ export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): [A
         }
         else {
             for (let i = k ; i > (lastWord.location + lastWord.word.length); i--) {
+                
                 resultPositions.push(i - 1); // single letters
                 resultWords.push("");
             }

@@ -151,7 +151,8 @@ const GameMain = () => {
                       lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
             </div>
             <div className={styles.gameMiddle}>
-                <StreamComponent stream={GS.stream} dict={GS.dict.filter((transform:Transform) => unlockedDict.has(transform.id))} />
+                <StreamComponent stream={GS.stream} lastDestroyedWord={GS.destroyed} destroyedLocation={GS.destroyedLocation} 
+                                 dict={GS.dict.filter((transform:Transform) => unlockedDict.has(transform.id))} />
                 <Keyboard keyStatus={keyStatus} />
             </div>
             <div className={styles.gameFooter}>

@@ -1,5 +1,5 @@
 import React from "react";
-import {Letter, Transform} from "game/gameTypes"
+import {Letter, Transform, Word} from "game/gameTypes"
 import styles from "css/stream.module.css";
 import * as StreamOps from "game/streamops";
 
@@ -21,29 +21,31 @@ const prioStyle = (prio: number) => {
 
 const prioOpacity = (prio: number) => {
     if (prio < 6)
-        return {}
+        return {};
     else return {
-        //opacity: 3/Math.sqrt(prio)
         opacity: 6/(prio)
-    }
+    };
 }
 
-const wordToElement = (input: [Array<Letter>, string], idx: number, wordIndex?: number) => {
-    const word:Array<Letter> = input[0];
-    const wordS:string = input[1];
-    const style = (idx == 0) ? styles.currentWord :(wordIndex ? prioStyle(wordIndex) : styles.prioDefault);
+const wordToElement = (input: [Array<Letter>, string, boolean], idx: number, wordIndex?: number) => {
+    const word: Array<Letter> = input[0];
+    const wordS: string = input[1];
+    const destroyed: boolean = input[2];
+    const style = destroyed ? styles.deadWord :
+                ( (idx == 0) ? styles.currentWord : 
+                ( wordIndex ? prioStyle(wordIndex) : styles.prioDefault) );
     return (
         <span className={styles.streamWord} key={idx}>
             <span className={style} style={prioOpacity(idx)}>
                 <span className={styles.smallSpace}> &nbsp; </span>
                 {word.map((l: Letter, i: number) =>
                     (l.n > 5) ?
-                        <span key={l.n}>
-                            { l.text}
+                        <span key={i}>
+                            {l.text}
                             <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span>
                         </span> :
-                        <span key={l.n}>
-                            {l.text.repeat(l.n-1)}
+                        <span key={i}>
+                            {l.text.repeat(l.n - 1)}
                             <span className={styles.lastLetter}>{l.text}</span>
                         </span>
                 )}
@@ -51,29 +53,42 @@ const wordToElement = (input: [Array<Letter>, string], idx: number, wordIndex?: 
                     <span className={styles.realWord}>[{wordS}]</span>}
                 <span className={styles.smallSpace}> &nbsp; </span>
             </span>
-        </span>);}
+        </span>
+    );
+}
 
 interface Props {
     stream: Array<Letter>,
     dict: Array<Transform>,
+    lastDestroyedWord:Word|undefined,
+    destroyedLocation: number,
 };
 
-const Stream = ({stream, dict}: Props) => {
+const Stream = ({stream, dict, lastDestroyedWord, destroyedLocation}: Props) => {
     const [streamSplit, streamWords]:[Array<number>, Array<string>] = StreamOps.inputWordSplit(stream, dict);
     let i = 0;
-    const separatedStream:Array<[Array<Letter>, string]> = [];
+    const separatedStream:Array<[Array<Letter>, string, boolean]> = [];
+    console.log("len  : " + streamSplit.length.toString())
+
     for (let p = 1 ; p < streamSplit.length ; p++) // first number of streamSplit is always 0
     {
         const k:number = streamSplit[p];
-        separatedStream.push([stream.slice(i, k), streamWords[p]]);
+        if ( lastDestroyedWord && destroyedLocation  >= i && destroyedLocation < k )
+            separatedStream.push([lastDestroyedWord, "", true]);
+        separatedStream.push([stream.slice(i, k), streamWords[p], false]);
+        
         i = k;
     }
+    separatedStream.push([stream.slice(i), "", false]);
+    console.log("foo")
+    console.log(separatedStream.length)
+//    console.log(stream)
 
     let colorIndex = 1;
     return (
         <div className={styles.streamComponent}>
                 {separatedStream.reverse()
-                                .map((input: [Array<Letter>, string], i:number) => 
+                                .map((input: [Array<Letter>, string, boolean], i:number) => 
                                     wordToElement(input,
                                                   i,
                                                   input[1].length > 1 ? colorIndex++ : undefined))

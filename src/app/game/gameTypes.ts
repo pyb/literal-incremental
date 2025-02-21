@@ -109,6 +109,9 @@ export type GameState = {
 
     repeatDelays: Map<string, number>,
     repeatDelayMultiplier: number,
+
+    destroyed: Word|undefined,
+    destroyedLocation: number,
 }
 
 export type UIState = {

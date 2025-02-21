@@ -75,8 +75,25 @@
     }
 }
 
-
 .lastLetter {
     animation-duration: .15s;
     animation-name: emp;
 }
+
+@keyframes shrink {
+    from {
+        visibility: visible;
+    }
+    to {
+        visibility: hidden;
+        letter-spacing:-.4em;
+    }
+}
+
+.deadWord {
+    color: rgb(85, 29, 29);
+    animation-name: shrink;
+    animation-duration: .15s;
+    visibility: hidden;
+}
+
