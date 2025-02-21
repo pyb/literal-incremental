@@ -1,12 +1,11 @@
-import {KeyStatus, KeyMode, GameState, Transform, TransformLocation, Letter, Effect, EffectType, GameStateUpdate} from "game/gameTypes"
-import * as Types from "game/gameTypes"
+import {KeyStatus, KeyMode, Word, GameState, Transform, LogItem, TransformLocation, Letter, Effect, EffectType, GameStateUpdate} from "game/gameTypes"
 import * as StreamOp from "game/streamops"
 import {specialKeys, keyVisibility, initialRepeatDelay} from "game/gameData"
 import UIData from "UI/uiData"
 
 const addLog = (message: string, gs: GameState) => {
     gs.log.splice(0, 1) // remove first
-    const logItem: Types.LogItem = {
+    const logItem: LogItem = {
       text: message,
       key: gs.logKey
     }
@@ -19,18 +18,21 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
   modes: new Set<KeyMode>
 });
 
-// Note: This is a "View" ie an alternative way or presenting game state data
-export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<string>, activeKeys:Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
-                                 stream: Array<Letter>, dict: Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms: Set<number>):
-    Map<string, KeyStatus> => {
-  const result = new Map<string, KeyStatus>([]);
-  const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
+/****************************************/
+// Views
 
-  const letterTransforms:Map<string, TransformLocation> = StreamOp.scanForLetters(stream, dict);
-  const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(stream, dict);
+// Note: This is a "View" ie an alternative way or presenting game state data
+//export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<string>, activeKeys:Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
+//                                 stream: Array<Letter>, dict: Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms: Set<number>)
+  export const computeKeyStatus = (GS:GameState) :Map<string, KeyStatus> => {
+  const result = new Map<string, KeyStatus>([]);
+  const availableDict: Array<Transform> = unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
+
+  const letterTransforms:Map<string, TransformLocation> = StreamOp.scanForLetters(GS.stream, GS.dict);
+  const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(GS.stream, GS.dict);
   const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
 
-  [...visibleKeys, ...unlockedKeys].forEach((key:string) =>
+  [...GS.visibleKeys, ...GS.unlockedKeys].forEach((key:string) =>
     result.set(key, createEmptyKeyStatus(key)));
 
   wordTransforms.forEach((transformLocation: TransformLocation) => {
@@ -48,16 +50,16 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<stri
     }
   });
 
-  visibleKeys.forEach((key:string) => {
+  GS.visibleKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Visible);
     if (!specialKeys.has(key))
       result.get(key)?.modes.add(KeyMode.Letter);
   });
 
-  unlockedKeys.forEach((key:string) => {
+  GS.unlockedKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Unlocked);
     result.get(key)?.modes.add(KeyMode.Available);
-    if (repeatToggleMode && repeatableKeys.has(key))
+    if (GS.toggleRepeatMode && GS.repeatableKeys.has(key))
       result.get(key)?.modes.add(KeyMode.RepeatToggleAvailable);
   });
 
@@ -66,7 +68,7 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<stri
     result.get(key)?.modes.add(KeyMode.Available);
   });
 
-  activeKeys.forEach((key:string) => {
+  GS.activeKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Active);
   });
 
@@ -75,13 +77,17 @@ export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<stri
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Visible);
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.RepeatModeKey);
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Modifier);
-  if (repeatToggleMode)
+  if (GS.toggleRepeatMode)
     result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Active);
-  if (repeatableKeys.size > 0)
+  if (GS.repeatableKeys.size > 0)
     result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Available);
 
   return result;
 }
+
+export const unlockedDict = (dict: Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms:Set<number>)
+    :Array<Transform> => 
+  dict.filter((transform:Transform) => (unlockedTransforms.has(transform.id) && visibleTransforms.has(transform.id)));
 
 /*********************************/
 
@@ -120,10 +126,13 @@ const toggleKeyRepeat = ((key: string): [effect: Effect | undefined, GameStateUp
   -...?
 */
 
-export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Transform>):
-((gs:GameState) => void) | null => {
-  if (effect.type == EffectType.LetterUnlock) {
-    const letter:string = effect.letter as string;
+export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Transform>):GameStateUpdate => {
+  const type:EffectType = effect.type;
+  const letter:string = effect.letter as string; // this is sometimes undefined, but always defined when we need it below
+  const level:number = effect.level as number; // ditto
+  const id:number = effect.transform as number; // ...
+
+  if (type == EffectType.LetterUnlock) {
     return ((gs:GameState) => {
       gs.unlockedKeys.add(letter);
       gs.visibleKeys.add(letter);
@@ -131,32 +140,28 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
         gs.repeatDelays.set(letter, initialRepeatDelay);
     });
   }
-  else if (effect.type == EffectType.WordLengthUnlock) {
-    const level:number = effect.level as number;
+  else if (type == EffectType.WordLengthUnlock) {
     return ((gs:GameState) => { gs.maxWordSize = level});
   }
-  else if (effect.type == EffectType.LetterRepeaterUnlock) {
-    const letter:string = effect.letter as string;
+  else if (type == EffectType.LetterRepeaterUnlock) {
     return ((gs:GameState) => {
       gs.repeatableKeys.add(letter);
      });
   }
-  else if (effect.type == EffectType.UpgradeRepeater) {
-    const letter:string = effect.letter as string;
+  else if (type == EffectType.UpgradeRepeater) {
     return ((gs:GameState) => {
       const currentDelay:number = gs.repeatDelays.get(letter) || initialRepeatDelay; // should always be defined, but...
-      const factor:number = effect.level as number;
-        gs.repeatDelays.set(letter, currentDelay / factor);
+      gs.repeatDelays.set(letter, currentDelay / level);
      });
   }
-  else if (effect.type == EffectType.ToggleRepeater) {
+  else if (type == EffectType.ToggleRepeater) {
     return ((gs:GameState) => { gs.toggleRepeatMode = !gs.toggleRepeatMode });
   }
-  else if (effect.type == EffectType.TransformUnlock) {
-    const id:number = effect.transform as number;
+  else if (type == EffectType.TransformUnlock) {
     return ((gs:GameState) => { gs.unlockedTransforms.add(id) });
   }
-  return null;
+  else
+    return null;
 }
 
 const toggleRepeatEffect:Effect = {type: EffectType.ToggleRepeater};
@@ -185,7 +190,7 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
   else if (modes.has(KeyMode.Unlocked) && modes.has(KeyMode.Letter))
     return directInput(key);
   /*
-  // unused
+  // unused. obsolete?
   else if ( modes.has(KeyMode.Modifier) &&
            ((modes.has(KeyMode.Available) || modes.has(KeyMode.Unlocked))))
     return toggleModifier(key);
@@ -266,7 +271,7 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
 }
 
 const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:string=""):
-   [effect: Effect | undefined, GameStateUpdate] => {
+   [Effect | undefined, GameStateUpdate] => {
   let transforms:Array<TransformLocation> = StreamOp.scanForWords(stream, dict);
 
   if (trigger.length > 0)
@@ -288,6 +293,3 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
     gs.stream = StreamOp.applyWordTransform(transform, stream, transformLocation.location)
   })];
 }
-
-export const unlockedDict = (dict: Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms:Set<number>):Array<Transform> => 
-  dict.filter((transform:Transform) => (unlockedTransforms.has(transform.id) && visibleTransforms.has(transform.id)));

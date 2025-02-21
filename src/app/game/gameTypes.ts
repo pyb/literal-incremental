@@ -3,6 +3,9 @@ export type Letter = {
     n: number, // >= 1
 }
 
+// not in use... the stream is also an Array<Letter> yet I don't want to call it a Word...
+export type Word = Array<Letter>;
+
 // Triggers on n times word or letter. 
 export type Transform = {
     id: number,
@@ -26,8 +29,6 @@ export enum EffectType {
     ToggleRepeater,
     UpgradeRepeater,
     TransformUnlock,
-
-    // ...
 }
 
 export type Effect = {

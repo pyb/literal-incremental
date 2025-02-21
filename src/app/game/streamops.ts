@@ -1,10 +1,12 @@
 // Input stream operations
 
-import {Transform, TransformLocation, Letter} from "game/gameTypes"
+import {Transform, TransformLocation, Letter, Word} from "game/gameTypes"
 import * as Util from "game/util"
 
+/*
 import {Trie} from "game/trie/trie";
 import {TrieNode} from "game/trie/trieNode";
+*/
 
 /* 
   Input Stream Ops: Actions (Substitutions aka Replace) and Scans. (aka Search)
