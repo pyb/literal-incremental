@@ -74,10 +74,8 @@ const Stream = ({stream, dict, lastDestroyedWord, destroyedLocation}: Props) => 
         const k:number = streamSplit[p];
         if ( lastDestroyedWord && destroyedLocation  >= i && destroyedLocation < k )
         {
-            //console.log(lastDestroyedWord)
-            //separatedStream.push([lastDestroyedWord, "", true]);
-        }
-          
+            separatedStream.push([lastDestroyedWord, "", true]);
+        } 
         separatedStream.push([stream.slice(i, k), streamWords[p], false]);
         i = k;
     }
