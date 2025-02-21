@@ -219,7 +219,7 @@ export const initialGameState:GameState = {
     logKey: UIData.logSize,
     repeatDelayMultiplier: fastRepeat,
     //repeatDelayMultiplier: 1,
-    repeatDelays: new Map<string, number>([["i", initialRepeatDelay]]),
+    repeatDelays: new Map<string, number>([["i", initialRepeatDelay], ["n", initialRepeatDelay]]),
     maxWordSize: 3,
     toggleRepeatMode: false,
     destroyed: undefined,
