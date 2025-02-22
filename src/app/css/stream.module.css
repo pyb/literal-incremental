@@ -63,7 +63,7 @@
 }
 
 .realWord {
-    font-size: 70%;
+    font-size: 30%;
 }
 
 @keyframes emp {
@@ -90,10 +90,26 @@
     }
 }
 
-.deadWord {
+.deadWordOld {
     color: rgb(85, 29, 29);
     animation-name: shrink;
     animation-duration: .15s;
     visibility: hidden;
 }
 
+.destroy-exit-done {
+    display: none;
+}
+
+.destroy-exit {
+
+}
+
+.destroy-exit-active {
+    animation-duration: .15s;
+    animation-name: emp;
+}
+
+.tombstone {
+    /* todo */
+}

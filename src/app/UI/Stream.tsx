@@ -2,6 +2,9 @@ import React from "react";
 import {Letter, Transform, Word} from "game/gameTypes"
 import styles from "css/stream.module.css";
 import * as StreamOps from "game/streamops";
+import { CSSTransition } from 'react-transition-group';
+import * as UIData from "UI/uiData";
+import * as GameData from "game/gameData";
 
 const stylesArr = [
     styles.prio1,
@@ -27,35 +30,58 @@ const prioOpacity = (prio: number) => {
     };
 }
 
-const wordToElement = (input: [Array<Letter>, string, boolean, number], idx: number, wordIndex?: number) => {
+interface WordProps {
+    input: [Array<Letter>, string, boolean, number],
+    idx: number,
+    wordIndex: number|undefined,
+} 
+
+const wordStyle = (idx:number, destroyed: boolean, wordIndex:number|undefined, word:string ) => {
+    if (destroyed)
+        return styles.deadWord;
+    else if (idx == 0)
+        return styles.currentWord;
+    else if (word == GameData.tombStone)
+        return styles.tombstone;
+    else if (wordIndex)
+        return prioStyle(wordIndex)
+    else 
+        return styles.prioDefault;
+}
+
+let c = 100000;
+
+const WordComponent = ({input, idx, wordIndex}:WordProps) => {
+    const nodeRef = React.useRef(null);
     const word: Array<Letter> = input[0];
     const wordS: string = input[1];
     const destroyed: boolean = input[2];
     const destroyedIdx: number = input[3];
 
-    const style = destroyed ? styles.deadWord :
-                ( (idx == 0) ? styles.currentWord : 
-                ( wordIndex ? prioStyle(wordIndex) : styles.prioDefault) );
+    const style = wordStyle(idx, destroyed, wordIndex, wordS);
+
     return (
-        <span className={styles.streamWord} key={destroyed? 1000000 + (destroyedIdx as number) : idx}>
-            <span className={style} style={prioOpacity(idx)}>
-                <span className={styles.smallSpace}> &nbsp; </span>
-                {word.map((l: Letter, i: number) =>
-                    (l.n > 5) ?
-                        <span key={i}>
-                            {l.text}
-                            <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span>
-                        </span> :
-                        <span key={i}>
-                            {l.text.repeat(l.n - 1)}
-                            <span className={styles.lastLetter}>{l.text}</span>
-                        </span>
-                )}
-                {wordS &&
-                    <span className={styles.realWord}>[{wordS}]</span>}
-                <span className={styles.smallSpace}> &nbsp; </span>
+        <CSSTransition nodeRef={nodeRef} in={true} timeout={200} classNames="destroy">
+            <span className={styles.streamWord} key={destroyed ? c++ + (destroyedIdx as number) : idx}>
+                <span className={style} style={prioOpacity(idx)}>
+                    {!destroyed && <span className={styles.smallSpace}> &nbsp; </span>}
+                    {word.map((l: Letter, i: number) =>
+                        (l.n > 5) ?
+                            <span key={i}>
+                                {l.text}
+                                <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span>
+                            </span> :
+                            <span key={i}>
+                                {l.text.repeat(l.n - 1)}
+                                <span className={styles.lastLetter}>{l.text}</span>
+                            </span>
+                    )}
+                    {wordS &&
+                        <span className={styles.realWord}>[{wordS}]</span>}
+                    {!destroyed && <span className={styles.smallSpace}> &nbsp; </span>}
+                </span>
             </span>
-        </span>
+        </CSSTransition>
     );
 }
 
@@ -88,9 +114,11 @@ const Stream = ({stream, dict, lastDestroyedWord, destroyedLocation, destroyedWo
         <div className={styles.streamComponent}>
                 {separatedStream.reverse()
                                 .map((input: [Array<Letter>, string, boolean, number], i:number) => 
-                                    wordToElement(input,
-                                                  i,
-                                                  input[1].length > 1 ? colorIndex++ : undefined))
+                                    <WordComponent
+                                          input={input}
+                                          idx={i}
+                                          key={i}
+                                          wordIndex={input[1].length > 1 ? colorIndex++ : undefined} />)
                                 .reverse()}
         </div>
     )

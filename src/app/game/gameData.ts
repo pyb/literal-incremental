@@ -31,7 +31,7 @@ export const gameKeys = new Set<string> ( [...keyVisibility.keys()]);
 const startingVisibleKeys = new Set<string>();
 keyVisibility.forEach((visibility:number, key:string) => { if (visibility == 0) startingVisibleKeys.add(key)});
 
-const tombStone = "x"; // "Tombstone" letter, which will block parts of the stream from joining to form words
+export const tombStone = "x"; // "Tombstone" letter, which will block parts of the stream from joining to form words
 
 const startingUnlockedKeys = ["i", "t"];
 
@@ -109,7 +109,7 @@ export const dict: Array<Types.Transform> = [
         id:4,
         visibility: 300,
         word: "in",
-        output: "",
+        output: tombStone,
         shortDesc: "ULK_E",
         longDesc: "Unlock letter e",
         effect: unlockEffect1,
