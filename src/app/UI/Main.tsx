@@ -145,22 +145,23 @@ const GameMain = () => {
                     <Keyboard large={GS.glyphs == 0} keyStatus={keyStatus} />
                 </div>
             </div>
-            {GS.glyphs >= 6 &&
             <div className={styles.gameFooter}>
-                <Footer items={[
-                    <Log key={0} log={GS.log} />,
-                    <RCScout key={3} />,
-                    <Debug key={4}
-                           speedupCallback={speedupCallback}
-                           glyphs={GS.glyphs}
-                           repeatMultiplier={GS.repeatDelayMultiplier}
-                           last={GS.lastTransform ?
-                            (GS.lastTransform.output ? GS.lastTransform.output 
-                                                     : (GS.lastTransform.letter || GS.lastTransform.word) as string) :
-                            ""} />,
-                    <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
-                ]} />
-            </div>}
+                <div className={GS.glyphs < 6 ? styles.hidden : undefined}>
+                    <Footer items={[
+                        <Log key={0} log={GS.log} />,
+                        <RCScout key={3} />,
+                        <Debug key={4}
+                            speedupCallback={speedupCallback}
+                            glyphs={GS.glyphs}
+                            repeatMultiplier={GS.repeatDelayMultiplier}
+                            last={GS.lastTransform ?
+                                (GS.lastTransform.output ? GS.lastTransform.output
+                                    : (GS.lastTransform.letter || GS.lastTransform.word) as string) :
+                                ""} />,
+                        <button key={1} className={styles.reset} onClick={resetCallback}>Reset</button>,
+                    ]} />
+                </div>
+            </div>
         </div>
     );
 }

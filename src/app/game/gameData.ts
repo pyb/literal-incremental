@@ -7,7 +7,7 @@ import {allAnagrams} from "game/util"
 
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
-    ['t', 1], //testing
+//    ['x', 1], //testing
     ['n', 10],
     // This should become visible slightly before the first word transform does ("in"?)
     [UIData.wordTransformKey, 250],
@@ -27,13 +27,14 @@ export const keyVisibility = new Map<string, number>([
 
 export const gameKeys = new Set<string> ( [...keyVisibility.keys()]);
 
-//const startingVisibleKeys = ["i", "n", "w", "e", UIData.wordTransformKey];
+//const startingVisibleKeys = ["i", "n", "w", "e", tombStone, UIData.wordTransformKey];
 const startingVisibleKeys = new Set<string>();
 keyVisibility.forEach((visibility:number, key:string) => { if (visibility == 0) startingVisibleKeys.add(key)});
 
 export const tombStone = "x"; // "Tombstone" letter, which will block parts of the stream from joining to form words
 
-const startingUnlockedKeys = ["i", "t"];
+//const startingUnlockedKeys = ["i", tombStone];
+const startingUnlockedKeys = ["i"];
 
 const unlockEffect1:Effect = {
     type: EffectType.LetterUnlock,

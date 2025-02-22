@@ -54,22 +54,21 @@ const Dict = ({ dict, unlockedDict, lastTransform }: Props) => {
 
     return (
         <div className={styles.dictComponent}>
-            {dict.length > 0 &&
-                <>
-                    <div className={styles.longArea}>
-                        <div className={styles.longAreaMain}>
-                            {longItems.map((item: Transform, index: number) => 
-                                <LongItem key={index} item={item} isUnlocked={unlockedDict.has(item.id)} />)}
-                        </div>
-                        <div className={styles.lastTransform}>
-                            {(lastTransform.word || lastTransform.letter) && <ShortItem item={lastTransform} isUnlocked={unlockedDict.has(lastTransform.id)} />}
-                        </div>
+            <div className={dict.length == 0 ? styles.hidden : undefined}>
+                <div className={styles.longArea}>
+                    <div className={styles.longAreaMain}>
+                        {longItems.map((item: Transform, index: number) =>
+                            <LongItem key={index} item={item} isUnlocked={unlockedDict.has(item.id)} />)}
                     </div>
-                    <div className={styles.shortArea}>
-                        {shortItems.slice(0, maxShortItems).map((item: Transform) =>
-                             <ShortItem key={item.word || item.letter} item={item} isUnlocked={unlockedDict.has(item.id)} />)}
+                    <div className={styles.lastTransform}>
+                        {(lastTransform.word || lastTransform.letter) && <ShortItem item={lastTransform} isUnlocked={unlockedDict.has(lastTransform.id)} />}
                     </div>
-                </>}
+                </div>
+                <div className={styles.shortArea}>
+                    {shortItems.slice(0, maxShortItems).map((item: Transform) =>
+                        <ShortItem key={item.word || item.letter} item={item} isUnlocked={unlockedDict.has(item.id)} />)}
+                </div>
+            </div>
         </div>
     );
 };

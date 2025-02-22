@@ -56,3 +56,7 @@ button.reset {
 .debug {
     font-size: 80%;
 }
+
+.hidden {
+    visibility: hidden;
+}
