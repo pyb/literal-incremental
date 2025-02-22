@@ -12,8 +12,8 @@ export const keyVisibility = new Map<string, number>([
     // This should become visible slightly before the first word transform does ("in"?)
     [UIData.wordTransformKey, 250],
     //[UIData.wordTransformKey, 10],
-    [UIData.repeatModeKey, 400],
-    ['e', 600],
+    [UIData.repeatModeKey, 1000],
+    ['e', 1000],
     ['w', 500]]);
 /*
 export const keyVisibility = new Map<string, number>([
@@ -99,7 +99,7 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:3,
-        visibility: 1000,
+        visibility: 1000000,
         word: "ne",
         output: "",
         shortDesc: "ULK_T1",
@@ -111,20 +111,21 @@ export const dict: Array<Types.Transform> = [
         id:4,
         visibility: 300,
         word: "in",
-        output: tombStone,
-        shortDesc: "ULK_E",
-        longDesc: "Unlock letter e",
-        effect: unlockEffect1,
+        shortDesc: "3LW",
+        output: tombStone.repeat(3),
+        longDesc: "Unlock three-letter words",
+        effect: unlockThreeLetter,
         transformKeyActivates: true, // and not just x
     },
     {
         id:54,
-        visibility: 3000,
+        visibility: 300000,
         word: "inlll",
         output: tombStone,
-        shortDesc: "3LW",
-        longDesc: "Unlock three-letter words",
-        effect: unlockThreeLetter,
+        shortDesc: "ULK_E",
+        longDesc: "Unlock letter e",
+        effect: unlockEffect1,
+   
     },
     {
         id:5,
@@ -148,13 +149,13 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:16,
-        visibility: 1000,
+        visibility: 100000,
         word: "neg",
         output: "w",
     },
     {
         id:7,
-        visibility: 1000,
+        visibility: 100000,
         word: "ninini",
         output: "",
         shortDesc: "ULWIN",
@@ -164,7 +165,7 @@ export const dict: Array<Types.Transform> = [
     {
         id:8,
         word: "nininin",
-        visibility: 1000,
+        visibility: 100000,
         output: "",
         shortDesc: "REPI+",
         longDesc: "Improve repeat delay I",
@@ -221,8 +222,8 @@ export const initialGameState:GameState = {
     visibleTransforms: new Set<number>([]),
     log: log,
     logKey: UIData.logSize,
-    //repeatDelayMultiplier: fastRepeat,
-    repeatDelayMultiplier: 1,
+    repeatDelayMultiplier: fastRepeat,
+    //repeatDelayMultiplier: 1,
     repeatDelays: new Map<string, number>([["i", initialRepeatDelay], ["n", initialRepeatDelay]]),
     maxWordSize: 3,
     toggleRepeatMode: false,

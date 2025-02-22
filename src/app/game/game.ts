@@ -1,8 +1,7 @@
-import {KeyStatus, KeyMode, Word, GameState, Transform, LogItem, TransformLocation, Letter, Effect, EffectType, GameStateUpdate} from "game/gameTypes"
+import {KeyStatus, KeyMode, GameState, Transform, LogItem, TransformLocation, Letter, Effect, EffectType, GameStateUpdate} from "game/gameTypes"
 import * as StreamOp from "game/streamops"
 import {specialKeys, keyVisibility, initialRepeatDelay} from "game/gameData"
 import UIData from "UI/uiData"
-import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
 
 const addLog = (message: string, gs: GameState) => {
     gs.log.splice(0, 1) // remove first
@@ -23,12 +22,10 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
 // Views
 
 // Note: This is a "View" ie an alternative way or presenting game state data
-//export const computeKeyStatus = (visibleKeys:Set<string>, unlockedKeys: Set<string>, activeKeys:Set<string>, repeatableKeys:Set<string>, repeatToggleMode: boolean,
-//                                 stream: Array<Letter>, dict: Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms: Set<number>)
-  export const computeKeyStatus = (GS:GameState) :Map<string, KeyStatus> => {
+export const computeKeyStatus = (GS:GameState) :Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
-  const availableDict: Array<Transform> = unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
 
+  const availableDict: Array<Transform> = unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
   const letterTransforms:Map<string, TransformLocation> = StreamOp.scanForLetters(GS.stream, availableDict);
   const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(GS.stream, availableDict);
   const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
@@ -37,7 +34,7 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
     result.set(key, createEmptyKeyStatus(key)));
 
   wordTransforms.forEach((transformLocation: TransformLocation) => {
-    const transform =  availableDict.find((t)=> t.id == transformLocation.id);
+    const transform = availableDict.find((t)=> t.id == transformLocation.id);
     if (transform)
     {
       const key = transform.output;
@@ -178,11 +175,10 @@ const toggleRepeatEffect:Effect = {type: EffectType.ToggleRepeater};
 export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>,
     visibleTransforms:Set<number>, unlockedTransforms:Set<number>)
     :[Effect | undefined, GameStateUpdate] => {
- 
+
   const modes:Set<KeyMode> = status.modes;
   const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
   
-  console.log(modes)
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.RepeatModeKey) && modes.has(KeyMode.Available))
   {
@@ -310,10 +306,11 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   if (!transform)
     throw new Error('Bug: transform id not found');
 
+  const wordTransformResult:StreamOp.WordTransformResult = StreamOp.applyWordTransform(transform, stream);
+  console.log(wordTransformResult)
   return [transform.effect,
     ((gs:GameState) => {
     gs.lastTransform = transform;
-    const wordTransformResult:StreamOp.WordTransformResult = StreamOp.applyWordTransform(transform, stream);
     gs.stream = wordTransformResult.result;
     gs.destroyed = wordTransformResult.destroyed;
     gs.destroyedLocation = wordTransformResult.destroyedLocation || 0;

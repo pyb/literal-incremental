@@ -78,7 +78,7 @@ const WordComponent = ({input, idx, wordIndex}:WordProps) => {
                     )}
                     {wordS &&
                         <span className={styles.realWord}>[{wordS}]</span>}
-                    {!destroyed && <span className={styles.smallSpace}> &nbsp; </span>}
+                    {/*!destroyed && <span className={styles.smallSpace}> &nbsp; </span>*/}
                 </span>
             </span>
         </CSSTransition>

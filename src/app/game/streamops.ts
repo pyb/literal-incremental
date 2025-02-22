@@ -50,7 +50,9 @@ const convertWordToString = (w:Array<Letter>):string => {
 
 // due to bugs/oversights in streamops we sometimes produce empty items or duplicated letters. Fix this: 
 export const cleanupStream = (stream:Array<Letter>):Array<Letter> => {
-    const filtered:Array<Letter> = [...stream].filter((l:Letter) => (l.n > 0 && l.text));
+    const filtered:Array<Letter> = [...stream].filter(
+        (l:Letter) => (l.n > 0 && l.text));
+    
     let i = 0;
     while (true) {
         const cur = filtered[i];
@@ -60,10 +62,8 @@ export const cleanupStream = (stream:Array<Letter>):Array<Letter> => {
         if (cur.text != next.text)
             i++;
         else {
-            //cur.n += next.n;
             const newElement:Letter = {text: cur.text, n:cur.n + next.n};
             filtered.splice(i, 2, newElement);
-            i+= 2;
         }
     }
     return filtered;
@@ -186,6 +186,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
             destroyed = result.slice(i+1, secLength);
             destroyedLocation = i+1;
             result.splice(i+1, secLength, ...section);
+            result.push(...convertStringToWord(transform.output));
             length = secLength;
             break;
         }

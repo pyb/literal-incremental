@@ -57,18 +57,7 @@ const GameMain = () => {
     const [GS, setGS] = useImmer<GameState>(GameData.initialGameState);
     const [doProcessInterval, setDoProcessInterval] = React.useState<boolean>(false);
     const intervalId = React.useRef<number>(0);
-
-    /*
-    const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS.visibleKeys,
-                                                                   GS.unlockedKeys,
-                                                                   GS.activeKeys,
-                                                                   GS.repeatableKeys,
-                                                                   GS.toggleRepeatMode,
-                                                                   GS.stream,
-                                                                   GS.dict,
-                                                                   GS.visibleTransforms,
-                                                                   GS.unlockedTransforms);
-    */                                                              
+                                                         
     const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS);
     const visibleDict: Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
     const unlockedDict = new Set<number>(Game.unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms)

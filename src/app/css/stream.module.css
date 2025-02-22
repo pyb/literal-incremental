@@ -99,6 +99,9 @@
     visibility: hidden;
 }
 
+.deadWord {
+    visibility: hidden;
+}
 .destroy-exit-done {
     display: none;
 }
