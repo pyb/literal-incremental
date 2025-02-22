@@ -5,54 +5,29 @@
     gap: 20px;
 }
 
+
+.magnifiedComponent {
+    composes: keyboardComponent;
+    scale:200%;
+}
+
 .keyRow {
     display: flex;
     flex-direction: row;
 }
 
-/*
-raised: {
-    bg: "colorPalette.subtle",
-    color: "colorPalette.fg",
-    borderWidth: "1px",
-    borderBottomWidth: "2px",
-    borderColor: "colorPalette.muted"
-  }
-
-  outline: {
-    borderWidth: "1px",
-    color: "colorPalette.fg"
-  },
-  subtle: {
-    bg: "colorPalette.muted",
-    color: "colorPalette.fg"
-  },
-  plain: {
-    color: "colorPalette.fg"
-  }
-},
-*/
-
 /* This is "raised"*/
-
 .key {
-/*    composes: key;*/
-/*
-    display: inline-flex;
-    flex-shrink: 0;
-*/
     align-items: center;
     text-align: center;
     font-weight: 500;
     font-family: 'Courier New', Courier, monospace;
 
     white-space: nowrap;
-/*    word-spacing: -0.5em;*/
     user-select: none;
     border:solid;
     border-radius: 0.25rem;
     border-width: 1px;
-/*    border-bottom-width: 2px;*/
     border-bottom-width: .1em;
     height: 1.5rem;
     line-height: 1.5rem;
@@ -61,7 +36,6 @@ raised: {
     color-scheme: light;
     background-color: #3b1106; /* orange subtle */
     border-color: #6c2710; /* orange muted */
-/*    min-width: 22px;*/
     padding-left: 5px;
     padding-right: 5px;
     margin-left: 5px;
@@ -81,7 +55,6 @@ raised: {
 
 .highlight  .key {
     background-color: #FDE047;
-    /*color: #FDE047;*/
     color: white;
     border-color: #713F12;
     border-width: 0px;
@@ -107,6 +80,12 @@ raised: {
     background-color: #18181b;
 }
 
+.keyboardFull
+{
+    flex-basis: 100%;
+    display: flex;
+    flex-direction: column;
+}
 .keyboardTop
 {
     flex-basis: 75%;

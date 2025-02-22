@@ -156,7 +156,7 @@ const GameMain = () => {
                         <StreamComponent stream={GS.stream} lastDestroyedWord={GS.destroyed} destroyedLocation={GS.destroyedLocation}
                             dict={GS.dict.filter((transform: Transform) => unlockedDict.has(transform.id))} />
                     }
-                    <Keyboard keyStatus={keyStatus} />
+                    <Keyboard large={GS.glyphs == 0} keyStatus={keyStatus} />
                 </div>
             </div>
             {GS.glyphs >= 5 &&

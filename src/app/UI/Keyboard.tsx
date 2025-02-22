@@ -97,9 +97,10 @@ const computeRows = (len:number, mx:number):Array<number> => {
 
 interface KeyboardProps {
     keyStatus: Map<string, KeyStatus>,
+    large: boolean,
 };
 
-const Keyboard = ({keyStatus}:KeyboardProps) => {
+const Keyboard = ({keyStatus, large}:KeyboardProps) => {
     let letterKeys = new Array<string>();
     let specialKeys = new Array<string>();
     
@@ -119,24 +120,26 @@ const Keyboard = ({keyStatus}:KeyboardProps) => {
     {
         layeredKeys.push(allKeys.splice(0, size));
     }
+    const hasSpecialKeys:boolean = specialKeys.filter((key:string) => keyStatus.get(key)?.modes.has(KeyMode.Visible)).length != 0;
     return (
-        <div className={styles.keyboardComponent}>
-            <div className={styles.keyboardTop}>
-                <div className={styles.vstack}>
-                    {layeredKeys.map((keyRow: Array<React.ReactNode>, index: number) =>
-                        <div className={styles.hstack} key={index}>
-                            {keyRow}
-                        </div>)}
+           <div className={large? styles.magnifiedComponent : styles.keyboardComponent}>
+                <div className={hasSpecialKeys ? styles.keyboardTop: styles.keyboardFull}>
+                    <div className={styles.vstack}>
+                        {layeredKeys.map((keyRow: Array<React.ReactNode>, index: number) =>
+                            <div className={styles.hstack} key={index}>
+                                {keyRow}
+                            </div>)}
+                    </div>
                 </div>
-            </div>
+            {hasSpecialKeys &&
             <div className={styles.keyboardBottom}>
                 <div className={styles.hstack}>
                     {specialKeys.map((key: string) =>
                         <Key text={key} key={key} modes={keyStatus.get(key)?.modes as Set<KeyMode>} />)}
                 </div>
-            </div>
+            </div>}
         </div>
     );
 }
-
+//<div className={large ? styles.magnified : undefined}>
 export default Keyboard;
