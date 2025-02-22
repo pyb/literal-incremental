@@ -328,7 +328,6 @@ export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>)
             k = 0;
         }
         else {
-            console.log(lastWord.length)
             for (let i = k ; i > (lastWord.location + (lastWord.length as number)); i--) {
                 
                 resultPositions.push(i - 1); // single letters

@@ -27,15 +27,17 @@ const prioOpacity = (prio: number) => {
     };
 }
 
-const wordToElement = (input: [Array<Letter>, string, boolean], idx: number, wordIndex?: number) => {
+const wordToElement = (input: [Array<Letter>, string, boolean, number], idx: number, wordIndex?: number) => {
     const word: Array<Letter> = input[0];
     const wordS: string = input[1];
     const destroyed: boolean = input[2];
+    const destroyedIdx: number = input[3];
+
     const style = destroyed ? styles.deadWord :
                 ( (idx == 0) ? styles.currentWord : 
                 ( wordIndex ? prioStyle(wordIndex) : styles.prioDefault) );
     return (
-        <span className={styles.streamWord} key={idx}>
+        <span className={styles.streamWord} key={destroyed? 1000000 + (destroyedIdx as number) : idx}>
             <span className={style} style={prioOpacity(idx)}>
                 <span className={styles.smallSpace}> &nbsp; </span>
                 {word.map((l: Letter, i: number) =>
@@ -62,21 +64,22 @@ interface Props {
     dict: Array<Transform>,
     lastDestroyedWord:Word|undefined,
     destroyedLocation: number,
+    destroyedWordId: number,
 };
 
-const Stream = ({stream, dict, lastDestroyedWord, destroyedLocation}: Props) => {
+const Stream = ({stream, dict, lastDestroyedWord, destroyedLocation, destroyedWordId}: Props) => {
     const [streamSplit, streamWords]:[Array<number>, Array<string>] = StreamOps.inputWordSplit(stream, dict);
     let i = 0;
-    const separatedStream:Array<[Array<Letter>, string, boolean]> = [];
+    const separatedStream:Array<[Array<Letter>, string, boolean, number]> = [];
 
     for (let p = 1 ; p < streamSplit.length ; p++) // first number of streamSplit is always 0
     {
         const k:number = streamSplit[p];
         if ( lastDestroyedWord && destroyedLocation  >= i && destroyedLocation < k )
         {
-            separatedStream.push([lastDestroyedWord, "", true]);
+            separatedStream.push([lastDestroyedWord, "", true, destroyedWordId]);
         } 
-        separatedStream.push([stream.slice(i, k), streamWords[p], false]);
+        separatedStream.push([stream.slice(i, k), streamWords[p], false, 0]);
         i = k;
     }
 
@@ -84,7 +87,7 @@ const Stream = ({stream, dict, lastDestroyedWord, destroyedLocation}: Props) => 
     return (
         <div className={styles.streamComponent}>
                 {separatedStream.reverse()
-                                .map((input: [Array<Letter>, string, boolean], i:number) => 
+                                .map((input: [Array<Letter>, string, boolean, number], i:number) => 
                                     wordToElement(input,
                                                   i,
                                                   input[1].length > 1 ? colorIndex++ : undefined))

@@ -138,8 +138,9 @@ const GameMain = () => {
             <div className={GS.glyphs > 1 ? styles.gameMiddleBorder : undefined}>
                 <div className={styles.gameMiddle}>
                     {GS.glyphs > 1 &&
-                        <StreamComponent stream={GS.stream} lastDestroyedWord={GS.destroyed} destroyedLocation={GS.destroyedLocation}
-                            dict={GS.dict.filter((transform: Transform) => unlockedDict.has(transform.id))} />
+                        <StreamComponent stream={GS.stream} lastDestroyedWord={GS.destroyed}
+                                         destroyedLocation={GS.destroyedLocation} destroyedWordId={GS.destroyedWordCounter}
+                                         dict={GS.dict.filter((transform: Transform) => unlockedDict.has(transform.id))} />
                     }
                     <Keyboard large={GS.glyphs == 0} keyStatus={keyStatus} />
                 </div>

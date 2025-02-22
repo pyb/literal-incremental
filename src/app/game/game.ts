@@ -304,5 +304,6 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
     gs.stream = wordTransformResult.result;
     gs.destroyed = wordTransformResult.destroyed;
     gs.destroyedLocation = wordTransformResult.destroyedLocation || 0;
+    gs.destroyedWordCounter++;
   })];
 }

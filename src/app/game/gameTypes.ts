@@ -112,6 +112,7 @@ export type GameState = {
 
     destroyed: Word|undefined,
     destroyedLocation: number,
+    destroyedWordCounter: number,
 }
 
 export type UIState = {
