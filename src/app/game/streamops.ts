@@ -136,6 +136,7 @@ export type WordTransformResult = {
     destroyed?: Word,
     destroyedLocation?: number,
     success: boolean,
+    length?: number, 
 }
 
 export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location:number=0)
@@ -148,6 +149,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     let destroyed:Word|undefined;
     let destroyedLocation:number = 0;
     let success = false;
+    let length:number = 0;
 
     while(k > 0)
     {
@@ -158,8 +160,8 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
             k = i;
             continue;
         }
-        while (i >= 0 &&
-               wordLetters.has(result[i].text) )
+        while ( i >= 0 &&
+                wordLetters.has(result[i].text) )
             i--;
         
         const section:Array<Letter> = structuredClone(stream.slice(i+1,k));
@@ -184,6 +186,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
             destroyed = result.slice(i+1, secLength);
             destroyedLocation = i+1;
             result.splice(i+1, secLength, ...section);
+            length = secLength;
             break;
         }
         k = i; 
@@ -193,6 +196,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
         destroyed: destroyed,
         destroyedLocation: destroyedLocation,
         success: success,
+        length: length,
     };
 }
 
@@ -288,9 +292,11 @@ export const scanForWords = (input: Array<Letter>, dict: Array<Transform>) => {
     wordTransforms.forEach((transform: Transform) => {
        const r:WordTransformResult = applyWordTransform(transform, input);
        if (r.success)
-        result.push({ id: transform.id, location: r.destroyedLocation as number, word: transform.word as string });
+       {
+        result.push({ id: transform.id, location: r.destroyedLocation as number, length: r.length, word: transform.word as string });
+       }
+        
     })
-
     return result.sort(sortTransforms);
 }
 
@@ -299,7 +305,8 @@ export const scanForWords = (input: Array<Letter>, dict: Array<Transform>) => {
 
 // Backwards scan
 // return indices where the Letter Array should be split ; and the original words
-export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): [Array<number>, Array<string>] => {
+export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>)
+        :[Array<number>, Array<string>] => {
     const resultPositions:Array<number> = [];
     const resultWords:Array<string> = [];
     const len:number = input.length;
@@ -311,7 +318,7 @@ export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): [A
         const restInput:Array<Letter> = input.slice(0, k);
         const bwSortedWordPositions:Array<TransformLocation> = scanForWords(restInput, dict);
         
-        const lastWord = bwSortedWordPositions[0];
+        const lastWord:TransformLocation = bwSortedWordPositions[0];
         if (!lastWord)
         {
             for (let i = k - 1; i >= 0 ; i--) {
@@ -321,7 +328,8 @@ export const inputWordSplit = (input: Array<Letter>, dict: Array<Transform>): [A
             k = 0;
         }
         else {
-            for (let i = k ; i > (lastWord.location + lastWord.word.length); i--) {
+            console.log(lastWord.length)
+            for (let i = k ; i > (lastWord.location + (lastWord.length as number)); i--) {
                 
                 resultPositions.push(i - 1); // single letters
                 resultWords.push("");

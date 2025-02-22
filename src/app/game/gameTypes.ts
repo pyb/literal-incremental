@@ -47,8 +47,8 @@ export const emptyTransform:Transform = {
 export type TransformLocation = {
     id: number,
     word: string, // combo word or letter
-    // n: number, // not required
     location: number,
+    length?: number, //in letters
 }
 
 // Visible/invisible. Modifier?  Unlocked? Bound to available transform ? Bound to Unavailable transform?

@@ -28,8 +28,8 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
   const result = new Map<string, KeyStatus>([]);
   const availableDict: Array<Transform> = unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
 
-  const letterTransforms:Map<string, TransformLocation> = StreamOp.scanForLetters(GS.stream, GS.dict);
-  const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(GS.stream, GS.dict);
+  const letterTransforms:Map<string, TransformLocation> = StreamOp.scanForLetters(GS.stream, availableDict);
+  const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(GS.stream, availableDict);
   const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
 
   [...GS.visibleKeys, ...GS.unlockedKeys].forEach((key:string) =>

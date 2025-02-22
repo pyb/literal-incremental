@@ -13,7 +13,7 @@ export const keyVisibility = new Map<string, number>([
     //[UIData.wordTransformKey, 10],
     [UIData.repeatModeKey, 400],
     ['e', 600],
-    ['w', 150]]);
+    ['w', 500]]);
 /*
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
@@ -73,7 +73,7 @@ const unlockThreeLetter:Effect = {
 export const dict: Array<Types.Transform> = [
     {
         id:0,
-        visibility: 200,
+        visibility: 400,
         word: "win",
         output: "",
         shortDesc: "WIN",
@@ -196,8 +196,8 @@ export const initialRepeatDelay = 500;
 
 export const specialKeys = new Set<string>([UIData.wordTransformKey, UIData.repeatModeKey]);
 
-const initialUnlockedTransforms:Array<number> = [1];
-//const initialUnlockedTransforms:Array<number> = [1,5];
+//const initialUnlockedTransforms:Array<number> = [1];
+const initialUnlockedTransforms:Array<number> = [1,4,5];
 
 export const initialGameState:GameState = {
     glyphs: 0,
