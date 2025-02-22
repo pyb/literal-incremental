@@ -8,7 +8,7 @@ import {allAnagrams} from "game/util"
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
 //    ['x', 1], //testing
-    ['n', 10],
+    ['n', 25],
     // This should become visible slightly before the first word transform does ("in"?)
     [UIData.wordTransformKey, 250],
     //[UIData.wordTransformKey, 10],
@@ -79,12 +79,13 @@ export const dict: Array<Types.Transform> = [
         word: "win",
         output: "",
         shortDesc: "WIN",
-        longDesc: "Win the Game."
+        longDesc: "Win the Game.",
+
     },
     {
         id:1,
         n: 40,
-        visibility: 20,
+        visibility: 15,
         shortDesc: "I->N",
         letter: "i",
         output: "n",
@@ -114,6 +115,7 @@ export const dict: Array<Types.Transform> = [
         shortDesc: "ULK_E",
         longDesc: "Unlock letter e",
         effect: unlockEffect1,
+        transformKeyActivates: true, // and not just x
     },
     {
         id:54,

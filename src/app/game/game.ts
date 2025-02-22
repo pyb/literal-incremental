@@ -2,6 +2,7 @@ import {KeyStatus, KeyMode, Word, GameState, Transform, LogItem, TransformLocati
 import * as StreamOp from "game/streamops"
 import {specialKeys, keyVisibility, initialRepeatDelay} from "game/gameData"
 import UIData from "UI/uiData"
+import { GSP_NO_RETURNED_VALUE } from "next/dist/lib/constants"
 
 const addLog = (message: string, gs: GameState) => {
     gs.log.splice(0, 1) // remove first
@@ -46,6 +47,8 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
         result.get(key)?.modes.add(KeyMode.Available);
       }
       else
+        result.get(UIData.wordTransformKey)?.modes.add(KeyMode.Available);
+      if (transform.transformKeyActivates)
         result.get(UIData.wordTransformKey)?.modes.add(KeyMode.Available);
     }
   });
@@ -178,7 +181,8 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
  
   const modes:Set<KeyMode> = status.modes;
   const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
-
+  
+  console.log(modes)
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.RepeatModeKey) && modes.has(KeyMode.Available))
   {
@@ -229,7 +233,7 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>,
 }
 
 const findTransform = (id: number, dict:Array<Transform>):Transform|undefined => {
-  return dict.find((transform:Transform) => transform.id = id);
+  return dict.find((transform:Transform) => transform.id == id);
 }
 
 const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate]  => {
@@ -288,6 +292,15 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   if (trigger.length > 0)
   {
     transforms = transforms.filter((tl:TransformLocation) => findTransform(tl.id, dict)?.output == trigger);
+  }
+  else { // Triggered by enter key
+    transforms = transforms.filter((tl:TransformLocation) => {
+      const transform = findTransform(tl.id, dict);
+      if (transform && (transform.output == "" || transform.transformKeyActivates))
+        return true;
+      else
+        return false;
+    });
   }
   const transformLocation = transforms[0];
   if (!transformLocation)

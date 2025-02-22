@@ -18,6 +18,7 @@ export type Transform = {
     output: string,
     visibility: number,
     effect?: Effect,
+    transformKeyActivates?: boolean,
 }
 
 export type GameStateUpdate = ((gs:GameState) => void) | null;
