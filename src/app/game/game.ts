@@ -3,16 +3,6 @@ import * as StreamOp from "game/streamops"
 import {specialKeys, keyVisibility, initialRepeatDelay} from "game/gameData"
 import UIData from "UI/uiData"
 
-const addLog = (message: string, gs: GameState) => {
-    gs.log.splice(0, 1) // remove first
-    const logItem: LogItem = {
-      text: message,
-      key: gs.logKey
-    }
-    gs.logKey += 1;
-    gs.log.push(logItem);
-}
-
 const createEmptyKeyStatus = (key:string):KeyStatus => ({
   key:key,
   modes: new Set<KeyMode>
@@ -22,15 +12,15 @@ const createEmptyKeyStatus = (key:string):KeyStatus => ({
 // Views
 
 // Note: This is a "View" ie an alternative way or presenting game state data
-export const computeKeyStatus = (GS:GameState) :Map<string, KeyStatus> => {
+export const computeKeyStatus = (gs:GameState) :Map<string, KeyStatus> => {
   const result = new Map<string, KeyStatus>([]);
 
-  const availableDict: Array<Transform> = unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
-  const letterTransforms:Map<string, TransformLocation> = StreamOp.scanForLetters(GS.stream, availableDict);
-  const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(GS.stream, availableDict);
+  const availableDict: Array<Transform> = unlockedDict(gs.dict, gs.visibleTransforms, gs.unlockedTransforms);
+  const letterTransforms:Map<string, TransformLocation> = StreamOp.scanForLetters(gs.stream, availableDict);
+  const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(gs.stream, availableDict);
   const letterTransformKeys:Array<string> = Array.from(letterTransforms.keys());
 
-  [...GS.visibleKeys, ...GS.unlockedKeys].forEach((key:string) =>
+  [...gs.visibleKeys, ...gs.unlockedKeys].forEach((key:string) =>
     result.set(key, createEmptyKeyStatus(key)));
 
   wordTransforms.forEach((transformLocation: TransformLocation) => {
@@ -50,16 +40,16 @@ export const computeKeyStatus = (GS:GameState) :Map<string, KeyStatus> => {
     }
   });
 
-  GS.visibleKeys.forEach((key:string) => {
+  gs.visibleKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Visible);
     if (!specialKeys.has(key))
       result.get(key)?.modes.add(KeyMode.Letter);
   });
 
-  GS.unlockedKeys.forEach((key:string) => {
+  gs.unlockedKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Unlocked);
     result.get(key)?.modes.add(KeyMode.Available);
-    if (GS.toggleRepeatMode && GS.repeatableKeys.has(key))
+    if (gs.toggleRepeatMode && gs.repeatableKeys.has(key))
       result.get(key)?.modes.add(KeyMode.RepeatToggleAvailable);
   });
 
@@ -68,7 +58,7 @@ export const computeKeyStatus = (GS:GameState) :Map<string, KeyStatus> => {
     result.get(key)?.modes.add(KeyMode.Available);
   });
 
-  GS.activeKeys.forEach((key:string) => {
+  gs.activeKeys.forEach((key:string) => {
     result.get(key)?.modes.add(KeyMode.Active);
   });
 
@@ -77,9 +67,9 @@ export const computeKeyStatus = (GS:GameState) :Map<string, KeyStatus> => {
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Visible);
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.RepeatModeKey);
   result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Modifier);
-  if (GS.toggleRepeatMode)
+  if (gs.toggleRepeatMode)
     result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Active);
-  if (GS.repeatableKeys.size > 0)
+  if (gs.repeatableKeys.size > 0)
     result.get(UIData.repeatModeKey)?.modes.add(KeyMode.Available);
 
   return result;
@@ -134,15 +124,23 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
 
   if (type == EffectType.LetterUnlock) {
     return ((gs:GameState) => {
-      gs.unlockedKeys.add(letter);
-      gs.visibleKeys.add(letter);
-      if (!gs.repeatDelays.has(letter))
-        gs.repeatDelays.set(letter, initialRepeatDelay);
+      if (!gs.unlockedKeys.has(letter))
+      {
+        addLogF("Unlocked letter " + letter, gs);
+        gs.unlockedKeys.add(letter);
+        gs.visibleKeys.add(letter);
+        if (!gs.repeatDelays.has(letter))
+          gs.repeatDelays.set(letter, initialRepeatDelay);
+      }
     });
   }
   else if (type == EffectType.WordLengthUnlock) {
     return ((gs:GameState) => {
-      gs.maxWordSize = level;
+      if (gs.maxWordSize != level)
+      {
+        addLogF("Unlocked " + level.toString() + "-letter words", gs);
+        gs.maxWordSize = level;
+      }
     });
   }
   else if (type == EffectType.LetterRepeaterUnlock) {
@@ -163,7 +161,11 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
   }
   else if (type == EffectType.TransformUnlock) {
     return ((gs:GameState) => {
-      gs.unlockedTransforms.add(id);
+      if (!gs.unlockedTransforms.has(id))
+      {
+        addLogF("Unlocked a transform", gs);
+        gs.unlockedTransforms.add(id);
+      }
     });
   }
   else
@@ -238,7 +240,7 @@ const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate] 
       const glyphs = gs.glyphs + 1;
       gs.glyphs = glyphs;
       keyVisibility.forEach((visibility:number, key:string) => { if (visibility == glyphs) {
-        addLog("Key available : " + key, gs);
+        addLogF("Key available : " + key, gs);
         gs.visibleKeys.add(key);
       } });
       
@@ -249,9 +251,9 @@ const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate] 
         if (transform.visibility && transform.visibility == glyphs)
         {
           if (transform.shortDesc)
-            addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.shortDesc , gs);
+            addLogF("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.shortDesc , gs);
           else
-            addLog("Transform available.", gs);
+            addLogF("Transform available.", gs);
           gs.visibleTransforms.add(transform.id);
         }
       });
@@ -306,14 +308,55 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   if (!transform)
     throw new Error('Bug: transform id not found');
 
-  const wordTransformResult:StreamOp.WordTransformResult = StreamOp.applyWordTransform(transform, stream);
-  console.log(wordTransformResult)
+  const wordTransformResult:StreamOp.WordTransformResult = StreamOp.scanAndApplyWordTransform(transform, stream);
+
   return [transform.effect,
     ((gs:GameState) => {
+    const simplifiedStream = simplifyStream(wordTransformResult.result, gs.dict, gs.visibleTransforms, gs.unlockedTransforms);
     gs.lastTransform = transform;
-    gs.stream = wordTransformResult.result;
+    gs.stream = simplifiedStream ? simplifiedStream : wordTransformResult.result;
     gs.destroyed = wordTransformResult.destroyed;
     gs.destroyedLocation = wordTransformResult.destroyedLocation || 0;
     gs.destroyedWordCounter++;
   })];
+}
+
+// Utility function
+/*
+export const addLog = (message: string):GameStateUpdate => {
+  return ((gs:GameState) => {
+    addLogF(message,gs);
+  });
+}
+*/
+
+const addLogF = (message: string, gs: GameState) => {
+  gs.log.splice(0, 1) // remove first
+  const logItem: LogItem = {
+    text: message,
+    key: gs.logKey
+  }
+  gs.logKey += 1;
+  gs.log.push(logItem);
+}
+
+//export const simplifyStream = (gs:GameState):Array<Letter>|undefined=> {
+export const simplifyStream = (stream: Array<Letter>, dict:Array<Transform>,
+                               visibleTransforms:Set<number>, unlockedTransforms:Set<number>,)
+    :Array<Letter>|undefined=> {
+  const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
+  const wordTransforms:Array<TransformLocation> = StreamOp.scanForWords(stream, availableDict);
+
+  for (const transformLocation of wordTransforms)
+  {
+    const transform = dict.find((item:Transform) => item.id == transformLocation.id);
+    if (!transform)
+      throw new Error('Bug: transform id not found');
+    const r:StreamOp.WordTransformResult = StreamOp.scanAndApplyWordTransform(transform, stream);
+    if (r.success && r.reordered)
+    {
+      stream = r.reordered;
+    }
+  }
+  return stream;
 }

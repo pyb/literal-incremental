@@ -130,17 +130,17 @@ export const applyLetterTransform = (transform: Transform, stream:Array<Letter>,
   If word is empty, success.  
 
 */
-
 export type WordTransformResult = {
     result: Array<Letter>,
     destroyed?: Word,
     destroyedLocation?: number,
     success: boolean,
-    length?: number, 
+    length?: number,
+    reordered?: Array<Letter>,
 }
 
-export const applyWordTransform = (transform: Transform, stream:Array<Letter>, location:number=0)
-:WordTransformResult => {
+export const scanAndApplyWordTransform = (transform: Transform, stream:Array<Letter>)
+    :WordTransformResult => {
     let result:Array<Letter> = structuredClone(stream);
     const word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
     const wordLetters = new Set<string>(word.map((letter:Letter) => letter.text));
@@ -150,6 +150,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
     let destroyedLocation:number = 0;
     let success = false;
     let length:number = 0;
+    let reorderedStream:Array<Letter> = [];
 
     while(k > 0)
     {
@@ -183,6 +184,10 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
         }
         if (success)
         {
+            // Create reordered sections for the case where we don't want to actually apply the transform
+            const reorderedSection:Array<Letter> =  section.toSorted(sortWord);
+            reorderedStream = result.slice(0, i+1).concat(reorderedSection).concat(result.slice(k));
+
             destroyed = result.slice(i+1, secLength);
             destroyedLocation = i+1;
             result.splice(i+1, secLength, ...section);
@@ -198,6 +203,7 @@ export const applyWordTransform = (transform: Transform, stream:Array<Letter>, l
         destroyedLocation: destroyedLocation,
         success: success,
         length: length,
+        reordered: cleanupStream(reorderedStream),
     };
 }
 
@@ -291,7 +297,7 @@ export const scanForWords = (input: Array<Letter>, dict: Array<Transform>) => {
     const wordTransforms:Array<Transform> = dict.filter(transform =>transform.word);
         
     wordTransforms.forEach((transform: Transform) => {
-       const r:WordTransformResult = applyWordTransform(transform, input);
+       const r:WordTransformResult = scanAndApplyWordTransform(transform, input);
        if (r.success)
        {
         result.push({ id: transform.id, location: r.destroyedLocation as number, length: r.length, word: transform.word as string });

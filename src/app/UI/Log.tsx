@@ -1,20 +1,6 @@
 import {GameState, LogItem} from "game/gameTypes"
 import styles from "css/log.module.css"
 
-// Utility function
- export const addLog = (message: string) => {
-    return ((gs:GameState) => {
-      gs.log.splice(0, 1) // remove first
-      const logItem:LogItem = {
-        text: message,
-        key:gs.logKey
-      }
-      gs.logKey += 1;
-      gs.log.push(logItem);
-    });
-  }
-
-
 interface Props {
     log: Array<LogItem>;
 };

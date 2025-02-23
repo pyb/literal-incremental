@@ -109,7 +109,7 @@ export const dict: Array<Types.Transform> = [
     // should this be unlocked from the start?
     {
         id:4,
-        visibility: 300,
+        visibility: 20,
         word: "in",
         shortDesc: "3LW",
         output: tombStone.repeat(3),
@@ -225,7 +225,7 @@ export const initialGameState:GameState = {
     repeatDelayMultiplier: fastRepeat,
     //repeatDelayMultiplier: 1,
     repeatDelays: new Map<string, number>([["i", initialRepeatDelay], ["n", initialRepeatDelay]]),
-    maxWordSize: 3,
+    maxWordSize: 2,
     toggleRepeatMode: false,
     destroyed: undefined,
     destroyedLocation: 0,

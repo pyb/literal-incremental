@@ -141,5 +141,4 @@ const Keyboard = ({keyStatus, large}:KeyboardProps) => {
         </div>
     );
 }
-//<div className={large ? styles.magnified : undefined}>
 export default Keyboard;

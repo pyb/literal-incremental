@@ -69,7 +69,7 @@ const WordComponent = ({input, idx, wordIndex}:WordProps) => {
                         (l.n > 5) ?
                             <span key={i}>
                                 {l.text}
-                                <span className={styles.superscript}> {"(" + l.n.toString() + ")"} </span>
+                                <span className={styles.superscript}> {l.n.toString()} </span>
                             </span> :
                             <span key={i}>
                                 {l.text.repeat(l.n - 1)}
@@ -101,10 +101,12 @@ const Stream = ({stream, dict, lastDestroyedWord, destroyedLocation, destroyedWo
     for (let p = 1 ; p < streamSplit.length ; p++) // first number of streamSplit is always 0
     {
         const k:number = streamSplit[p];
+        /*
         if ( lastDestroyedWord && destroyedLocation  >= i && destroyedLocation < k )
         {
             separatedStream.push([lastDestroyedWord, "", true, destroyedWordId]);
         } 
+        */
         separatedStream.push([stream.slice(i, k), streamWords[p], false, 0]);
         i = k;
     }

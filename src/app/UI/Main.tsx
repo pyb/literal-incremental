@@ -62,7 +62,6 @@ const GameMain = () => {
     const visibleDict: Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
     const unlockedDict = new Set<number>(Game.unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms)
                                         .map((transform:Transform)=> transform.id));
-
     if (GS.keysToTrigger.size > 0)
     {
         const activeKeys = new Set<string>();
@@ -77,8 +76,18 @@ const GameMain = () => {
         });
         setGS((gs: GameState) => {
             gs.keysToTrigger.clear();
-            gs.activeKeys = activeKeys
+            gs.activeKeys = activeKeys;
         });
+        /*
+        const simplifiedStream:Array<Letter>|undefined = Game.simplifyStream(GS);
+        //if (simplifiedStream)
+        if (false)
+        {
+            setGS((gs: GameState) => {
+                gs.stream = simplifiedStream;
+            });
+        }
+        */
     }
   
     // executed every tick
