@@ -275,11 +275,16 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
   if (!transform)
     throw new Error("Bug: transform id " + id.toString() + " not found");
 
+  const newStream:Array<Letter> = StreamOp.applyLetterTransform(transform, stream, transformLocation.location);
+
+  console.log(newStream)
+  
   return [transform.effect, 
     ((gs:GameState) => {
-      //gs.stream = Stream.addLetter(key, gs.stream);
+      const simplifiedStream = simplifyStream(newStream, dict, gs.visibleTransforms, gs.unlockedTransforms);
+      //console.log(simplifiedStream)
       gs.lastTransform = transform;
-      gs.stream = StreamOp.applyLetterTransform(transform, stream, transformLocation.location);
+      gs.stream = simplifiedStream ? simplifiedStream : newStream;
       gs.destroyed = undefined;
     })];
 }
@@ -352,9 +357,11 @@ export const simplifyStream = (stream: Array<Letter>, dict:Array<Transform>,
     const transform = dict.find((item:Transform) => item.id == transformLocation.id);
     if (!transform)
       throw new Error('Bug: transform id not found');
-    const r:StreamOp.WordTransformResult = StreamOp.scanAndApplyWordTransform(transform, stream);
+    const r:StreamOp.WordTransformResult = StreamOp.scanAndApplyWordTransform(transform, stream, false);
     if (r.success && r.reordered)
     {
+      console.log(transform.word)
+      console.log(r.reordered)
       stream = r.reordered;
     }
   }

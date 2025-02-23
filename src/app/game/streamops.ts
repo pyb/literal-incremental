@@ -139,7 +139,7 @@ export type WordTransformResult = {
     reordered?: Array<Letter>,
 }
 
-export const scanAndApplyWordTransform = (transform: Transform, stream:Array<Letter>)
+export const scanAndApplyWordTransform = (transform: Transform, stream:Array<Letter>, doApply:boolean=true)
     :WordTransformResult => {
     let result:Array<Letter> = structuredClone(stream);
     const word:Array<Letter> = compressSortedStream(convertStringToWord(transform.word as string).toSorted(sortWord));
@@ -185,7 +185,12 @@ export const scanAndApplyWordTransform = (transform: Transform, stream:Array<Let
         if (success)
         {
             // Create reordered sections for the case where we don't want to actually apply the transform
-            const reorderedSection:Array<Letter> =  section.toSorted(sortWord);
+            let reorderedSection:Array<Letter>;
+            if (doApply)
+                reorderedSection = section.toSorted(sortWord);
+            else
+                reorderedSection = stream.slice(i+1,k).toSorted(sortWord);
+            
             reorderedStream = result.slice(0, i+1).concat(reorderedSection).concat(result.slice(k));
 
             destroyed = result.slice(i+1, secLength);
