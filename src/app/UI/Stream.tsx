@@ -66,7 +66,7 @@ const WordComponent = ({input, idx, wordIndex}:WordProps) => {
                 <span className={style} style={prioOpacity(idx)}>
                     {!destroyed && <span className={styles.smallSpace}> &nbsp; </span>}
                     {word.map((l: Letter, i: number) =>
-                        (l.n > 5) ?
+                        (l.n > 3) ?
                             <span key={i}>
                                 {l.text}
                                 <span className={styles.superscript}> {l.n.toString()} </span>
@@ -76,8 +76,8 @@ const WordComponent = ({input, idx, wordIndex}:WordProps) => {
                                 <span className={styles.lastLetter}>{l.text}</span>
                             </span>
                     )}
-                    {wordS &&
-                        <span className={styles.realWord}>[{wordS}]</span>}
+                    {/*wordS &&
+                        <span className={styles.realWord}>[{wordS}]</span>*/}
                     {/*!destroyed && <span className={styles.smallSpace}> &nbsp; </span>*/}
                 </span>
             </span>

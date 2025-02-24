@@ -13,6 +13,7 @@
     overflow: hidden;
     white-space: nowrap;
     direction: rtl;
+    font-size:20px;
 }
 
 .streamContent {
@@ -20,7 +21,7 @@
 }
 
 .superscript {
-    font-size: 70%;
+    font-size: 5px;
     vertical-align: super;
     margin-left: -3px;
     margin-right: -3px;

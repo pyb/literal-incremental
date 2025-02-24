@@ -126,7 +126,7 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
     return ((gs:GameState) => {
       if (!gs.unlockedKeys.has(letter))
       {
-        addLogF("Unlocked letter " + letter, gs);
+        addLog("Unlocked letter " + letter, gs);
         gs.unlockedKeys.add(letter);
         gs.visibleKeys.add(letter);
         if (!gs.repeatDelays.has(letter))
@@ -138,7 +138,7 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
     return ((gs:GameState) => {
       if (gs.maxWordSize != level)
       {
-        addLogF("Unlocked " + level.toString() + "-letter words", gs);
+        addLog("Unlocked " + level.toString() + "-letter words", gs);
         gs.maxWordSize = level;
       }
     });
@@ -163,7 +163,7 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
     return ((gs:GameState) => {
       if (!gs.unlockedTransforms.has(id))
       {
-        addLogF("Unlocked a transform", gs);
+        addLog("Unlocked a transform", gs);
         gs.unlockedTransforms.add(id);
       }
     });
@@ -196,7 +196,7 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
   else if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
     return letterTransform(key, stream, availableDict);
   else if (modes.has(KeyMode.Unlocked) && modes.has(KeyMode.Letter))
-    return directInput(key);
+    return directInput(key, stream);
   /*
   // unused. obsolete?
   else if ( modes.has(KeyMode.Modifier) &&
@@ -234,30 +234,34 @@ const findTransform = (id: number, dict:Array<Transform>):Transform|undefined =>
   return dict.find((transform:Transform) => transform.id == id);
 }
 
-const directInput = (key: string):[effect: Effect | undefined, GameStateUpdate]  => {
+const directInput = (key: string, stream: Array<Letter>):[effect: Effect | undefined, GameStateUpdate]  => {
+  const newStream:Array<Letter>= StreamOp.addLetter(key, structuredClone(stream));
+
   return [undefined,
     ((gs:GameState):void => {
       const glyphs = gs.glyphs + 1;
       gs.glyphs = glyphs;
       keyVisibility.forEach((visibility:number, key:string) => { if (visibility == glyphs) {
-        addLogF("Key available : " + key, gs);
+        addLog("Key available : " + key, gs);
         gs.visibleKeys.add(key);
       } });
-      
-      if (glyphs < 3)
-        return;
   
       gs.dict.forEach((transform:Transform) => {
         if (transform.visibility && transform.visibility == glyphs)
         {
           if (transform.shortDesc)
-            addLogF("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.shortDesc , gs);
+            addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.shortDesc , gs);
           else
-            addLogF("Transform available.", gs);
+            addLog("Transform available.", gs);
           gs.visibleTransforms.add(transform.id);
         }
       });
-      gs.stream = StreamOp.addLetter(key, gs.stream);
+
+      if (glyphs < 3)
+        return;
+   
+      const simplifiedStream = simplifyStream(newStream, gs.dict, gs.visibleTransforms, gs.unlockedTransforms);
+      gs.stream = simplifiedStream ? simplifiedStream : newStream;
       gs.destroyed = undefined;
     })];
 }
@@ -282,7 +286,6 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
   return [transform.effect, 
     ((gs:GameState) => {
       const simplifiedStream = simplifyStream(newStream, dict, gs.visibleTransforms, gs.unlockedTransforms);
-      //console.log(simplifiedStream)
       gs.lastTransform = transform;
       gs.stream = simplifiedStream ? simplifiedStream : newStream;
       gs.destroyed = undefined;
@@ -326,16 +329,7 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
   })];
 }
 
-// Utility function
-/*
-export const addLog = (message: string):GameStateUpdate => {
-  return ((gs:GameState) => {
-    addLogF(message,gs);
-  });
-}
-*/
-
-const addLogF = (message: string, gs: GameState) => {
+const addLog = (message: string, gs: GameState) => {
   gs.log.splice(0, 1) // remove first
   const logItem: LogItem = {
     text: message,

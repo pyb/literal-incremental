@@ -90,6 +90,14 @@ export const dict: Array<Types.Transform> = [
         letter: "i",
         output: "n",
     },
+    {// what should unlock this?
+        id:111,
+        n: 10,
+        visibility: 15000,
+        shortDesc: "I->N",
+        letter: "i",
+        output: "n",
+    },
     {
         id:2,
         n: 10,
@@ -118,16 +126,6 @@ export const dict: Array<Types.Transform> = [
         transformKeyActivates: true, // and not just x
     },
     {
-        id:54,
-        visibility: 300000,
-        word: "inlll",
-        output: tombStone,
-        shortDesc: "ULK_E",
-        longDesc: "Unlock letter e",
-        effect: unlockEffect1,
-   
-    },
-    {
         id:5,
         visibility: 3000,
         //visibility: 30,
@@ -146,6 +144,17 @@ export const dict: Array<Types.Transform> = [
         shortDesc: "2LW",
         longDesc: "Unlock two-letter words",
         effect: unlockTwoLetter,
+    },
+    /*
+    {
+        id:54,
+        visibility: 300000,
+        word: "inlll",
+        output: tombStone,
+        shortDesc: "ULK_E",
+        longDesc: "Unlock letter e",
+        effect: unlockEffect1,
+   
     },
     {
         id:16,
@@ -171,13 +180,14 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Improve repeat delay I",
         effect: repeatRateUpgradeI,
     },
-
+    */
+/*
     { id:100, visibility: 1000, word: "foo", output: "bar", shortDesc: "LRU1", longDesc: "LongPress Repeat Upgrade 1"},
     { id:101, visibility: 1000, word: "baz", output: "", shortDesc: "Test2", longDesc: "Test2" },
- //   { id: 1001, visibility: 1000, n:3, input: "bar", output: "w" },
+    { id: 1001, visibility: 1000, n:3, input: "bar", output: "w" },
     { id:102, visibility: 1000, word: "bar", output: "w" },
     { id:103, visibility: 1000, word: "cat", output: "", shortDesc: "Test3", longDesc: "Test3" },
-
+*/
 ];
 
 dict.forEach((transform:Types.Transform) => {
