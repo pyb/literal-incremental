@@ -130,7 +130,7 @@ const GameMain = () => {
         <div className={styles.game}>
             <div className={styles.gameTop}>
                 <Dict dict={visibleDict}
-                      unlockedDict={unlockedDict}
+                      availableDict={Game.availableDict(GS)}
                       lastTransform={GS.lastTransform || Types.emptyTransform} ></Dict>
             </div>
             <div className={GS.glyphs > 1 ? styles.gameMiddleBorder : undefined}>

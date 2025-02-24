@@ -43,14 +43,16 @@ const ShortItem = ({ item, isUnlocked }: { item: Transform, isUnlocked: boolean}
 
 interface Props {
     dict: Array<Transform>,
-    unlockedDict: Set<number>,
+    availableDict: Array<Transform>,
     lastTransform: Transform,
 };
 
-const Dict = ({ dict, unlockedDict, lastTransform }: Props) => {
+const Dict = ({ dict, availableDict, lastTransform }: Props) => {
     const longItems: Array<Transform> = dict.slice(0, UIData.dictLongItems);
     const shortItems: Array<Transform> = dict.slice(UIData.dictLongItems);
     const maxShortItems = UIData.dictColumns * UIData.dictRows;
+
+    const availableDictIds = new Set<number>(availableDict.map((t:Transform) => t.id));
 
     return (
         <div className={styles.dictComponent}>
@@ -58,15 +60,15 @@ const Dict = ({ dict, unlockedDict, lastTransform }: Props) => {
                 <div className={styles.longArea}>
                     <div className={styles.longAreaMain}>
                         {longItems.map((item: Transform, index: number) =>
-                            <LongItem key={index} item={item} isUnlocked={unlockedDict.has(item.id)} />)}
+                            <LongItem key={index} item={item} isUnlocked={availableDictIds.has(item.id)} />)}
                     </div>
                     <div className={styles.lastTransform}>
-                        {(lastTransform.word || lastTransform.letter) && <ShortItem item={lastTransform} isUnlocked={unlockedDict.has(lastTransform.id)} />}
+                        {(lastTransform.word || lastTransform.letter) && <ShortItem item={lastTransform} isUnlocked={availableDictIds.has(lastTransform.id)} />}
                     </div>
                 </div>
                 <div className={styles.shortArea}>
                     {shortItems.slice(0, maxShortItems).map((item: Transform) =>
-                        <ShortItem key={item.word || item.letter} item={item} isUnlocked={unlockedDict.has(item.id)} />)}
+                        <ShortItem key={item.word || item.letter} item={item} isUnlocked={availableDictIds.has(item.id)} />)}
                 </div>
             </div>
         </div>

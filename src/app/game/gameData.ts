@@ -10,8 +10,8 @@ export const keyVisibility = new Map<string, number>([
 //    ['x', 1], //testing
     ['n', 25],
     // This should become visible slightly before the first word transform does ("in"?)
-    [UIData.wordTransformKey, 250],
-    //[UIData.wordTransformKey, 10],
+    //[UIData.wordTransformKey, 250],
+    [UIData.wordTransformKey, 65],
     [UIData.repeatModeKey, 1000],
     ['e', 1000],
     ['w', 500]]);
@@ -120,7 +120,8 @@ export const dict: Array<Types.Transform> = [
         visibility: 20,
         word: "in",
         shortDesc: "3LW",
-        output: tombStone.repeat(3),
+        //output: tombStone.repeat(3),
+        output: tombStone,
         longDesc: "Unlock three-letter words",
         effect: unlockThreeLetter,
         transformKeyActivates: true, // and not just x
