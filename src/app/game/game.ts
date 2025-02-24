@@ -283,7 +283,7 @@ const directInput = (key: string, stream: Array<Letter>): GameStateUpdate => {
     gs.dict.forEach((transform: Transform) => {
       if (transform.visibility && transform.visibility == glyphs) {
         if (transform.shortDesc)
-          addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.shortDesc, gs);
+          addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.longDesc, gs);
         else
           addLog("Transform available.", gs);
         gs.visibleTransforms.add(transform.id);

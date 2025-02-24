@@ -14,7 +14,6 @@ export type Transform = {
     n?: number,
     letter?: string, // for letter transforms
     word?: string,
-    words?: Set<string>, // all anagramsm for word transform
     output: string,
     visibility: number,
     effect?: Effect,
@@ -98,7 +97,7 @@ export type GameState = {
     visibleTransforms: Set<number>,
 
     effectCharges: Map<number,number>, // id -> how many times effect used
-     
+
     visibleKeys: Set<string>,
     unlockedKeys: Set<string>,
     pressedKeys: Set<string>,
