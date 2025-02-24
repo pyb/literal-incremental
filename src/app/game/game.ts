@@ -260,6 +260,10 @@ export const unlockedDict = (dict: Array<Transform>, visibleTransforms: Set<numb
 
 export const availableDict = (gs:GameState):Array<Transform> => {
   let unlocked:Array<Transform> = unlockedDict(gs.dict, gs.visibleTransforms, gs.unlockedTransforms);
+  const charges = gs.effectCharges;
+  unlocked = unlocked.filter ((t:Transform) => (!t.effectCharges ||
+                                                !charges.get(t.id) ||
+                                                 charges.get(t.id) as number < t.effectCharges));
   if (!gs.visibleKeys.has(UIData.wordTransformKey))
     unlocked = unlocked.filter((t:Transform)=>t.letter);
 

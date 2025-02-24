@@ -7,7 +7,7 @@ import UIData from "UI/uiData";
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 25],
-    [UIData.wordTransformKey, 75],
+    [UIData.wordTransformKey, 74],
     [UIData.repeatModeKey, 1000],
     ['o', 200],
     ['e', 500],
@@ -80,7 +80,7 @@ export const dict: Array<Types.Transform> = [
         id:1,
         n: 40,
         visibility: 15,
-        shortDesc: "40I->N",
+        //shortDesc: "40I->N",
         letter: "i",
         output: "n",
     },
@@ -106,7 +106,7 @@ export const dict: Array<Types.Transform> = [
     // should this be unlocked from the start?
     {
         id:4,
-        visibility: 100,
+        visibility: 75,
         word: "in",
         shortDesc: "3LW",
         output: tombStone,
@@ -234,8 +234,8 @@ export const initialGameState:GameState = {
     visibleTransforms: new Set<number>([]),
     log: initialLog,
     logKey: UIData.logSize,
-    repeatDelayMultiplier: fastRepeat,
-    //repeatDelayMultiplier: 1,
+    //repeatDelayMultiplier: fastRepeat,
+    repeatDelayMultiplier: 1,
     repeatDelays: new Map<string, number>([["i", initialRepeatDelay], ["n", initialRepeatDelay]]),
     maxWordSize: 2,
     toggleRepeatMode: false,
