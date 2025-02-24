@@ -50,6 +50,7 @@ export type TransformLocation = {
     word: string, // combo word or letter
     location: number,
     length?: number, //in letters
+    prio: number,
 }
 
 // Visible/invisible. Modifier?  Unlocked? Bound to available transform ? Bound to Unavailable transform?

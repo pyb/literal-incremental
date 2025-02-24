@@ -235,7 +235,7 @@ export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform
                         const current = result.get(transformLetter);
                         if (!current ||
                             current.location < pos)
-                            result.set(transformLetter, { id: transform.id, word: key, location: pos });
+                            result.set(transformLetter, { prio: transform.visibility, id: transform.id, word: key, location: pos });
                     }
                 });
             }
@@ -246,7 +246,7 @@ export const scanForLetters = (input: Array<Letter>, transforms: Array<Transform
                 if (i != -1)
                 {
                     const pos = (input.length - i) - transform.word.length;
-                    result.set(transformLetter, {id: transform.id, location: pos, word: transform.word})
+                    result.set(transformLetter, {id: transform.id, location: pos, word: transform.word,  prio: transform.visibility})
                 }
             }
             else
@@ -261,15 +261,14 @@ const inputToString = (input: Array<Letter>):string => {
     return input.map((letter: Letter) => letter.text).join('');
 }
 
-// This behaviour will probably be updated 
-// For now we prioritise rightmost transform, unless a longer transform exists using the same letters
-// We could change to : always pick the longest word.
 const sortTransforms = (a:TransformLocation, b:TransformLocation) => {
     const aLen:number = a.word.length;
     const bLen:number = b.word.length;
     const aEnd:number = a.location + aLen;
     const bEnd:number = b.location + bLen;
 
+    if (a.prio != b.prio)
+        return (b.prio - a.prio)
     if (aEnd != bEnd)
         return (bEnd-aEnd);
     else
@@ -305,7 +304,7 @@ export const scanForWords = (input: Array<Letter>, dict: Array<Transform>) => {
        const r:WordTransformResult = scanAndApplyWordTransform(transform, input);
        if (r.success)
        {
-        result.push({ id: transform.id, location: r.destroyedLocation as number, length: r.length, word: transform.word as string });
+        result.push({ prio: transform.visibility, id: transform.id, location: r.destroyedLocation as number, length: r.length, word: transform.word as string });
        }
         
     })

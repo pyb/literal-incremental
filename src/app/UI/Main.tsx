@@ -64,7 +64,6 @@ const GameMain = () => {
                                         .map((transform:Transform)=> transform.id));
     if (GS.keysToTrigger.size > 0)
     {
-        //console.log(GS.effectCharges)
         const activeKeys = new Set<string>();
         GS.keysToTrigger.forEach((key: string) => {
             const updates: Array<GameStateUpdate> = Game.execute(key, keyStatus, GS);

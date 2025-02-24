@@ -191,7 +191,6 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
   const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
   
   /*
-  // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.RepeatModeKey) && modes.has(KeyMode.Available))
   {
     return [toggleRepeatEffect, null];
@@ -282,10 +281,10 @@ const directInput = (key: string, stream: Array<Letter>): GameStateUpdate => {
 
     gs.dict.forEach((transform: Transform) => {
       if (transform.visibility && transform.visibility == glyphs) {
-        if (transform.shortDesc)
-          addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.longDesc, gs);
+        if (transform.longDesc)
+          addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + (transform.longDesc || ""), gs);
         else
-          addLog("Transform available.", gs);
+          addLog("Transform available. " + (transform.shortDesc|| ""), gs);
         gs.visibleTransforms.add(transform.id);
       }
     });
@@ -313,8 +312,6 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
     throw new Error("Bug: transform id " + id.toString() + " not found");
 
   const newStream:Array<Letter> = StreamOp.applyLetterTransform(transform, stream, transformLocation.location);
-
-  console.log(newStream)
   
   return [transform,
     ((gs:GameState) => {
@@ -385,8 +382,6 @@ export const simplifyStream = (stream: Array<Letter>, gs:GameState)
     const r:StreamOp.WordTransformResult = StreamOp.scanAndApplyWordTransform(transform, stream, false);
     if (r.success && r.reordered)
     {
-      console.log(transform.word)
-      console.log(r.reordered)
       stream = r.reordered;
     }
   }

@@ -7,7 +7,7 @@ import UIData from "UI/uiData";
 export const keyVisibility = new Map<string, number>([
     ['i', 0],
     ['n', 25],
-    [UIData.wordTransformKey, 50],
+    [UIData.wordTransformKey, 75],
     [UIData.repeatModeKey, 1000],
     ['o', 200],
     ['e', 500],
@@ -63,7 +63,8 @@ const unlockCheapN:Effect = {
     level:111,
 }
 
-const initialUnlockedTransforms:Array<number> = [1,2,4,9];
+//const initialUnlockedTransforms:Array<number> = [1,2,4,9];
+const initialUnlockedTransforms:Array<number> = [1,2,4,5,9]; // added 5 for testing in vs inn upon enter
 
 export const dict: Array<Types.Transform> = [
     {
@@ -79,14 +80,14 @@ export const dict: Array<Types.Transform> = [
         id:1,
         n: 40,
         visibility: 15,
-        shortDesc: "I->N",
+        shortDesc: "40I->N",
         letter: "i",
         output: "n",
     },
     {
         id:2,
         n: 10,
-        visibility: 230,
+        visibility: 200,
         letter: "n",
         output: "o"
     },
@@ -116,7 +117,7 @@ export const dict: Array<Types.Transform> = [
     },
     {
         id:5,
-        visibility: 300,
+        visibility: 180,
         word: "inn",
         output: "e",
     },
