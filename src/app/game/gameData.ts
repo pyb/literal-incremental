@@ -130,6 +130,7 @@ export const dict: Array<Types.Transform> = [
         longDesc: "Unlock Transform INN",
         effect: unlockTransform1,
         effectCharges: 1,
+        transformKeyActivates: true,
     },
     {// what should unlock this? "UnlockCheapN"
         id: 111,

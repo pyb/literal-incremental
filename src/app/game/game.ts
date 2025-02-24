@@ -324,6 +324,7 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
 
 const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:string=""):
    [Transform | undefined, GameStateUpdate] => {
+
   let transforms:Array<TransformLocation> = StreamOp.scanForWords(stream, dict);
   if (trigger.length > 0)
   {
