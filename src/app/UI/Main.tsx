@@ -64,9 +64,10 @@ const GameMain = () => {
                                         .map((transform:Transform)=> transform.id));
     if (GS.keysToTrigger.size > 0)
     {
+        //console.log(GS.effectCharges)
         const activeKeys = new Set<string>();
         GS.keysToTrigger.forEach((key: string) => {
-            const updates: Array<GameStateUpdate> = Game.execute(key, keyStatus, GS.stream, GS.dict, GS.visibleTransforms, GS.unlockedTransforms);
+            const updates: Array<GameStateUpdate> = Game.execute(key, keyStatus, GS);
             updates.forEach((update) => {
                 if (update) {
                     activeKeys.add(key);
@@ -78,16 +79,6 @@ const GameMain = () => {
             gs.keysToTrigger.clear();
             gs.activeKeys = activeKeys;
         });
-        /*
-        const simplifiedStream:Array<Letter>|undefined = Game.simplifyStream(GS);
-        //if (simplifiedStream)
-        if (false)
-        {
-            setGS((gs: GameState) => {
-                gs.stream = simplifiedStream;
-            });
-        }
-        */
     }
   
     // executed every tick

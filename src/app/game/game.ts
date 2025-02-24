@@ -112,7 +112,15 @@ const toggleKeyRepeat = ((key: string): [effect: Effect | undefined, GameStateUp
   -...?
 */
 
-export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Transform>):GameStateUpdate => {
+const increaseCharge = (gs:GameState, id:number) => {
+  const current = gs.effectCharges.get(id)
+  if (current)
+    gs.effectCharges.set(id, current+1);
+  else
+    gs.effectCharges.set(id, 1);
+}
+
+export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Transform>, transform:Transform):GameStateUpdate => {
   const type:EffectType = effect.type;
   const letter:string = effect.letter as string; // this is sometimes undefined, but always defined when we need it below
   const level:number = effect.level as number; // ditto
@@ -127,6 +135,7 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
         gs.visibleKeys.add(letter);
         if (!gs.repeatDelays.has(letter))
           gs.repeatDelays.set(letter, initialRepeatDelay);
+        increaseCharge(gs, transform.id);
       }
     });
   }
@@ -136,18 +145,21 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
       {
         addLog("Unlocked " + level.toString() + "-letter words", gs);
         gs.maxWordSize = level;
+        increaseCharge(gs, transform.id);
       }
     });
   }
   else if (type == EffectType.LetterRepeaterUnlock) {
     return ((gs:GameState) => {
       gs.repeatableKeys.add(letter);
+      increaseCharge(gs, transform.id);
      });
   }
   else if (type == EffectType.UpgradeRepeater) {
     return ((gs:GameState) => {
       const currentDelay:number = gs.repeatDelays.get(letter) || initialRepeatDelay; // should always be defined, but...
       gs.repeatDelays.set(letter, currentDelay / level);
+      increaseCharge(gs, transform.id);
      });
   }
   else if (type == EffectType.ToggleRepeater) {
@@ -161,6 +173,7 @@ export const executeEffect = (effect:Effect, stream:Array<Letter>, dict:Array<Tr
       {
         addLog("Unlocked a transform", gs);
         gs.unlockedTransforms.add(id);
+        increaseCharge(gs, transform.id);
       }
     });
   }
@@ -172,27 +185,31 @@ const toggleRepeatEffect:Effect = {type: EffectType.ToggleRepeater};
 
 export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array<Letter>, dict:Array<Transform>,
     visibleTransforms:Set<number>, unlockedTransforms:Set<number>)
-    :[Effect | undefined, GameStateUpdate] => {
+    :[Transform | undefined, GameStateUpdate] => {
 
   const modes:Set<KeyMode> = status.modes;
   const availableDict: Array<Transform> = unlockedDict(dict, visibleTransforms, unlockedTransforms);
   
+  /*
   // TODO : what to do if TRANSFORM and UNLOCKED?
   if (modes.has(KeyMode.RepeatModeKey) && modes.has(KeyMode.Available))
   {
     return [toggleRepeatEffect, null];
   }
-  
+  */
+ /*
   if (modes.has(KeyMode.RepeatToggleAvailable) && modes.has(KeyMode.Unlocked))
     return toggleKeyRepeat(key);
-  else if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available))
+  */
+  //else 
+  if (modes.has(KeyMode.WordTransformKey) && modes.has(KeyMode.Available))
     return wordTransform(stream, availableDict);
   else if (modes.has(KeyMode.WordTransform) && modes.has(KeyMode.Available))
     return wordTransform(stream, availableDict, key);
   else if (modes.has(KeyMode.LetterTranform) && modes.has(KeyMode.Available))
     return letterTransform(key, stream, availableDict);
   else if (modes.has(KeyMode.Unlocked) && modes.has(KeyMode.Letter))
-    return directInput(key, stream);
+    return [undefined, directInput(key, stream)];
   /*
   // unused. obsolete?
   else if ( modes.has(KeyMode.Modifier) &&
@@ -204,9 +221,9 @@ export const executeKeyFunction = (key: string, status: KeyStatus, stream: Array
   return [undefined, null];
 }
 
-export const execute = (key: string, keyStatus: Map<string, KeyStatus>,
-                        stream: Array<Letter>, dict:Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms:Set<number>):
-    Array<GameStateUpdate> => {
+export const execute = (key: string, keyStatus: Map<string, KeyStatus>, gs:GameState)
+                       // stream: Array<Letter>, dict:Array<Transform>, visibleTransforms: Set<number>, unlockedTransforms:Set<number>):
+    :Array<GameStateUpdate> => {
   const status = keyStatus.get(key);
   if (!status)
   {
@@ -214,9 +231,17 @@ export const execute = (key: string, keyStatus: Map<string, KeyStatus>,
     console.log('Error: unknown key : ' + key);
     return [];
   }
-  const [effect, transformResult] = executeKeyFunction(key, status, stream, dict, visibleTransforms, unlockedTransforms);
- 
-  const effectResult = effect ? executeEffect(effect, stream, dict) : null;
+  const [transform, transformResult] = executeKeyFunction(key, status, gs.stream, gs.dict, gs.visibleTransforms, gs.unlockedTransforms);
+  
+  let effectResult:GameStateUpdate|null = null;
+  if (transform && transform.effect) {
+    const charges = gs.effectCharges.get(transform.id)
+    if (charges && transform.effectCharges && charges >= transform.effectCharges)
+      effectResult = null;
+    else
+      effectResult = executeEffect(transform.effect, gs.stream, gs.dict, transform);
+  }
+  
   if (transformResult && effectResult)
     return [effectResult, transformResult];
   else if (effectResult)
@@ -242,40 +267,40 @@ export const availableDict = (gs:GameState):Array<Transform> => {
   return unlocked; 
 }
 
-const directInput = (key: string, stream: Array<Letter>):[effect: Effect | undefined, GameStateUpdate]  => {
+const directInput = (key: string, stream: Array<Letter>): GameStateUpdate => {
   const newStream:Array<Letter>= StreamOp.addLetter(key, structuredClone(stream));
 
-  return [undefined,
-    ((gs:GameState):void => {
-      const glyphs = gs.glyphs + 1;
-      gs.glyphs = glyphs;
-      keyVisibility.forEach((visibility:number, key:string) => { if (visibility == glyphs) {
+  return ((gs: GameState): void => {
+    const glyphs = gs.glyphs + 1;
+    gs.glyphs = glyphs;
+    keyVisibility.forEach((visibility: number, key: string) => {
+      if (visibility == glyphs) {
         addLog("Key available : " + key, gs);
         gs.visibleKeys.add(key);
-      } });
-  
-      gs.dict.forEach((transform:Transform) => {
-        if (transform.visibility && transform.visibility == glyphs)
-        {
-          if (transform.shortDesc)
-            addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.shortDesc , gs);
-          else
-            addLog("Transform available.", gs);
-          gs.visibleTransforms.add(transform.id);
-        }
-      });
+      }
+    });
 
-      if (glyphs < 3)
-        return;
-   
-      const simplifiedStream = simplifyStream(newStream, gs);
-      gs.stream = simplifiedStream ? simplifiedStream : newStream;
-      gs.destroyed = undefined;
-    })];
+    gs.dict.forEach((transform: Transform) => {
+      if (transform.visibility && transform.visibility == glyphs) {
+        if (transform.shortDesc)
+          addLog("Transform available : " + (transform.n ? transform.n.toString() : "") + transform.shortDesc, gs);
+        else
+          addLog("Transform available.", gs);
+        gs.visibleTransforms.add(transform.id);
+      }
+    });
+
+    if (glyphs < 3)
+      return;
+
+    const simplifiedStream = simplifyStream(newStream, gs);
+    gs.stream = simplifiedStream ? simplifiedStream : newStream;
+    gs.destroyed = undefined;
+  })
 }
 
 const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform>):
-    [effect: Effect | undefined, GameStateUpdate] => {
+    [Transform | undefined, GameStateUpdate] => {
   const transforms:Map<string, TransformLocation> = StreamOp.scanForLetters(stream, dict);
   const transformLocation = transforms.get(key);
   if (!transformLocation)
@@ -291,7 +316,7 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
 
   console.log(newStream)
   
-  return [transform.effect, 
+  return [transform,
     ((gs:GameState) => {
       const simplifiedStream = simplifyStream(newStream, gs);
       gs.lastTransform = transform;
@@ -301,7 +326,7 @@ const letterTransform = (key: string, stream:Array<Letter>, dict:Array<Transform
 }
 
 const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:string=""):
-   [Effect | undefined, GameStateUpdate] => {
+   [Transform | undefined, GameStateUpdate] => {
   let transforms:Array<TransformLocation> = StreamOp.scanForWords(stream, dict);
   if (trigger.length > 0)
   {
@@ -326,7 +351,8 @@ const wordTransform = (stream:Array<Letter>, dict:Array<Transform>, trigger:stri
 
   const wordTransformResult:StreamOp.WordTransformResult = StreamOp.scanAndApplyWordTransform(transform, stream);
 
-  return [transform.effect,
+  return [
+    transform,
     ((gs:GameState) => {
     const simplifiedStream = simplifyStream(wordTransformResult.result, gs);
     gs.lastTransform = transform;

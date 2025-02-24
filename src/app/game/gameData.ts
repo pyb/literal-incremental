@@ -124,6 +124,7 @@ export const dict: Array<Types.Transform> = [
         output: tombStone,
         longDesc: "Unlock three-letter words",
         effect: unlockThreeLetter,
+        effectCharges: 1,
         transformKeyActivates: true, // and not just x
     },
     {
@@ -241,4 +242,5 @@ export const initialGameState:GameState = {
     destroyed: undefined,
     destroyedLocation: 0,
     destroyedWordCounter: 0,
+    effectCharges: new Map<number,number>(),
 };

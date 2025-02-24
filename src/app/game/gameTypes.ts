@@ -18,6 +18,7 @@ export type Transform = {
     output: string,
     visibility: number,
     effect?: Effect,
+    effectCharges?: number
     transformKeyActivates?: boolean,
 }
 
@@ -96,6 +97,8 @@ export type GameState = {
     unlockedTransforms: Set<number>,
     visibleTransforms: Set<number>,
 
+    effectCharges: Map<number,number>, // id -> how many times effect used
+     
     visibleKeys: Set<string>,
     unlockedKeys: Set<string>,
     pressedKeys: Set<string>,
