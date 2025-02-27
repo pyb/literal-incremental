@@ -88,17 +88,15 @@ export type LogItem = {
 export type GameState = {
     glyphs: number,
     maxWordSize: number,
-    toggleRepeatMode: boolean,
+    effectCharges: Map<number,number>, // id -> how many times transform id's effect used
+    repeatDelays: Map<string, number>, 
 
     stream: Array<Letter>,
-    dict: Array<Transform>,
 
-    lastTransform: Transform|undefined,
+    dict: Array<Transform>,
     unlockedTransforms: Set<number>,
     visibleTransforms: Set<number>,
-
-    effectCharges: Map<number,number>, // id -> how many times transform id's effect used
-
+   
     visibleKeys: Set<string>,
     unlockedKeys: Set<string>,
     pressedKeys: Set<string>,
@@ -107,13 +105,13 @@ export type GameState = {
     repeatableKeys: Set<string>,
     keysToTrigger: Set<string>,
     currentPressedKeysTracker: Map<string, number>, // map key to elapsed time since last press
+    toggleRepeatMode: boolean,
 
+    // Is all the below UI state?
     log: Array<LogItem>,
     logKey: number,
-
-    repeatDelays: Map<string, number>,
+    lastTransform: Transform|undefined,
     repeatDelayMultiplier: number,
-
     destroyed: Word|undefined,
     destroyedLocation: number,
     destroyedWordCounter: number,

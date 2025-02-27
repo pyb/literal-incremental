@@ -41,10 +41,6 @@ const convertStringToWord = (s:string):Array<Letter> => {
     return result;
 }
 
-const convertWordToString = (w:Array<Letter>):string => {
-    return w.map((l:Letter) => l.text + "(" + l.n.toString()+ ")").join("");
-}
-
 /****************************************************************/
 // Replace
 

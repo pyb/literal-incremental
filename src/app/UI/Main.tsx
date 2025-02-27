@@ -51,22 +51,19 @@ const Footer = ({items}: {items: Array<React.ReactNode>}) => {
       </div>);
 }
 
-let k:number = 0;
-
 const GameMain = () => {
     const [GS, setGS] = useImmer<GameState>(GameData.initialGameState);
     const [doProcessInterval, setDoProcessInterval] = React.useState<boolean>(false);
     const intervalId = React.useRef<number>(0);
                                                          
-    const keyStatus:Map<string, KeyStatus> = Game.computeKeyStatus(GS);
-    const visibleDict: Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
-    const unlockedDict = new Set<number>(Game.unlockedDict(GS.dict, GS.visibleTransforms, GS.unlockedTransforms)
+    const visibleDict:Array<Transform> = GS.dict.filter((transform:Transform)=> GS.visibleTransforms.has(transform.id));
+    const unlockedDict = new Set<number>(Game.unlockedDict(GS)
                                         .map((transform:Transform)=> transform.id));
     if (GS.keysToTrigger.size > 0)
     {
         const activeKeys = new Set<string>();
         GS.keysToTrigger.forEach((key: string) => {
-            const updates: Array<GameStateUpdate> = Game.execute(key, keyStatus, GS);
+            const updates: Array<GameStateUpdate> = Game.execute(key, GS);
             updates.forEach((update) => {
                 if (update) {
                     activeKeys.add(key);
@@ -96,6 +93,9 @@ const GameMain = () => {
 
     React.useEffect(() => {
         setGS(load());
+    }, []);
+
+    React.useEffect(() => {
         intervalId.current = window.setInterval(() => setDoProcessInterval(true),
             UIData.tick);
         KH.setup((key: string, pressed: boolean) => {
@@ -107,7 +107,7 @@ const GameMain = () => {
             KH.teardown();
             window.clearInterval(intervalId.current);
         };
-    }, [setGS]);
+    }, [setGS, setDoProcessInterval]);
 
     const resetCallback = () => {
         setGS(GameData.initialGameState);
@@ -130,7 +130,7 @@ const GameMain = () => {
                                          destroyedLocation={GS.destroyedLocation} destroyedWordId={GS.destroyedWordCounter}
                                          dict={GS.dict.filter((transform: Transform) => unlockedDict.has(transform.id))} />
                     }
-                    <Keyboard large={GS.glyphs == 0} keyStatus={keyStatus} />
+                    <Keyboard large={GS.glyphs == 0} keyStatus={Game.computeKeyStatus(GS)} />
                 </div>
             </div>
             <div className={styles.gameFooter}>
